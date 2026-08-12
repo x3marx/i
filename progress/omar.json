@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786555361846,
+  "updatedAt": 1786555412436,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -1370,14 +1370,14 @@
       "form4:227": {
         "selected": "A",
         "correct": false,
-        "elapsed": 33,
-        "ts": 1786529974812
+        "elapsed": 42,
+        "ts": 1786555402362
       },
       "form4:228": {
-        "selected": "C",
-        "correct": false,
-        "elapsed": 17,
-        "ts": 1786529995971
+        "selected": "D",
+        "correct": true,
+        "elapsed": 6,
+        "ts": 1786555411477
       },
       "form4:229": {
         "selected": "A",
@@ -5658,12 +5658,12 @@
         "lastTs": 1786529940719
       },
       "form4:227": {
-        "attempts": 1,
+        "attempts": 2,
         "correct": 0,
-        "wrong": 1,
-        "studyAttempts": 1,
+        "wrong": 2,
+        "studyAttempts": 2,
         "studyCorrect": 0,
-        "studyWrong": 1,
+        "studyWrong": 2,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
@@ -5672,24 +5672,24 @@
         "lastSelected": "A",
         "lastCorrect": false,
         "lastContext": "study",
-        "lastTs": 1786529974812
+        "lastTs": 1786555402362
       },
       "form4:228": {
-        "attempts": 1,
-        "correct": 0,
+        "attempts": 2,
+        "correct": 1,
         "wrong": 1,
-        "studyAttempts": 1,
-        "studyCorrect": 0,
+        "studyAttempts": 2,
+        "studyCorrect": 1,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "C",
-        "lastCorrect": false,
+        "lastSelected": "D",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786529995971
+        "lastTs": 1786555411477
       },
       "form4:229": {
         "attempts": 1,
@@ -6925,7 +6925,7 @@
       "lastQuestionBySet": {
         "set1": "form1:1",
         "set2": "form2:168",
-        "set3": "form4:227"
+        "set3": "form4:228"
       }
     }
   }
