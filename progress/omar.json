@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786611342799,
+  "updatedAt": 1786611363237,
   "deviceId": "device-3fr431r9-mspxovx4",
   "state": {
     "version": 4,
@@ -98,14 +98,14 @@
       "form1:15": {
         "selected": "D",
         "correct": true,
-        "elapsed": 28,
-        "ts": 1786611167943
+        "elapsed": 10,
+        "ts": 1786611354432
       },
       "form1:16": {
         "selected": "C",
         "correct": true,
-        "elapsed": 17,
-        "ts": 1786611185534
+        "elapsed": 6,
+        "ts": 1786611361034
       },
       "form1:17": {
         "selected": "B",
@@ -2054,11 +2054,11 @@
         "lastTs": 1786294164387
       },
       "form1:15": {
-        "attempts": 5,
-        "correct": 4,
+        "attempts": 6,
+        "correct": 5,
         "wrong": 1,
-        "studyAttempts": 5,
-        "studyCorrect": 4,
+        "studyAttempts": 6,
+        "studyCorrect": 5,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -2068,14 +2068,14 @@
         "lastSelected": "D",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786611167943
+        "lastTs": 1786611354432
       },
       "form1:16": {
-        "attempts": 5,
-        "correct": 1,
+        "attempts": 6,
+        "correct": 2,
         "wrong": 4,
-        "studyAttempts": 5,
-        "studyCorrect": 1,
+        "studyAttempts": 6,
+        "studyCorrect": 2,
         "studyWrong": 4,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -2085,7 +2085,7 @@
         "lastSelected": "C",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786611185534
+        "lastTs": 1786611361034
       },
       "form1:17": {
         "attempts": 1,
@@ -6920,10 +6920,10 @@
     "examResults": {},
     "lastExamSetId": "",
     "ui": {
-      "studySet": "set3",
+      "studySet": "set1",
       "examSet": "set1",
       "lastQuestionBySet": {
-        "set1": "form1:15",
+        "set1": "form1:19",
         "set2": "form2:168",
         "set3": "form4:225",
         "set4": "form4:301"
