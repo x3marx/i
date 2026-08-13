@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786611243827,
+  "updatedAt": 1786611254795,
   "deviceId": "device-3fr431r9-mspxovx4",
   "state": {
     "version": 4,
@@ -278,14 +278,14 @@
       "form1:45": {
         "selected": "C",
         "correct": true,
-        "elapsed": 8,
-        "ts": 1786611002076
+        "elapsed": 2,
+        "ts": 1786611244848
       },
       "form1:46": {
         "selected": "C",
         "correct": true,
-        "elapsed": 5,
-        "ts": 1786611006930
+        "elapsed": 3,
+        "ts": 1786611248514
       },
       "form1:47": {
         "selected": "B",
@@ -2564,11 +2564,11 @@
         "lastTs": 1786295202313
       },
       "form1:45": {
-        "attempts": 3,
-        "correct": 2,
+        "attempts": 4,
+        "correct": 3,
         "wrong": 1,
-        "studyAttempts": 3,
-        "studyCorrect": 2,
+        "studyAttempts": 4,
+        "studyCorrect": 3,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -2578,14 +2578,14 @@
         "lastSelected": "C",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786611002076
+        "lastTs": 1786611244848
       },
       "form1:46": {
-        "attempts": 3,
-        "correct": 1,
+        "attempts": 4,
+        "correct": 2,
         "wrong": 2,
-        "studyAttempts": 3,
-        "studyCorrect": 1,
+        "studyAttempts": 4,
+        "studyCorrect": 2,
         "studyWrong": 2,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -2595,7 +2595,7 @@
         "lastSelected": "C",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786611006930
+        "lastTs": 1786611248514
       },
       "form1:47": {
         "attempts": 1,
@@ -6923,7 +6923,7 @@
       "studySet": "set1",
       "examSet": "set1",
       "lastQuestionBySet": {
-        "set1": "form1:45",
+        "set1": "form1:48",
         "set2": "form2:168",
         "set3": "form4:225"
       }
