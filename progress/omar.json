@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786611106975,
+  "updatedAt": 1786611122071,
   "deviceId": "device-3fr431r9-mspxovx4",
   "state": {
     "version": 4,
@@ -596,14 +596,14 @@
       "form1:98": {
         "selected": "D",
         "correct": true,
-        "elapsed": 60,
-        "ts": 1786610849772
+        "elapsed": 14,
+        "ts": 1786611113756
       },
       "form1:99": {
         "selected": "C",
         "correct": true,
-        "elapsed": 19,
-        "ts": 1786610869253
+        "elapsed": 5,
+        "ts": 1786611120382
       },
       "form1:100": {
         "selected": "B",
@@ -3465,11 +3465,11 @@
         "lastTs": 1786296757082
       },
       "form1:98": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -3479,14 +3479,14 @@
         "lastSelected": "D",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786610849772
+        "lastTs": 1786611113756
       },
       "form1:99": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -3496,7 +3496,7 @@
         "lastSelected": "C",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786610869253
+        "lastTs": 1786611120382
       },
       "form1:100": {
         "attempts": 1,
@@ -6923,7 +6923,7 @@
       "studySet": "set1",
       "examSet": "set1",
       "lastQuestionBySet": {
-        "set1": "form1:98",
+        "set1": "form1:15",
         "set2": "form2:168",
         "set3": "form4:225"
       }
