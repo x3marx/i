@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786611665158,
+  "updatedAt": 1786611680066,
   "deviceId": "device-3fr431r9-mspxovx4",
   "state": {
     "version": 4,
@@ -294,10 +294,10 @@
         "ts": 1786295317139
       },
       "form1:48": {
-        "selected": "D",
-        "correct": false,
-        "elapsed": 9,
-        "ts": 1786611261492
+        "selected": "C",
+        "correct": true,
+        "elapsed": 12,
+        "ts": 1786611669655
       },
       "form1:49": {
         "selected": "C",
@@ -416,8 +416,8 @@
       "form1:68": {
         "selected": "D",
         "correct": true,
-        "elapsed": 4,
-        "ts": 1786611267680
+        "elapsed": 1,
+        "ts": 1786611671792
       },
       "form1:69": {
         "selected": "A",
@@ -2615,21 +2615,21 @@
         "lastTs": 1786295317139
       },
       "form1:48": {
-        "attempts": 4,
-        "correct": 1,
+        "attempts": 5,
+        "correct": 2,
         "wrong": 3,
-        "studyAttempts": 4,
-        "studyCorrect": 1,
+        "studyAttempts": 5,
+        "studyCorrect": 2,
         "studyWrong": 3,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "D",
-        "lastCorrect": false,
+        "lastSelected": "C",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786611261492
+        "lastTs": 1786611669655
       },
       "form1:49": {
         "attempts": 1,
@@ -2955,11 +2955,11 @@
         "lastTs": 1786295830347
       },
       "form1:68": {
-        "attempts": 4,
-        "correct": 3,
+        "attempts": 5,
+        "correct": 4,
         "wrong": 1,
-        "studyAttempts": 4,
-        "studyCorrect": 3,
+        "studyAttempts": 5,
+        "studyCorrect": 4,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -2969,7 +2969,7 @@
         "lastSelected": "D",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786611267680
+        "lastTs": 1786611671792
       },
       "form1:69": {
         "attempts": 1,
@@ -6923,7 +6923,7 @@
       "studySet": "set1",
       "examSet": "set1",
       "lastQuestionBySet": {
-        "set1": "form1:48",
+        "set1": "form1:70",
         "set2": "form2:168",
         "set3": "form4:225",
         "set4": "form4:301"
