@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786797499580,
+  "updatedAt": 1786797575456,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -2046,10 +2046,10 @@
         "ts": 1786796270523
       },
       "form2:140": {
-        "selected": "C",
-        "correct": false,
-        "elapsed": 18,
-        "ts": 1786796289368
+        "selected": "D",
+        "correct": true,
+        "elapsed": 14,
+        "ts": 1786797506207
       },
       "form2:141": {
         "selected": "B",
@@ -2088,10 +2088,10 @@
         "ts": 1786796402996
       },
       "form2:147": {
-        "selected": "A",
-        "correct": false,
-        "elapsed": 17,
-        "ts": 1786796420616
+        "selected": "D",
+        "correct": true,
+        "elapsed": 11,
+        "ts": 1786797519027
       },
       "form2:148": {
         "selected": "C",
@@ -2184,10 +2184,10 @@
         "ts": 1786796685149
       },
       "form2:163": {
-        "selected": "A",
-        "correct": false,
-        "elapsed": 24,
-        "ts": 1786796709363
+        "selected": "D",
+        "correct": true,
+        "elapsed": 4,
+        "ts": 1786797524177
       },
       "form2:164": {
         "selected": "B",
@@ -2250,16 +2250,16 @@
         "ts": 1786796863318
       },
       "form2:174": {
-        "selected": "D",
-        "correct": false,
-        "elapsed": 28,
-        "ts": 1786796892122
-      },
-      "form2:175": {
         "selected": "B",
         "correct": false,
-        "elapsed": 12,
-        "ts": 1786796906134
+        "elapsed": 26,
+        "ts": 1786797551495
+      },
+      "form2:175": {
+        "selected": "D",
+        "correct": true,
+        "elapsed": 15,
+        "ts": 1786797567639
       },
       "form2:176": {
         "selected": "D",
@@ -8179,21 +8179,21 @@
         "lastTs": 1786796270523
       },
       "form2:140": {
-        "attempts": 1,
-        "correct": 0,
+        "attempts": 2,
+        "correct": 1,
         "wrong": 1,
-        "studyAttempts": 1,
-        "studyCorrect": 0,
+        "studyAttempts": 2,
+        "studyCorrect": 1,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "C",
-        "lastCorrect": false,
+        "lastSelected": "D",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786796289368
+        "lastTs": 1786797506207
       },
       "form2:141": {
         "attempts": 1,
@@ -8298,21 +8298,21 @@
         "lastTs": 1786796402996
       },
       "form2:147": {
-        "attempts": 1,
-        "correct": 0,
+        "attempts": 2,
+        "correct": 1,
         "wrong": 1,
-        "studyAttempts": 1,
-        "studyCorrect": 0,
+        "studyAttempts": 2,
+        "studyCorrect": 1,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "A",
-        "lastCorrect": false,
+        "lastSelected": "D",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786796420616
+        "lastTs": 1786797519027
       },
       "form2:148": {
         "attempts": 1,
@@ -8570,21 +8570,21 @@
         "lastTs": 1786796685149
       },
       "form2:163": {
-        "attempts": 1,
-        "correct": 0,
+        "attempts": 2,
+        "correct": 1,
         "wrong": 1,
-        "studyAttempts": 1,
-        "studyCorrect": 0,
+        "studyAttempts": 2,
+        "studyCorrect": 1,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "A",
-        "lastCorrect": false,
+        "lastSelected": "D",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786796709363
+        "lastTs": 1786797524177
       },
       "form2:164": {
         "attempts": 1,
@@ -8757,29 +8757,12 @@
         "lastTs": 1786796863318
       },
       "form2:174": {
-        "attempts": 1,
+        "attempts": 2,
         "correct": 0,
-        "wrong": 1,
-        "studyAttempts": 1,
+        "wrong": 2,
+        "studyAttempts": 2,
         "studyCorrect": 0,
-        "studyWrong": 1,
-        "examAttempts": 0,
-        "examCorrect": 0,
-        "examWrong": 0,
-        "examUnanswered": 0,
-        "everWrong": true,
-        "lastSelected": "D",
-        "lastCorrect": false,
-        "lastContext": "study",
-        "lastTs": 1786796892122
-      },
-      "form2:175": {
-        "attempts": 1,
-        "correct": 0,
-        "wrong": 1,
-        "studyAttempts": 1,
-        "studyCorrect": 0,
-        "studyWrong": 1,
+        "studyWrong": 2,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
@@ -8788,7 +8771,24 @@
         "lastSelected": "B",
         "lastCorrect": false,
         "lastContext": "study",
-        "lastTs": 1786796906134
+        "lastTs": 1786797551495
+      },
+      "form2:175": {
+        "attempts": 2,
+        "correct": 1,
+        "wrong": 1,
+        "studyAttempts": 2,
+        "studyCorrect": 1,
+        "studyWrong": 1,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": true,
+        "lastSelected": "D",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1786797567639
       },
       "form2:176": {
         "attempts": 1,
@@ -9226,7 +9226,7 @@
         "set3": "form4:225",
         "set4": "form4:385",
         "set1": "form1:16",
-        "set2": "form2:140"
+        "set2": "form2:181"
       }
     }
   }
