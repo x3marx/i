@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786882734106,
+  "updatedAt": 1786882746931,
   "deviceId": "device-3fr431r9-mspxovx4",
   "state": {
     "version": 4,
@@ -2142,10 +2142,10 @@
         "ts": 1786882612720
       },
       "form4:356": {
-        "selected": "D",
+        "selected": "C",
         "correct": false,
-        "elapsed": 6,
-        "ts": 1786882620132
+        "elapsed": 7,
+        "ts": 1786882740200
       },
       "form4:357": {
         "selected": "A",
@@ -8457,21 +8457,21 @@
         "lastTs": 1786882612720
       },
       "form4:356": {
-        "attempts": 2,
+        "attempts": 3,
         "correct": 0,
-        "wrong": 2,
-        "studyAttempts": 2,
+        "wrong": 3,
+        "studyAttempts": 3,
         "studyCorrect": 0,
-        "studyWrong": 2,
+        "studyWrong": 3,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "D",
+        "lastSelected": "C",
         "lastCorrect": false,
         "lastContext": "study",
-        "lastTs": 1786882620132
+        "lastTs": 1786882740200
       },
       "form4:357": {
         "attempts": 1,
