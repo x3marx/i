@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786902184532,
+  "updatedAt": 1786902250723,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -642,10 +642,10 @@
         "ts": 1786797440593
       },
       "form2:106": {
-        "selected": "D",
-        "correct": true,
-        "elapsed": 60,
-        "ts": 1786795009950
+        "selected": "A",
+        "correct": false,
+        "elapsed": 21,
+        "ts": 1786902210677
       },
       "form2:107": {
         "selected": "C",
@@ -662,8 +662,8 @@
       "form2:109": {
         "selected": "C",
         "correct": true,
-        "elapsed": 9,
-        "ts": 1786902039879
+        "elapsed": 5,
+        "ts": 1786902249431
       },
       "form2:110": {
         "selected": "D",
@@ -852,10 +852,10 @@
         "ts": 1786902183483
       },
       "form2:141": {
-        "selected": "C",
-        "correct": false,
-        "elapsed": 36,
-        "ts": 1786902076744
+        "selected": "B",
+        "correct": true,
+        "elapsed": 7,
+        "ts": 1786902242579
       },
       "form2:142": {
         "selected": "D",
@@ -908,8 +908,8 @@
       "form2:150": {
         "selected": "C",
         "correct": true,
-        "elapsed": 12,
-        "ts": 1786796484708
+        "elapsed": 10,
+        "ts": 1786902225926
       },
       "form2:151": {
         "selected": "B",
@@ -4220,12 +4220,12 @@
         "lastTs": 1786895854217
       },
       "form2:106": {
-        "attempts": 2,
+        "attempts": 3,
         "correct": 1,
-        "wrong": 1,
-        "studyAttempts": 1,
+        "wrong": 2,
+        "studyAttempts": 2,
         "studyCorrect": 1,
-        "studyWrong": 0,
+        "studyWrong": 1,
         "examAttempts": 1,
         "examCorrect": 0,
         "examWrong": 1,
@@ -4233,8 +4233,8 @@
         "everWrong": true,
         "lastSelected": "A",
         "lastCorrect": false,
-        "lastContext": "exam",
-        "lastTs": 1786897525916
+        "lastContext": "study",
+        "lastTs": 1786902210677
       },
       "form2:107": {
         "attempts": 2,
@@ -4271,11 +4271,11 @@
         "lastTs": 1786895642089
       },
       "form2:109": {
-        "attempts": 3,
-        "correct": 2,
+        "attempts": 4,
+        "correct": 3,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 2,
+        "studyAttempts": 3,
+        "studyCorrect": 3,
         "studyWrong": 0,
         "examAttempts": 1,
         "examCorrect": 0,
@@ -4285,7 +4285,7 @@
         "lastSelected": "C",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786902039879
+        "lastTs": 1786902249431
       },
       "form2:110": {
         "attempts": 2,
@@ -4815,21 +4815,21 @@
         "lastTs": 1786902183483
       },
       "form2:141": {
-        "attempts": 3,
-        "correct": 1,
+        "attempts": 4,
+        "correct": 2,
         "wrong": 2,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 1,
         "examCorrect": 0,
         "examWrong": 1,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "C",
-        "lastCorrect": false,
+        "lastSelected": "B",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786902076744
+        "lastTs": 1786902242579
       },
       "form2:142": {
         "attempts": 3,
@@ -4968,21 +4968,21 @@
         "lastTs": 1786897985198
       },
       "form2:150": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 1,
-        "studyCorrect": 1,
+        "studyAttempts": 2,
+        "studyCorrect": 2,
         "studyWrong": 0,
         "examAttempts": 1,
         "examCorrect": 0,
         "examWrong": 1,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "D",
-        "lastCorrect": false,
-        "lastContext": "exam",
-        "lastTs": 1786896123348
+        "lastSelected": "C",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1786902225926
       },
       "form2:151": {
         "attempts": 2,
