@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786905327686,
+  "updatedAt": 1786905388360,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -404,8 +404,8 @@
       "form1:66": {
         "selected": "A",
         "correct": true,
-        "elapsed": 4,
-        "ts": 1786719563552
+        "elapsed": 15,
+        "ts": 1786905344121
       },
       "form1:67": {
         "selected": "A",
@@ -512,8 +512,8 @@
       "form1:84": {
         "selected": "D",
         "correct": true,
-        "elapsed": 12,
-        "ts": 1786719575650
+        "elapsed": 15,
+        "ts": 1786905360841
       },
       "form1:85": {
         "selected": "C",
@@ -572,8 +572,8 @@
       "form1:94": {
         "selected": "B",
         "correct": true,
-        "elapsed": 10,
-        "ts": 1786719586046
+        "elapsed": 5,
+        "ts": 1786905367752
       },
       "form1:95": {
         "selected": "B",
@@ -588,10 +588,10 @@
         "ts": 1786719408022
       },
       "form1:97": {
-        "selected": "D",
-        "correct": false,
-        "elapsed": 19,
-        "ts": 1786719428232
+        "selected": "C",
+        "correct": true,
+        "elapsed": 15,
+        "ts": 1786905383400
       },
       "form1:98": {
         "selected": "D",
@@ -3540,11 +3540,11 @@
         "lastTs": 1786717978789
       },
       "form1:66": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -3554,7 +3554,7 @@
         "lastSelected": "A",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786719563552
+        "lastTs": 1786905344121
       },
       "form1:67": {
         "attempts": 1,
@@ -3846,11 +3846,11 @@
         "lastTs": 1786719165355
       },
       "form1:84": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -3860,7 +3860,7 @@
         "lastSelected": "D",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786719575650
+        "lastTs": 1786905360841
       },
       "form1:85": {
         "attempts": 1,
@@ -4016,11 +4016,11 @@
         "lastTs": 1786719346255
       },
       "form1:94": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -4030,7 +4030,7 @@
         "lastSelected": "B",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786719586046
+        "lastTs": 1786905367752
       },
       "form1:95": {
         "attempts": 1,
@@ -4067,21 +4067,21 @@
         "lastTs": 1786719408022
       },
       "form1:97": {
-        "attempts": 1,
-        "correct": 0,
-        "wrong": 1,
-        "studyAttempts": 1,
-        "studyCorrect": 0,
-        "studyWrong": 1,
+        "attempts": 3,
+        "correct": 1,
+        "wrong": 2,
+        "studyAttempts": 3,
+        "studyCorrect": 1,
+        "studyWrong": 2,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "D",
-        "lastCorrect": false,
+        "lastSelected": "C",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786719428232
+        "lastTs": 1786905383400
       },
       "form1:98": {
         "attempts": 1,
@@ -11850,7 +11850,7 @@
       "studySet": "set1",
       "examSet": "set3",
       "lastQuestionBySet": {
-        "set1": "form1:51",
+        "set1": "form1:97",
         "set2": "form2:190",
         "set3": "form4:250",
         "set4": "form4:306"
