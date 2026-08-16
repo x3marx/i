@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786882876648,
+  "updatedAt": 1786882893143,
   "deviceId": "device-3fr431r9-mspxovx4",
   "state": {
     "version": 4,
@@ -2354,14 +2354,14 @@
       "form4:391": {
         "selected": "C",
         "correct": true,
-        "elapsed": 4,
-        "ts": 1786882680744
+        "elapsed": 10,
+        "ts": 1786882879166
       },
       "form4:392": {
         "selected": "B",
         "correct": true,
         "elapsed": 5,
-        "ts": 1786882689020
+        "ts": 1786882884494
       },
       "form4:393": {
         "selected": "A",
@@ -2385,7 +2385,7 @@
         "selected": "C",
         "correct": true,
         "elapsed": 5,
-        "ts": 1786882695202
+        "ts": 1786882890204
       },
       "form4:397": {
         "selected": "C",
@@ -9052,11 +9052,11 @@
         "lastTs": 1786882867586
       },
       "form4:391": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -9066,14 +9066,14 @@
         "lastSelected": "C",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786882680744
+        "lastTs": 1786882879166
       },
       "form4:392": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -9083,7 +9083,7 @@
         "lastSelected": "B",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786882689020
+        "lastTs": 1786882884494
       },
       "form4:393": {
         "attempts": 1,
@@ -9137,11 +9137,11 @@
         "lastTs": 1786881619692
       },
       "form4:396": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -9151,7 +9151,7 @@
         "lastSelected": "C",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786882695202
+        "lastTs": 1786882890204
       },
       "form4:397": {
         "attempts": 1,
@@ -9249,7 +9249,7 @@
         "set1": "form1:16",
         "set2": "form2:130",
         "set3": "form4:256",
-        "set4": "form4:391"
+        "set4": "form4:396"
       }
     }
   }
