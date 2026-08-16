@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs401-e9c46733eee1205d",
   "questionCount": 401,
-  "updatedAt": 1786882854830,
+  "updatedAt": 1786882876648,
   "deviceId": "device-3fr431r9-mspxovx4",
   "state": {
     "version": 4,
@@ -2330,8 +2330,8 @@
       "form4:387": {
         "selected": "D",
         "correct": true,
-        "elapsed": 9,
-        "ts": 1786882662963
+        "elapsed": 4,
+        "ts": 1786882856842
       },
       "form4:388": {
         "selected": "C",
@@ -2348,8 +2348,8 @@
       "form4:390": {
         "selected": "B",
         "correct": true,
-        "elapsed": 9,
-        "ts": 1786882672864
+        "elapsed": 10,
+        "ts": 1786882867586
       },
       "form4:391": {
         "selected": "C",
@@ -8984,11 +8984,11 @@
         "lastTs": 1786881354779
       },
       "form4:387": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -8998,7 +8998,7 @@
         "lastSelected": "D",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786882662963
+        "lastTs": 1786882856842
       },
       "form4:388": {
         "attempts": 1,
@@ -9035,11 +9035,11 @@
         "lastTs": 1786881491021
       },
       "form4:390": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -9049,7 +9049,7 @@
         "lastSelected": "B",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1786882672864
+        "lastTs": 1786882867586
       },
       "form4:391": {
         "attempts": 2,
@@ -9249,7 +9249,7 @@
         "set1": "form1:16",
         "set2": "form2:130",
         "set3": "form4:256",
-        "set4": "form4:387"
+        "set4": "form4:391"
       }
     }
   }
