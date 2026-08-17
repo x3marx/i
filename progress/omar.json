@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs404-1aa2fd9104cbda48",
   "questionCount": 404,
-  "updatedAt": 1787004675123,
+  "updatedAt": 1787004692227,
   "deviceId": "device-j6kvfend-msqdxjiw",
   "state": {
     "version": 4,
@@ -908,8 +908,8 @@
       "form2:150": {
         "selected": "C",
         "correct": true,
-        "elapsed": 5,
-        "ts": 1786902318074
+        "elapsed": 9,
+        "ts": 1787004682009
       },
       "form2:151": {
         "selected": "B",
@@ -4982,21 +4982,21 @@
         "lastTs": 1787002702036
       },
       "form2:150": {
-        "attempts": 5,
-        "correct": 3,
+        "attempts": 6,
+        "correct": 4,
         "wrong": 2,
-        "studyAttempts": 3,
-        "studyCorrect": 3,
+        "studyAttempts": 4,
+        "studyCorrect": 4,
         "studyWrong": 0,
         "examAttempts": 2,
         "examCorrect": 0,
         "examWrong": 2,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "D",
-        "lastCorrect": false,
-        "lastContext": "exam",
-        "lastTs": 1787002855975
+        "lastSelected": "C",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1787004682009
       },
       "form2:151": {
         "attempts": 3,
@@ -14100,7 +14100,7 @@
       "examSet": "set2",
       "lastQuestionBySet": {
         "set1": "form1:37",
-        "set2": "form2:150",
+        "set2": "form2:184",
         "set3": "form4:250",
         "set4": "form4:373"
       }
