@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs404-1aa2fd9104cbda48",
   "questionCount": 404,
-  "updatedAt": 1787000743401,
+  "updatedAt": 1787000759459,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -11138,7 +11138,7 @@
         "index": 0,
         "answers": {},
         "review": {},
-        "remaining": 5915,
+        "remaining": 5912,
         "startedAt": 1786901873700,
         "finishedAt": 0
       },
@@ -13580,7 +13580,7 @@
     "lastExamSetId": "set4",
     "ui": {
       "studySet": "set4",
-      "examSet": "set4",
+      "examSet": "set2",
       "lastQuestionBySet": {
         "set1": "form1:37",
         "set2": "form2:190",
