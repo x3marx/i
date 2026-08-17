@@ -403,6 +403,69 @@ html[data-theme="light"] .profileBtn.active{
 }
 
 
+
+/* Final-test 3-attempt history and trend */
+.examTrend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+  margin-top:7px;
+}
+.examTrendChip{
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:5px 8px;
+  background:rgba(255,255,255,.045);
+  color:var(--muted);
+  font-size:.74rem;
+  font-weight:700;
+}
+.examTrendChip b{color:var(--brand);font-weight:900}
+.examTrendDelta{font-weight:900;color:var(--good);font-size:.76rem}
+.examTrendDelta.down{color:var(--bad)}
+.examHistoryBox{
+  margin-top:12px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:rgba(255,255,255,.035);
+  padding:11px;
+}
+.examHistoryTitle{font-weight:900;color:#dbeafe;margin-bottom:8px}
+.examHistoryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.examAttemptCard{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:9px;
+  background:rgba(255,255,255,.035);
+  min-width:0;
+}
+.examAttemptCard .attemptNo{font-size:.72rem;color:var(--muted);font-weight:700}
+.examAttemptCard .attemptScore{font-size:1.15rem;color:var(--brand);font-weight:900;margin:3px 0}
+.examAttemptMeta{font-size:.72rem;color:var(--muted);line-height:1.65}
+.examAttemptMeta strong{color:var(--text)}
+.examTrendSummary{
+  margin-top:9px;
+  border-top:1px solid var(--line);
+  padding-top:8px;
+  color:var(--muted);
+  font-size:.8rem;
+  line-height:1.7;
+}
+.examTrendSummary b{color:var(--text)}
+html[data-theme="light"] .examHistoryBox,
+html[data-theme="light"] .examAttemptCard,
+html[data-theme="light"] .examTrendChip{background:#f8fafc;border-color:#d8e0ea}
+html[data-theme="light"] .examHistoryTitle{color:#1e293b}
+html[data-theme="light"] .examAttemptMeta,
+html[data-theme="light"] .examTrendSummary,
+html[data-theme="light"] .examTrendChip{color:#64748b}
+html[data-theme="light"] .examAttemptMeta strong,
+html[data-theme="light"] .examTrendSummary b{color:#1e293b}
+@media(max-width:700px){
+  .examHistoryGrid{grid-template-columns:1fr}
+}
+
 /* GitHub progress sync */
 .syncPanel{margin-top:10px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);overflow:hidden}
 .syncPanel>summary{cursor:pointer;list-style:none;padding:10px 12px;font-weight:800;color:#dbeafe;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -804,6 +867,10 @@ function normalizeState(raw){
   base.history=raw.history&&typeof raw.history==="object"?raw.history:{};
   base.examSessions=raw.examSessions&&typeof raw.examSessions==="object"?raw.examSessions:{};
   base.examResults=raw.examResults&&typeof raw.examResults==="object"?raw.examResults:{};
+  Object.keys(base.examResults).forEach(setId=>{
+    if(Array.isArray(base.examResults[setId]))base.examResults[setId]=base.examResults[setId].slice(-3);
+    else base.examResults[setId]=[];
+  });
   base.lastExamSetId=typeof raw.lastExamSetId==="string"?raw.lastExamSetId:"";
   base.ui=Object.assign(base.ui,raw.ui&&typeof raw.ui==="object"?raw.ui:{});
   if(!SETS.some(s=>s.id===base.ui.studySet))base.ui.studySet="set1";
@@ -930,6 +997,62 @@ function latestExamResult(setId){
   const arr=Array.isArray(state.examResults[setId])?state.examResults[setId]:[];
   return arr.length?arr[arr.length-1]:null;
 }
+function examResultHistory(setId){
+  const arr=Array.isArray(state.examResults[setId])?state.examResults[setId]:[];
+  return arr.slice(-3);
+}
+function nextExamAttemptNumber(setId){
+  const arr=Array.isArray(state.examResults[setId])?state.examResults[setId]:[];
+  const maxAttempt=arr.reduce((m,r)=>Math.max(m,Number(r?.attempt)||0),0);
+  return maxAttempt+1;
+}
+function examTrendData(setId){
+  const arr=examResultHistory(setId);
+  if(!arr.length)return {results:[],delta:null,best:null,latest:null};
+  const scores=arr.map(r=>Number(r.score)||0);
+  return {
+    results:arr,
+    delta:arr.length>=2?scores[scores.length-1]-scores[0]:null,
+    best:Math.max(...scores),
+    latest:scores[scores.length-1]
+  };
+}
+function formatExamDate(ts){
+  if(!ts)return "—";
+  try{return new Date(Number(ts)).toLocaleDateString("ar-SA",{year:"numeric",month:"2-digit",day:"2-digit"});}
+  catch(e){return "—";}
+}
+function formatDurationShort(sec){
+  sec=Math.max(0,Number(sec)||0);
+  const m=Math.floor(sec/60),s=Math.floor(sec%60);
+  return m?`${m}د ${s}ث`:`${s}ث`;
+}
+function renderExamTrendInline(setId){
+  const t=examTrendData(setId);
+  if(!t.results.length)return '<div class="examTrend"><span class="examTrendChip">لا توجد نتائج محفوظة بعد</span></div>';
+  const chips=t.results.map(r=>`<span class="examTrendChip">محاولة ${Number(r.attempt)||"—"}: <b>${Number(r.score)||0}%</b></span>`).join("");
+  const delta=t.delta===null?"":`<span class="examTrendDelta ${t.delta<0?"down":""}">${t.delta>0?"↑":t.delta<0?"↓":"→"} ${t.delta>0?"+":""}${t.delta} نقطة</span>`;
+  return `<div class="examTrend">${chips}${delta}</div>`;
+}
+function renderExamHistoryBox(setId){
+  const t=examTrendData(setId);
+  const cards=t.results.map(r=>`<div class="examAttemptCard">
+    <div class="attemptNo">المحاولة ${Number(r.attempt)||"—"} · ${formatExamDate(r.finishedAt)}</div>
+    <div class="attemptScore">${Number(r.score)||0}%</div>
+    <div class="examAttemptMeta">
+      <strong>صحيح:</strong> ${Number(r.correct)||0} ·
+      <strong>خطأ:</strong> ${Number(r.wrong)||0} ·
+      <strong>غير مجاب:</strong> ${Number(r.unanswered)||0}<br>
+      <strong>المدة:</strong> ${formatDurationShort(r.durationUsed)}
+    </div>
+  </div>`).join("");
+  const trend=t.delta===null?"تحتاج إلى نتيجتين على الأقل لعرض الاتجاه.":`التغير من أقدم نتيجة محفوظة إلى أحدث نتيجة: <b>${t.delta>0?"+":""}${t.delta} نقطة</b>. أفضل نتيجة محفوظة: <b>${t.best}%</b>.`;
+  return `<div class="examHistoryBox">
+    <div class="examHistoryTitle">آخر 3 اختبارات نهائية — ${setDef(setId).label}</div>
+    <div class="examHistoryGrid">${cards||'<div class="examAttemptMeta">لا توجد اختبارات مكتملة حتى الآن.</div>'}</div>
+    <div class="examTrendSummary">${trend}</div>
+  </div>`;
+}
 function examStatusForSet(setId){
   const sess=state.examSessions[setId];
   if(sess&&sess.status==="in_progress"){
@@ -949,6 +1072,7 @@ function renderJourney(){
       <div class="journeyHead"><b>${s.label} <span style="color:var(--muted)">(${s.range})</span></b><span class="journeyStatus">مراجعة ${r.done}/${r.total}</span></div>
       <div class="progressTrack"><i style="width:${pct(r.done,r.total)}%"></i></div>
       <div class="journeyHead"><span class="journeyStatus">الاختبار ${e.text}</span><span class="journeyStatus">${r.accuracy}% دقة المراجعة</span></div>
+      ${renderExamTrendInline(s.id)}
       <div class="journeyActions">
         <button class="btn ${view.studySet===s.id?"primary":""}" data-review-set="${s.id}">فتح المراجعة</button>
         <button class="btn ${e.kind==="progress"?"warn":""}" data-exam-set="${s.id}">${e.kind==="progress"?"استئناف الاختبار":"فتح الاختبار"}</button>
@@ -1151,11 +1275,11 @@ function updateTimer(){
 
 /* Final tests: fixed coverage sets, shuffled only inside each set. */
 function createExamSession(setId){
-  const qs=setQuestions(setId),results=Array.isArray(state.examResults[setId])?state.examResults[setId]:[];
+  const qs=setQuestions(setId);
   const order=shuffleArray(qs.map(key)),optionOrder={};
   order.forEach(k=>{const q=QUESTION_BY_KEY.get(k);optionOrder[k]=shuffleArray(q.options.map(o=>o.key));});
   return {
-    setId,status:"in_progress",attempt:results.length+1,order,optionOrder,
+    setId,status:"in_progress",attempt:nextExamAttemptNumber(setId),order,optionOrder,
     index:0,answers:{},review:{},remaining:qs.length*60,startedAt:Date.now(),finishedAt:0
   };
 }
@@ -1283,10 +1407,28 @@ function finishExam(auto){
   applyExamHistory(session);
   state.examMistakeKeys=mistakes.map(r=>key(r.q));state.lastExamSetId=exam.setId;
   if(!Array.isArray(state.examResults[exam.setId]))state.examResults[exam.setId]=[];
-  state.examResults[exam.setId].push({
-    attempt:session.attempt,score:data.score,correct:data.correct,wrong:data.wrong,unanswered:data.unanswered,total:data.total,
-    finishedAt:session.finishedAt,durationUsed:Math.max(0,data.total*60-session.remaining)
-  });
+  const resultRecord={
+    attempt:session.attempt,
+    score:data.score,
+    correct:data.correct,
+    wrong:data.wrong,
+    unanswered:data.unanswered,
+    total:data.total,
+    startedAt:Number(session.startedAt)||0,
+    finishedAt:session.finishedAt,
+    durationUsed:Math.max(0,data.total*60-session.remaining),
+    lessons:data.lessons,
+    mistakes:mistakes.map(r=>({
+      key:key(r.q),
+      questionNo:r.q.id,
+      lesson:r.q.lesson||"",
+      selected:r.selected||"",
+      correctAnswer:r.q.answer,
+      unanswered:!!r.unanswered
+    }))
+  };
+  state.examResults[exam.setId].push(resultRecord);
+  state.examResults[exam.setId]=state.examResults[exam.setId].slice(-3);
   clearInterval(exam.timerId);exam.timerId=null;save();markGhDirty(100);render();
 }
 function answerText(q,keyValue,session=exam.session){
@@ -1309,7 +1451,7 @@ function renderExamResults(){
   const card=$("quizCard"),data=examResultsData(exam.session),rows=Object.entries(data.lessons).map(([lesson,r])=>({lesson,...r,pct:pct(r.correct,r.total)})).sort((a,b)=>a.pct-b.pct);
   const weakest=rows.slice(0,3).map(r=>r.lesson+" ("+r.pct+"%)").join("، "),mistakes=examMistakeRows();
   const table=rows.map(r=>`<tr><td>${escapeHtml(r.lesson)}</td><td>${r.total}</td><td class="okLesson">${r.correct}</td><td>${r.unanswered}</td><td class="${r.pct<70?'weakLesson':'okLesson'}">${r.pct}%</td></tr>`).join("");
-  card.innerHTML=`<div class="examResultBox"><h2 style="margin:0;text-align:center">نتيجة الاختبار ${setDef(exam.setId).number}</h2><div class="examScore">${data.score}%<small>${data.correct} من ${data.total}</small></div><div class="examReviewSummary"><span class="badge">إجابات خاطئة: ${data.wrong}</span><span class="badge">غير مجابة: ${data.unanswered}</span></div><p style="text-align:center;color:var(--muted);margin:6px 0">أضعف الدروس: ${escapeHtml(weakest||"لا يوجد")}</p><table class="examLessonTable"><thead><tr><th>الدرس</th><th>الأسئلة</th><th>صحيح</th><th>غير مجاب</th><th>النسبة</th></tr></thead><tbody>${table}</tbody></table><button class="btn bad examReviewToggle" id="reviewMistakesBtn">مراجعة الأخطاء (${mistakes.length})</button><div class="examTools"><button class="btn primary" id="practiceMistakesBtn">التدرب على الأخطاء</button><button class="btn" id="exportMistakesResultBtn">تصدير الأخطاء إلى Excel</button></div><div id="examMistakeReview"></div><div class="examActions"><button class="btn primary" id="newExamBtn">اختبار جديد لنفس المجموعة</button><button class="btn" id="backStudyBtn">العودة للمراجعة</button></div></div>`;
+  card.innerHTML=`<div class="examResultBox"><h2 style="margin:0;text-align:center">نتيجة الاختبار ${setDef(exam.setId).number}</h2><div class="examScore">${data.score}%<small>${data.correct} من ${data.total}</small></div><div class="examReviewSummary"><span class="badge">إجابات خاطئة: ${data.wrong}</span><span class="badge">غير مجابة: ${data.unanswered}</span></div><p style="text-align:center;color:var(--muted);margin:6px 0">أضعف الدروس: ${escapeHtml(weakest||"لا يوجد")}</p><table class="examLessonTable"><thead><tr><th>الدرس</th><th>الأسئلة</th><th>صحيح</th><th>غير مجاب</th><th>النسبة</th></tr></thead><tbody>${table}</tbody></table><button class="btn bad examReviewToggle" id="reviewMistakesBtn">مراجعة الأخطاء (${mistakes.length})</button><div class="examTools"><button class="btn primary" id="practiceMistakesBtn">التدرب على الأخطاء</button><button class="btn" id="exportMistakesResultBtn">تصدير الأخطاء إلى Excel</button></div><div id="examMistakeReview"></div>${renderExamHistoryBox(exam.setId)}<div class="examActions"><button class="btn primary" id="newExamBtn">اختبار جديد لنفس المجموعة</button><button class="btn" id="backStudyBtn">العودة للمراجعة</button></div></div>`;
   $("reviewMistakesBtn").onclick=()=>{const box=$("examMistakeReview");if(box.innerHTML){box.innerHTML="";$("reviewMistakesBtn").textContent=`مراجعة الأخطاء (${mistakes.length})`;}else{renderMistakeReview();$("reviewMistakesBtn").textContent="إخفاء مراجعة الأخطاء";box.scrollIntoView({behavior:"smooth",block:"start"});}};
   $("practiceMistakesBtn").onclick=()=>{exitExam();startExamMistakePractice();};$("exportMistakesResultBtn").onclick=exportExamMistakes;
   $("newExamBtn").onclick=()=>startExam(exam.setId,true);$("backStudyBtn").onclick=exitExam;
@@ -1341,7 +1483,7 @@ function renderProgressDashboard(){
       <td>${s.label}<br><small style="color:var(--muted)">${s.range}</small></td>
       <td><div class="inlineProgress"><div class="progressTrack"><i style="width:${pct(r.done,r.total)}%"></i></div><b>${r.done}/${r.total}</b></div></td>
       <td>${r.accuracy}%</td><td>${r.mistakes}</td>
-      <td>${lastQ?"سؤال "+escapeHtml(lastQ.id):"—"}</td><td>${escapeHtml(e.text)}</td>
+      <td>${lastQ?"سؤال "+escapeHtml(lastQ.id):"—"}</td><td>${escapeHtml(e.text)}${renderExamTrendInline(s.id)}</td>
       <td><button class="btn" data-dashboard-review="${s.id}">مراجعة</button> <button class="btn ${e.kind==="progress"?"warn":""}" data-dashboard-exam="${s.id}">${e.kind==="progress"?"استئناف":"اختبار"}</button></td>
     </tr>`;
   }).join("");
@@ -1355,6 +1497,7 @@ function renderProgressDashboard(){
     </div>
     <div class="recordHint">سجل الأخطاء تراكمي: السؤال يبقى معروفاً بأنه أخطأت فيه سابقاً حتى لو أجبته بشكل صحيح لاحقاً. يمكن الوصول إليه من «تدريب سجل الأخطاء».</div>
     <div class="progressTableWrap"><table class="progressTable"><thead><tr><th>المجموعة</th><th>تقدم المراجعة</th><th>دقة المراجعة</th><th>أخطاء مسجلة</th><th>آخر موضع</th><th>الاختبار</th><th>فتح</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${SETS.map(s=>renderExamHistoryBox(s.id)).join("")}
     <div class="backupRow"><button class="btn primary" id="backupProgressCardBtn">نسخة احتياطية من التقدم</button><button class="btn" id="returnToStudyBtn">العودة للمراجعة الحالية</button></div>
   </div>`;
   card.querySelectorAll("[data-dashboard-review]").forEach(b=>b.onclick=()=>switchStudySet(b.dataset.dashboardReview));
