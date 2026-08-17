@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs404-1aa2fd9104cbda48",
   "questionCount": 404,
-  "updatedAt": 1786997695713,
+  "updatedAt": 1786997703048,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -13281,13 +13281,17 @@
           "form4:361": {
             "selected": "C",
             "ts": 1786997687777
+          },
+          "form4:311": {
+            "selected": "C",
+            "ts": 1786997702483
           }
         },
         "review": {
           "form4:373": true,
           "form4:315": true
         },
-        "remaining": 4900,
+        "remaining": 4892,
         "startedAt": 1786995136445,
         "finishedAt": 0
       }
