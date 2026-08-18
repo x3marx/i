@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs404-9d7756bd2393dc5b",
   "questionCount": 404,
-  "updatedAt": 1787083787627,
+  "updatedAt": 1787083838855,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -13152,13 +13152,13 @@
     },
     "lastExamSetId": "set4",
     "ui": {
-      "studySet": "set3",
+      "studySet": "set4",
       "examSet": "set4",
       "lastQuestionBySet": {
         "set1": "form1:4",
         "set2": "form1:104",
         "set3": "form4:276",
-        "set4": "form4:373"
+        "set4": "form4:341"
       }
     }
   }
