@@ -5,8 +5,8 @@
   "version": 4,
   "bankId": "qs404-1aa2fd9104cbda48",
   "questionCount": 404,
-  "updatedAt": 1787059320832,
-  "deviceId": "device-3fr431r9-mspxovx4",
+  "updatedAt": 1787074338415,
+  "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
     "bankId": "qs404-1aa2fd9104cbda48",
@@ -14456,7 +14456,7 @@
     },
     "lastExamSetId": "set2",
     "ui": {
-      "studySet": "set2",
+      "studySet": "set1",
       "examSet": "set2",
       "lastQuestionBySet": {
         "set1": "form1:93",
