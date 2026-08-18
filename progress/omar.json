@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs404-1aa2fd9104cbda48",
   "questionCount": 404,
-  "updatedAt": 1787057627053,
+  "updatedAt": 1787057634431,
   "deviceId": "device-3fr431r9-mspxovx4",
   "state": {
     "version": 4,
@@ -11151,7 +11151,7 @@
           }
         },
         "review": {},
-        "remaining": 5777,
+        "remaining": 5772,
         "startedAt": 1787057322283,
         "finishedAt": 0
       },
