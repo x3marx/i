@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs404-9d7756bd2393dc5b",
   "questionCount": 404,
-  "updatedAt": 1787084197585,
+  "updatedAt": 1787084215460,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -11115,7 +11115,7 @@
             "B"
           ]
         },
-        "index": 22,
+        "index": 25,
         "answers": {
           "form1:40": {
             "selected": "B",
@@ -11204,10 +11204,22 @@
           "form1:73": {
             "selected": "C",
             "ts": 1787084186492
+          },
+          "form1:66": {
+            "selected": "A",
+            "ts": 1787084202348
+          },
+          "form1:61": {
+            "selected": "B",
+            "ts": 1787084205432
+          },
+          "form1:2": {
+            "selected": "A",
+            "ts": 1787084213540
           }
         },
         "review": {},
-        "remaining": 5707,
+        "remaining": 5689,
         "startedAt": 1787083904219,
         "finishedAt": 0
       },
