@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs404-9d7756bd2393dc5b",
   "questionCount": 404,
-  "updatedAt": 1787137170764,
+  "updatedAt": 1787137238496,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -13390,7 +13390,7 @@
             "A"
           ]
         },
-        "index": 5,
+        "index": 13,
         "answers": {
           "form2:109": {
             "selected": "C",
@@ -13411,10 +13411,42 @@
           "form2:172": {
             "selected": "B",
             "ts": 1787137155293
+          },
+          "form2:144": {
+            "selected": "B",
+            "ts": 1787137174721
+          },
+          "form2:187": {
+            "selected": "B",
+            "ts": 1787137182657
+          },
+          "form2:131": {
+            "selected": "B",
+            "ts": 1787137198785
+          },
+          "form2:181": {
+            "selected": "B",
+            "ts": 1787137209080
+          },
+          "form2:127": {
+            "selected": "C",
+            "ts": 1787137214170
+          },
+          "form2:199": {
+            "selected": "C",
+            "ts": 1787137220770
+          },
+          "form2:193": {
+            "selected": "C",
+            "ts": 1787137228473
+          },
+          "form2:197": {
+            "selected": "B",
+            "ts": 1787137236218
           }
         },
         "review": {},
-        "remaining": 5931,
+        "remaining": 5864,
         "startedAt": 1787137101487,
         "finishedAt": 0
       }
