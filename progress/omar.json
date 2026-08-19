@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs404-9d7756bd2393dc5b",
   "questionCount": 404,
-  "updatedAt": 1787136933318,
+  "updatedAt": 1787137026734,
   "deviceId": "device-s8spyxmu-msq9zjys",
   "state": {
     "version": 4,
@@ -12258,7 +12258,7 @@
             "D"
           ]
         },
-        "index": 85,
+        "index": 97,
         "answers": {
           "form4:308": {
             "selected": "C",
@@ -12599,12 +12599,64 @@
           "form4:356": {
             "selected": "B",
             "ts": 1787136907384
+          },
+          "form4:378": {
+            "selected": "C",
+            "ts": 1787136940114
+          },
+          "form4:318": {
+            "selected": "C",
+            "ts": 1787136943171
+          },
+          "form4:330": {
+            "selected": "B",
+            "ts": 1787136958687
+          },
+          "form4:355": {
+            "selected": "D",
+            "ts": 1787136967306
+          },
+          "form4:312": {
+            "selected": "C",
+            "ts": 1787136975670
+          },
+          "form4:337": {
+            "selected": "D",
+            "ts": 1787136980784
+          },
+          "form4:310": {
+            "selected": "A",
+            "ts": 1787136989238
+          },
+          "form4:392": {
+            "selected": "B",
+            "ts": 1787136994358
+          },
+          "form4:382": {
+            "selected": "A",
+            "ts": 1787136997026
+          },
+          "form4:374": {
+            "selected": "C",
+            "ts": 1787137001481
+          },
+          "form4:383": {
+            "selected": "B",
+            "ts": 1787137008878
+          },
+          "form4:364": {
+            "selected": "C",
+            "ts": 1787137016543
+          },
+          "form4:328": {
+            "selected": "D",
+            "ts": 1787137025512
           }
         },
         "review": {
           "form4:373": true
         },
-        "remaining": 5207,
+        "remaining": 5114,
         "startedAt": 1787135899976,
         "finishedAt": 0
       }
