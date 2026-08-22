@@ -1,0 +1,144 @@
+from pathlib import Path
+
+src = Path("/mnt/data/tbsystem_part3_six_groups_simple_sync.html")
+out = Path("/mnt/data/tbsystem_part3_six_groups_embedded_token_sync.html")
+text = src.read_text(encoding="utf-8")
+
+# 1) Embedded token placeholder.
+anchor = 'const GH_SETTINGS_KEY=BASE_STORE_KEY+"_github_sync_settings";'
+replacement = '''const GH_SETTINGS_KEY=BASE_STORE_KEY+"_github_sync_settings";
+
+/* ============================================================
+   GITHUB TOKEN
+   Replace ONLY the five stars below with your fine-grained token.
+   Keep the quotation marks.
+
+   Example:
+   const EMBEDDED_GITHUB_TOKEN="github_pat_xxxxxxxxxxxxxxxxx";
+   ============================================================ */
+const EMBEDDED_GITHUB_TOKEN="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";'''
+text = text.replace(anchor, replacement, 1)
+
+# 2) Embedded settings + automatic sync enabled.
+old = '''function loadGhSettings(){
+  /* Repository connection is embedded for convenience.
+     The token itself remains local to each browser/device. */
+  let stored={};
+  try{stored=JSON.parse(localStorage.getItem(GH_SETTINGS_KEY)||"{}")||{};}catch(e){}
+  return {
+    owner:"x3marx",
+    repo:"i",
+    branch:"progress-data",
+    token:String(stored.token||""),
+    auto:false
+  };
+}'''
+new = '''function loadGhSettings(){
+  let stored={};
+  try{stored=JSON.parse(localStorage.getItem(GH_SETTINGS_KEY)||"{}")||{};}catch(e){}
+  const embedded=String(EMBEDDED_GITHUB_TOKEN||"").trim();
+  const embeddedReady=embedded && embedded!=="*****";
+  return {
+    owner:"x3marx",
+    repo:"i",
+    branch:"progress-data",
+    token:embeddedReady?embedded:String(stored.token||""),
+    auto:true
+  };
+}'''
+text = text.replace(old, new, 1)
+
+old = '''function saveGhSettings(s){
+  try{
+    localStorage.setItem(GH_SETTINGS_KEY,JSON.stringify({
+      owner:"x3marx",repo:"i",branch:"progress-data",
+      token:String(s?.token||""),auto:false
+    }));
+  }catch(e){}
+}'''
+new = '''function saveGhSettings(s){
+  try{
+    localStorage.setItem(GH_SETTINGS_KEY,JSON.stringify({
+      owner:"x3marx",repo:"i",branch:"progress-data",
+      token:String(s?.token||""),auto:true
+    }));
+  }catch(e){}
+}'''
+text = text.replace(old, new, 1)
+
+# 3) Restore normal automatic sync after local changes.
+old = '''function queueGhSync(delay=3500){
+  /* Manual sync only by user request. */
+  clearTimeout(ghSyncTimer);ghSyncTimer=null;
+}'''
+new = '''function queueGhSync(delay=3500){
+  const s=loadGhSettings();
+  if(!s.auto||!s.owner||!s.repo||!s.token)return;
+  clearTimeout(ghSyncTimer);
+  ghSyncTimer=setTimeout(()=>syncGithubProgress("auto"),delay);
+}'''
+text = text.replace(old, new, 1)
+
+# 4) Embedded token is authoritative; prompt remains only if user forgot to replace stars.
+old = '''function ensureGithubToken(){
+  const s=loadGhSettings();
+  if(s.token)return s;
+  const token=window.prompt("ألصق GitHub Fine-grained Token لهذا الجهاز فقط. سيتم حفظه في متصفح هذا الجهاز ولن يدخل داخل HTML:");
+  if(!token||!String(token).trim())return null;
+  const next={...s,token:String(token).trim(),auto:false};
+  saveGhSettings(next);
+  return next;
+}'''
+new = '''function ensureGithubToken(){
+  const s=loadGhSettings();
+  if(s.token)return s;
+  const token=window.prompt("استبدل ***** داخل EMBEDDED_GITHUB_TOKEN في ملف HTML. يمكنك لصق الرمز هنا مؤقتاً لهذا الجهاز إذا أردت.");
+  if(!token||!String(token).trim())return null;
+  const next={...s,token:String(token).trim(),auto:true};
+  saveGhSettings(next);
+  return next;
+}'''
+text = text.replace(old, new, 1)
+
+# 5) Auto-sync on profile switch.
+old = 'function autoSyncAfterProfileSwitch(){updateGhStatus();}'
+new = '''function autoSyncAfterProfileSwitch(){
+  updateGhStatus();
+  const s=loadGhSettings();
+  if(s.token)setTimeout(()=>syncGithubProgress("auto"),500);
+}'''
+text = text.replace(old, new, 1)
+
+# 6) Restore automatic sync on initial page load.
+old = '''save();
+render();
+updateGhStatus();
+
+
+
+/* Phone-only panel defaults. Desktop remains visually unchanged. */'''
+new = '''save();
+render();
+updateGhStatus();
+const initialGhSettings=loadGhSettings();
+if(initialGhSettings.token)setTimeout(()=>syncGithubProgress("auto"),700);
+
+/* Phone-only panel defaults. Desktop remains visually unchanged. */'''
+text = text.replace(old, new, 1)
+
+out.write_text(text, encoding="utf-8")
+
+checks = {
+    "placeholder present": 'const EMBEDDED_GITHUB_TOKEN="*****";' in text,
+    "auto true": 'auto:true' in text,
+    "automatic delayed sync": 'ghSyncTimer=setTimeout(()=>syncGithubProgress("auto"),delay);' in text,
+    "initial automatic sync": 'setTimeout(()=>syncGithubProgress("auto"),700);' in text,
+    "manual button retained": 'profileSyncBtn.onclick=compactManualSync' in text,
+    "profiles retained": 'profileOmarBtn' in text and 'profileOtherBtn' in text,
+    "668 questions retained": text.count('"bankIndex":') == 668,
+    "6 groups retained": all(f'id:"set{i}"' in text for i in range(1,7)),
+    "GitHub path retained": 'progress-six-groups/${activeProfile}.json' in text,
+}
+print(f"Created: {out}")
+for k,v in checks.items():
+    print(f"{k}: {'PASS' if v else 'FAIL'}")
