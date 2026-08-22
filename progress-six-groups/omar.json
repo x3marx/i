@@ -1,0 +1,28 @@
+{
+  "app": "نظام تدريب بنك الأسئلة-الجزء الثالث",
+  "profile": "omar",
+  "profileLabel": "Omar",
+  "version": 4,
+  "bankId": "qs668-sixgroups-d94ef933408bc203",
+  "questionCount": 668,
+  "updatedAt": 1787432428799,
+  "deviceId": "device-r50tuzqf-mt4v48vz",
+  "state": {
+    "version": 4,
+    "bankId": "qs668-sixgroups-d94ef933408bc203",
+    "answers": {},
+    "stars": {},
+    "examMistakeKeys": [],
+    "history": {},
+    "examSessions": {},
+    "examResults": {},
+    "lastExamSetId": "",
+    "ui": {
+      "studySet": "set1",
+      "examSet": "set1",
+      "lastQuestionBySet": {
+        "set1": "form1:1"
+      }
+    }
+  }
+}
