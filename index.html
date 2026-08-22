@@ -297,7 +297,7 @@ html[data-theme="light"] .option.wrong{background:rgba(225,29,72,.075);border-co
 @media(max-width:860px){
   /* Put the active question before the dashboard/filters on phones. */
   .grid{display:flex!important;flex-direction:column;gap:10px}
-  #quizCard{order:1}
+  .questionColumn{order:1;width:100%}
   .panel{order:2;width:100%;padding:10px;position:static!important}
 
   /* Keep the title compact so the question is visible immediately. */
@@ -550,10 +550,13 @@ html[data-theme="light"] .answerExplanation{
 }
 html[data-theme="light"] .answerExplanationTitle{color:#0369a1}
 
+/* Question column keeps the footer directly under the active question */
+.questionColumn{min-width:0;display:grid;gap:12px;align-content:start}
+
 /* Footer / ownership / visitor counter */
 .siteFooter{
-  width:min(1220px,calc(100% - 24px));
-  margin:18px auto 82px;
+  width:100%;
+  margin:0;
   padding:17px 18px;
   text-align:center;
   border:1px solid var(--line);
@@ -600,7 +603,9 @@ html[data-theme="light"] .visitorCounter{
   color:#0369a1
 }
 @media(max-width:860px){
-  .siteFooter{margin-bottom:calc(86px + env(safe-area-inset-bottom))}
+  .questionColumn{order:1;width:100%}
+  .panel{order:2}
+  .siteFooter{margin:0 0 8px}
 }
 
 /* GitHub progress sync */
@@ -758,19 +763,29 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
       </details>
     </aside>
 
-    <section id="quizCard" class="card"></section>
+    <div class="questionColumn">
+      <section id="quizCard" class="card"></section>
+      <footer class="siteFooter">
+        <div class="siteFooterOwner">هذا البرنامج صناعة أبوقصي</div>
+        <div><a class="siteFooterMail" href="mailto:3moory@gmail.com">3moory@gmail.com</a></div>
+        <div>© <span id="copyrightYear"></span></div>
+        <div class="visitorCounter counterapi"
+             title="عداد زيارات الصفحة"
+             ns="x3marx.github.io"
+             action="view"
+             key="tbs-part3"
+             label="زيارة"
+             noCss="true"
+             noLink="true"
+             noIcon="true"
+             noAnim="true"
+             noFormatting="true">
+          جاري تحميل الزيارات...
+        </div>
+      </footer>
+    </div>
   </main>
 </div>
-
-<footer class="siteFooter">
-  <div class="siteFooterOwner">هذا البرنامج صناعة أبوقصي</div>
-  <div><a class="siteFooterMail" href="mailto:3moory@gmail.com">3moory@gmail.com</a></div>
-  <div>© <span id="copyrightYear"></span></div>
-  <div class="visitorCounter" id="visitorCounter" title="عداد زيارات الصفحة">
-    <span class="visitorEye">👁</span>
-    <span id="visitorCountText">جاري تحميل الزيارات...</span>
-  </div>
-</footer>
 
 <nav class="bottomBar">
   <button class="btn" id="prevBtnBottom">السابق</button>
@@ -1883,23 +1898,6 @@ const initialGhSettings=loadGhSettings();
 if(initialGhSettings.token)setTimeout(()=>syncGithubProgress("auto"),700);
 const yearEl=$("copyrightYear");if(yearEl)yearEl.textContent=String(new Date().getFullYear());
 
-async function loadPublicVisitorCounter(){
-  const txt=$("visitorCountText");
-  if(!txt)return;
-  try{
-    const endpoint=`https://counterapi.com/api/x3marx.github.io/view/tbs-part3?noFormatting=true&_=${Date.now()}`;
-    const res=await fetch(endpoint,{method:"GET",cache:"no-store",mode:"cors"});
-    if(!res.ok)throw new Error(`HTTP ${res.status}`);
-    const data=await res.json();
-    const value=Number(data?.value);
-    if(!Number.isFinite(value))throw new Error("Invalid counter response");
-    txt.textContent=`${value.toLocaleString("ar-SA")} زيارة`;
-  }catch(err){
-    txt.textContent="تعذر تحميل عدد الزيارات";
-    console.warn("Visitor counter error:",err);
-  }
-}
-setTimeout(loadPublicVisitorCounter,250);
 
 /* Phone-only panel defaults. Desktop remains visually unchanged. */
 function applyResponsiveSectionDefaults(){
@@ -1919,5 +1917,7 @@ window.addEventListener('resize',()=>{
   if(nowPhone!==responsiveWasPhone){responsiveWasPhone=nowPhone;applyResponsiveSectionDefaults();}
 });
 </script>
+
+<script src="https://counterapi.com/c.js?ns=x3marx.github.io" async></script>
 </body>
 </html>
