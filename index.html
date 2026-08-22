@@ -515,6 +515,88 @@ html[data-theme="light"] .compactSyncToast.bad{color:#9f1239;border-color:#fecdd
   }
 }
 
+
+/* Answer explanation */
+.explainWrap{margin-top:12px}
+.explainToggle{
+  width:100%;
+  min-height:42px;
+  border:1px solid rgba(56,189,248,.34);
+  border-radius:13px;
+  background:rgba(56,189,248,.08);
+  color:#bae6fd;
+  font-weight:900;
+  cursor:pointer;
+}
+.explainToggle:hover{border-color:rgba(56,189,248,.62);background:rgba(56,189,248,.13)}
+.answerExplanation{
+  margin-top:8px;
+  padding:13px 14px;
+  border:1px solid rgba(56,189,248,.26);
+  border-radius:14px;
+  background:rgba(14,165,233,.07);
+  color:var(--text);
+  line-height:1.95;
+  white-space:pre-wrap;
+}
+.answerExplanation[hidden]{display:none!important}
+.answerExplanationTitle{font-weight:900;color:#7dd3fc;margin-bottom:7px}
+.examExplainToggle{margin-top:9px}
+html[data-theme="light"] .explainToggle{
+  color:#075985;background:#f0f9ff;border-color:#bae6fd
+}
+html[data-theme="light"] .answerExplanation{
+  background:#f0f9ff;border-color:#bae6fd;color:#172033
+}
+html[data-theme="light"] .answerExplanationTitle{color:#0369a1}
+
+/* Footer / ownership / visitor counter */
+.siteFooter{
+  width:min(1220px,calc(100% - 24px));
+  margin:18px auto 82px;
+  padding:17px 18px;
+  text-align:center;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(18,26,44,.78);
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  color:var(--muted);
+  line-height:1.85;
+}
+.siteFooterOwner{font-weight:900;color:var(--text)}
+.siteFooterMail{
+  color:var(--brand2);
+  text-decoration:none;
+  font-weight:800;
+}
+.siteFooterMail:hover{text-decoration:underline}
+.visitorCounter{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin-top:9px;
+  padding:7px 12px;
+  border:1px solid rgba(110,231,183,.35);
+  border-radius:999px;
+  background:rgba(110,231,183,.08);
+  color:var(--good);
+  font-weight:900;
+  direction:rtl;
+}
+.visitorCounter.loading{color:var(--muted);border-color:var(--line);background:rgba(255,255,255,.035)}
+html[data-theme="light"] .siteFooter{
+  background:rgba(255,255,255,.92);
+  border-color:#d8e0ea;
+  box-shadow:0 10px 28px rgba(15,23,42,.08)
+}
+html[data-theme="light"] .visitorCounter{
+  background:#ecfdf5;border-color:#a7f3d0;color:#047857
+}
+@media(max-width:860px){
+  .siteFooter{margin-bottom:calc(86px + env(safe-area-inset-bottom))}
+}
+
 /* GitHub progress sync */
 .syncPanel{margin-top:10px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);overflow:hidden}
 .syncPanel>summary{cursor:pointer;list-style:none;padding:10px 12px;font-weight:800;color:#dbeafe;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -673,6 +755,15 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
     <section id="quizCard" class="card"></section>
   </main>
 </div>
+
+<footer class="siteFooter">
+  <div class="siteFooterOwner">هذا البرنامج صناعة أبوقصي</div>
+  <div><a class="siteFooterMail" href="mailto:3moory@gmail.com">3moory@gmail.com</a></div>
+  <div>© <span id="copyrightYear"></span></div>
+  <div class="visitorCounter loading" id="visitorCounter" title="عداد زيارات الصفحة">
+    <span>👁</span><span id="visitorCountText">جاري تحميل عدد الزيارات...</span>
+  </div>
+</footer>
 
 <nav class="bottomBar">
   <button class="btn" id="prevBtnBottom">السابق</button>
@@ -861,6 +952,7 @@ function ensureGithubToken(){
   if(!token||!String(token).trim())return null;
   const next={...s,token:String(token).trim(),auto:true};
   saveGhSettings(next);
+  setTimeout(()=>registerPageVisit(),150);
   return next;
 }
 async function compactManualSync(){
@@ -903,6 +995,73 @@ async function forceUseDevice(){
   const s=loadGhSettings();if(!s.owner||!s.repo||!s.token)return;
   ghSyncBusy=true;try{const cloud=await getGhCloudFile(s);await uploadGhCloud(s,cloud.exists?cloud.sha:"");}catch(err){setGhStatus("تعذر رفع نسخة هذا الجهاز: "+(err?.message||err),"bad");}finally{ghSyncBusy=false;}
 }
+
+const VISITS_PATH="progress-six-groups/visits.json";
+const VISIT_SESSION_KEY=BASE_STORE_KEY+"_visit_registered";
+function setVisitorDisplay(count,status="good"){
+  const box=$("visitorCounter"),txt=$("visitorCountText");
+  if(!box||!txt)return;
+  box.classList.remove("loading");
+  if(status==="loading")box.classList.add("loading");
+  txt.textContent=Number.isFinite(Number(count))?`${Number(count).toLocaleString("ar-SA")} زيارة`:String(count||"—");
+}
+async function readPublicVisitCount(){
+  try{
+    const url=`https://raw.githubusercontent.com/x3marx/i/progress-data/${VISITS_PATH}?t=${Date.now()}`;
+    const res=await fetch(url,{cache:"no-store"});
+    if(!res.ok)throw new Error("not found");
+    const data=await res.json();
+    const count=Math.max(0,Number(data.count)||0);
+    setVisitorDisplay(count);
+    return count;
+  }catch(e){
+    setVisitorDisplay("العداد بانتظار أول مزامنة","loading");
+    return 0;
+  }
+}
+async function getVisitCloudFile(s){
+  try{
+    const d=await ghRequest(`/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${encodePath(VISITS_PATH)}?ref=${encodeURIComponent(s.branch)}`,{settings:s});
+    let payload={};
+    try{payload=JSON.parse(base64ToUtf8(d.content));}catch(e){}
+    return {exists:true,sha:d.sha,payload};
+  }catch(err){
+    if(err.status===404)return {exists:false,sha:"",payload:{count:0}};
+    throw err;
+  }
+}
+async function registerPageVisit(){
+  const s=loadGhSettings();
+  if(!s.token){await readPublicVisitCount();return;}
+  try{
+    if(sessionStorage.getItem(VISIT_SESSION_KEY)==="1"){await readPublicVisitCount();return;}
+    await ensureGhDataBranch(s);
+    for(let attempt=0;attempt<2;attempt++){
+      const cloud=await getVisitCloudFile(s);
+      const current=Math.max(0,Number(cloud.payload?.count)||0);
+      const next=current+1;
+      const payload={count:next,updatedAt:Date.now()};
+      const body={
+        message:"Update Part 3 visitor count",
+        content:utf8ToBase64(JSON.stringify(payload,null,2)),
+        branch:s.branch
+      };
+      if(cloud.exists&&cloud.sha)body.sha=cloud.sha;
+      try{
+        await ghRequest(`/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${encodePath(VISITS_PATH)}`,{method:"PUT",settings:s,body});
+        sessionStorage.setItem(VISIT_SESSION_KEY,"1");
+        setVisitorDisplay(next);
+        return;
+      }catch(err){
+        if((err.status===409||err.status===422)&&attempt===0)continue;
+        throw err;
+      }
+    }
+  }catch(e){
+    await readPublicVisitCount();
+  }
+}
+
 function autoSyncAfterProfileSwitch(){
   updateGhStatus();
   const s=loadGhSettings();
@@ -1268,6 +1427,9 @@ function renderCard(){
     parts.push(`<button class="${cls}" data-pick="${o.key}"><span class="letter">${fixedOptionLetter(optionIndex)}</span><span>${escapeHtml(o.text)}</span></button>`);
   });
   parts.push('</div>');
+  if(String(q.explanation||"").trim()){
+    parts.push(`<div class="explainWrap"><button class="explainToggle" id="explainInCard" type="button">شرح الإجابة</button><div class="answerExplanation" id="answerExplanation" hidden><div class="answerExplanationTitle">شرح الإجابة</div>${escapeHtml(q.explanation)}</div></div>`);
+  }
   parts.push(`<div class="cardActions"><button class="btn" id="prevInCard">السابق</button><button class="btn primary" id="nextInCard">التالي</button><button class="btn" id="showInCard">إظهار الإجابة</button><button class="btn warn" id="starInCard">${isStarred(q)?'إزالة من المراجعة':'مراجعة لاحقاً'}</button></div>`);
   card.innerHTML=parts.join("");
 
@@ -1280,6 +1442,15 @@ function renderCard(){
     btn.addEventListener("touchcancel",()=>clearTimeout(touchTimer));
   });
   $("prevInCard").onclick=prev;$("nextInCard").onclick=next;$("showInCard").onclick=showAnswer;$("starInCard").onclick=toggleStar;
+  const explainBtn=$("explainInCard"),explainBox=$("answerExplanation");
+  if(explainBtn&&explainBox){
+    explainBtn.onclick=()=>{
+      const opening=explainBox.hidden;
+      explainBox.hidden=!opening;
+      explainBtn.textContent=opening?"إخفاء شرح الإجابة":"شرح الإجابة";
+      if(opening)explainBox.scrollIntoView({behavior:"smooth",block:"nearest"});
+    };
+  }
 }
 
 function updateHistoryStudy(q,selected,correct,ts){
@@ -1534,8 +1705,19 @@ function renderMistakeReview(){
   if(!mistakes.length){box.innerHTML='<div class="examResultBox" style="text-align:center;color:var(--good)">ممتاز، لا توجد إجابات خاطئة أو أسئلة غير مجابة.</div>';return;}
   box.innerHTML='<div class="examMistakes">'+mistakes.map((r,n)=>{
     const q=r.q;
-    return `<div class="examMistake ${r.unanswered?'unanswered':''}"><div class="examMistakeHead"><span class="badge">الخطأ ${n+1}</span><span class="badge">سؤال الاختبار ${r.index+1}</span><span class="badge">سؤال البنك ${escapeHtml(q.id)}</span>${q.lesson?`<span class="badge">${escapeHtml(q.lesson)}</span>`:""}</div><div class="examMistakeQuestion">${escapeHtml(q.question)}</div><div class="examAnswerLine user"><strong>إجابتك:</strong> ${escapeHtml(answerText(q,r.selected))}</div><div class="examAnswerLine correct"><strong>الإجابة الصحيحة:</strong> ${escapeHtml(answerText(q,q.answer))}</div></div>`;
+    const explanation=String(q.explanation||"").trim();
+    return `<div class="examMistake ${r.unanswered?'unanswered':''}"><div class="examMistakeHead"><span class="badge">الخطأ ${n+1}</span><span class="badge">سؤال الاختبار ${r.index+1}</span><span class="badge">سؤال البنك ${escapeHtml(q.id)}</span>${q.lesson?`<span class="badge">${escapeHtml(q.lesson)}</span>`:""}</div><div class="examMistakeQuestion">${escapeHtml(q.question)}</div><div class="examAnswerLine user"><strong>إجابتك:</strong> ${escapeHtml(answerText(q,r.selected))}</div><div class="examAnswerLine correct"><strong>الإجابة الصحيحة:</strong> ${escapeHtml(answerText(q,q.answer))}</div>${explanation?`<button class="btn examExplainToggle" type="button" data-exam-explain="${escapeHtml(key(q))}">شرح الإجابة</button><div class="answerExplanation" data-exam-explain-box="${escapeHtml(key(q))}" hidden><div class="answerExplanationTitle">شرح الإجابة</div>${escapeHtml(explanation)}</div>`:""}</div>`;
   }).join("")+'</div>';
+  box.querySelectorAll("[data-exam-explain]").forEach(btn=>{
+    btn.onclick=()=>{
+      const k=btn.getAttribute("data-exam-explain");
+      const panel=box.querySelector(`[data-exam-explain-box="${CSS.escape(k)}"]`);
+      if(!panel)return;
+      const opening=panel.hidden;
+      panel.hidden=!opening;
+      btn.textContent=opening?"إخفاء شرح الإجابة":"شرح الإجابة";
+    };
+  });
 }
 function renderExamResults(){
   const card=$("quizCard"),data=examResultsData(exam.session),rows=Object.entries(data.lessons).map(([lesson,r])=>({lesson,...r,pct:pct(r.correct,r.total)})).sort((a,b)=>a.pct-b.pct);
@@ -1759,6 +1941,8 @@ render();
 updateGhStatus();
 const initialGhSettings=loadGhSettings();
 if(initialGhSettings.token)setTimeout(()=>syncGithubProgress("auto"),700);
+const yearEl=$("copyrightYear");if(yearEl)yearEl.textContent=String(new Date().getFullYear());
+setTimeout(()=>registerPageVisit(),900);
 
 /* Phone-only panel defaults. Desktop remains visually unchanged. */
 function applyResponsiveSectionDefaults(){
