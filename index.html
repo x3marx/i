@@ -589,13 +589,6 @@ html[data-theme="light"] .answerExplanationTitle{color:#0369a1}
   line-height:1;
   filter:drop-shadow(0 0 6px rgba(56,189,248,.25));
 }
-.visitorBadge{
-  display:block;
-  height:22px;
-  max-width:100%;
-  border:0;
-  border-radius:6px;
-}
 html[data-theme="light"] .siteFooter{
   background:rgba(255,255,255,.92);
   border-color:#d8e0ea;
@@ -775,13 +768,7 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
   <div>© <span id="copyrightYear"></span></div>
   <div class="visitorCounter" id="visitorCounter" title="عداد زيارات الصفحة">
     <span class="visitorEye">👁</span>
-    <img
-      id="komarevVisitorBadge"
-      class="visitorBadge"
-      alt="عداد زيارات الصفحة"
-      loading="eager"
-      referrerpolicy="no-referrer"
-    >
+    <span id="visitorCountText">جاري تحميل الزيارات...</span>
   </div>
 </footer>
 
@@ -1896,15 +1883,23 @@ const initialGhSettings=loadGhSettings();
 if(initialGhSettings.token)setTimeout(()=>syncGithubProgress("auto"),700);
 const yearEl=$("copyrightYear");if(yearEl)yearEl.textContent=String(new Date().getFullYear());
 
-function loadKomarevVisitorCounter(){
-  const badge=$("komarevVisitorBadge");
-  if(!badge)return;
-  const key="x3marx-tbs-part3";
-  const label=encodeURIComponent("الزيارات");
-  const color=document.documentElement.dataset.theme==="light"?"0369a1":"0ea5e9";
-  badge.src=`https://komarev.com/ghpvc/?username=${encodeURIComponent(key)}&label=${label}&color=${color}&style=flat-square&_=${Date.now()}`;
+async function loadPublicVisitorCounter(){
+  const txt=$("visitorCountText");
+  if(!txt)return;
+  try{
+    const endpoint=`https://counterapi.com/api/x3marx.github.io/view/tbs-part3?noFormatting=true&_=${Date.now()}`;
+    const res=await fetch(endpoint,{method:"GET",cache:"no-store",mode:"cors"});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    const value=Number(data?.value);
+    if(!Number.isFinite(value))throw new Error("Invalid counter response");
+    txt.textContent=`${value.toLocaleString("ar-SA")} زيارة`;
+  }catch(err){
+    txt.textContent="تعذر تحميل عدد الزيارات";
+    console.warn("Visitor counter error:",err);
+  }
 }
-setTimeout(loadKomarevVisitorCounter,250);
+setTimeout(loadPublicVisitorCounter,250);
 
 /* Phone-only panel defaults. Desktop remains visually unchanged. */
 function applyResponsiveSectionDefaults(){
