@@ -1922,7 +1922,7 @@ window.addEventListener('resize',()=>{
     .then(function(data){
       const count=Number(data&&data.count);
       if(!Number.isFinite(count))throw new Error("Invalid counter response");
-      output.textContent=count.toLocaleString("ar-SA")+" زيارة";
+      output.textContent=count.toLocaleString("en-US")+" زيارة";
     })
     .catch(function(){
       output.textContent="تعذر تحميل عدد الزيارات";
