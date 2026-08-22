@@ -769,18 +769,9 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
         <div class="siteFooterOwner">هذا البرنامج صناعة أبوقصي</div>
         <div><a class="siteFooterMail" href="mailto:3moory@gmail.com">3moory@gmail.com</a></div>
         <div>© <span id="copyrightYear"></span></div>
-        <div class="visitorCounter counterapi"
-             title="عداد زيارات الصفحة"
-             ns="x3marx.github.io"
-             action="view"
-             key="tbs-part3"
-             label="زيارة"
-             noCss="true"
-             noLink="true"
-             noIcon="true"
-             noAnim="true"
-             noFormatting="true">
-          جاري تحميل الزيارات...
+        <div class="visitorCounter" id="visitorCounter" title="عداد زيارات الصفحة">
+          <span class="visitorEye">👁</span>
+          <span id="visitorCountText">جاري تحميل الزيارات...</span>
         </div>
       </footer>
     </div>
@@ -1918,6 +1909,25 @@ window.addEventListener('resize',()=>{
 });
 </script>
 
-<script src="https://counterapi.com/c.js?ns=x3marx.github.io" async></script>
+<script>
+(function(){
+  const endpoint="https://tbs-counter.omaryot13.workers.dev/";
+  const output=document.getElementById("visitorCountText");
+  if(!output)return;
+  fetch(endpoint+"?t="+Date.now(),{method:"GET",cache:"no-store"})
+    .then(function(response){
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      return response.json();
+    })
+    .then(function(data){
+      const count=Number(data&&data.count);
+      if(!Number.isFinite(count))throw new Error("Invalid counter response");
+      output.textContent=count.toLocaleString("ar-SA")+" زيارة";
+    })
+    .catch(function(){
+      output.textContent="تعذر تحميل عدد الزيارات";
+    });
+})();
+</script>
 </body>
 </html>
