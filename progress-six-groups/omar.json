@@ -5,15 +5,86 @@
   "version": 4,
   "bankId": "qs668-sixgroups-d94ef933408bc203",
   "questionCount": 668,
-  "updatedAt": 1787435011333,
-  "deviceId": "device-r50tuzqf-mt4v48vz",
+  "updatedAt": 1787821875859,
+  "deviceId": "device-60k2cpa7-mtbazg5v",
   "state": {
     "version": 4,
     "bankId": "qs668-sixgroups-d94ef933408bc203",
-    "answers": {},
+    "answers": {
+      "form1:202": {
+        "selected": "A",
+        "correct": true,
+        "elapsed": 19,
+        "ts": 1787820746669
+      },
+      "form1:206": {
+        "selected": "C",
+        "correct": true,
+        "elapsed": 7,
+        "ts": 1787820770979
+      },
+      "form1:211": {
+        "selected": "A",
+        "correct": true,
+        "elapsed": 45,
+        "ts": 1787820818631
+      }
+    },
     "stars": {},
     "examMistakeKeys": [],
-    "history": {},
+    "history": {
+      "form1:202": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "A",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1787820746669
+      },
+      "form1:206": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "C",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1787820770979
+      },
+      "form1:211": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "A",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1787820818631
+      }
+    },
     "examSessions": {},
     "examResults": {},
     "lastExamSetId": "",
@@ -21,7 +92,7 @@
       "studySet": "set1",
       "examSet": "set1",
       "lastQuestionBySet": {
-        "set1": "form1:122"
+        "set1": "form1:216"
       }
     }
   }
