@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-sixgroups-d94ef933408bc203",
   "questionCount": 668,
-  "updatedAt": 1787961442113,
+  "updatedAt": 1787961453103,
   "deviceId": "device-66n9vr8z-mt4v5053",
   "state": {
     "version": 4,
@@ -448,6 +448,12 @@
         "correct": true,
         "elapsed": 16,
         "ts": 1787961420988
+      },
+      "form3:313": {
+        "selected": "C",
+        "correct": true,
+        "elapsed": 12,
+        "ts": 1787961448686
       }
     },
     "stars": {},
@@ -1693,6 +1699,23 @@
         "lastCorrect": true,
         "lastContext": "study",
         "lastTs": 1787961420988
+      },
+      "form3:313": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "C",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1787961448686
       }
     },
     "examSessions": {},
