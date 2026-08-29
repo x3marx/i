@@ -853,7 +853,7 @@ function setGhSyncMeta(profileId,meta){try{localStorage.setItem(GH_SYNC_META_PRE
 function markGhDirty(autoDelay=3500){
   const m=ghSyncMeta(activeProfile);m.dirty=true;m.localUpdatedAt=Date.now();setGhSyncMeta(activeProfile,m);updateGhStatus();queueGhSync(autoDelay);
 }
-function queueGhSync(delay=3500){
+function queueGhSync(delay=30000){
   const s=loadGhSettings();
   if(!s.auto||!s.owner||!s.repo||!s.token)return;
   clearTimeout(ghSyncTimer);
