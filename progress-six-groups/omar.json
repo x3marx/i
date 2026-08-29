@@ -3,13 +3,13 @@
   "profile": "omar",
   "profileLabel": "Omar",
   "version": 4,
-  "bankId": "qs668-sixgroups-d94ef933408bc203",
+  "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1787965485352,
-  "deviceId": "device-66n9vr8z-mt4v5053",
+  "updatedAt": 1788028144886,
+  "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
-    "bankId": "qs668-sixgroups-d94ef933408bc203",
+    "bankId": "qs668-lesson-groups-v1",
     "answers": {
       "form1:202": {
         "selected": "A",
@@ -2987,15 +2987,11 @@
     "examResults": {},
     "lastExamSetId": "",
     "ui": {
-      "studySet": "set6",
+      "studySet": "set3",
       "examSet": "set1",
       "lastQuestionBySet": {
-        "set1": "form1:251",
-        "set2": "form2:222",
-        "set3": "form3:218",
-        "set4": "form4:209",
-        "set5": "form5:220",
-        "set6": "form6:533"
+        "set1": "form1:1",
+        "set3": "form1:251"
       }
     }
   }
