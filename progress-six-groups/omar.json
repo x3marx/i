@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788032936449,
+  "updatedAt": 1788032949578,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -304,6 +304,18 @@
         "correct": true,
         "elapsed": 14,
         "ts": 1788032923610
+      },
+      "form2:317": {
+        "selected": "C",
+        "correct": true,
+        "elapsed": 7,
+        "ts": 1788032937331
+      },
+      "form2:322": {
+        "selected": "C",
+        "correct": true,
+        "elapsed": 5,
+        "ts": 1788032942496
       }
     },
     "stars": {
@@ -1143,6 +1155,40 @@
         "lastCorrect": true,
         "lastContext": "study",
         "lastTs": 1788032923610
+      },
+      "form2:317": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "C",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1788032937331
+      },
+      "form2:322": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "C",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1788032942496
       }
     },
     "examSessions": {},
@@ -1153,7 +1199,7 @@
       "examSet": "set1",
       "lastQuestionBySet": {
         "set1": "form1:1",
-        "set3": "form2:317"
+        "set3": "form2:327"
       }
     }
   }
