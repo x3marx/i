@@ -241,7 +241,7 @@ html,body,button,input,select,textarea{font-family:'Cairo',system-ui,-apple-syst
   display:flex;align-items:center;justify-content:center;font-weight:900;
   transition:transform .15s,border-color .15s,background .2s,color .2s
 }
-.readerToggle{left:14px;top:62px;font-family:Arial,sans-serif!important}
+.readerToggle{left:62px;font-family:Arial,sans-serif!important}
 .focusToggle{left:110px}
 .readerToggle.active,.focusToggle.active{
   border-color:var(--brand2);background:rgba(2,132,199,.12);color:var(--brand2)
@@ -292,8 +292,8 @@ html[data-theme="light"] .progressKpi span,
 html[data-theme="light"] .stat span,
 html[data-theme="light"] .metricChip .label{color:#4b5563!important}
 @media(max-width:860px){
-  .readerToggle{left:8px;top:calc(54px + env(safe-area-inset-top));width:38px;height:38px;min-height:38px}
-  .focusToggle{left:14px;top:110px}
+  .readerToggle{left:56px;top:calc(8px + env(safe-area-inset-top));width:38px;height:38px;min-height:38px}
+  .focusToggle{left:100px;top:calc(8px + env(safe-area-inset-top));width:38px;height:38px;min-height:38px}
   .stickyQuestionNav{
     bottom:calc(74px + env(safe-area-inset-bottom));
     gap:4px;
@@ -309,121 +309,28 @@ html[data-theme="light"] .metricChip .label{color:#4b5563!important}
 }
 
 
-/* Compact Study Layout */
-.header{
-  padding:10px 16px!important;
-  min-height:64px!important;
-}
-.header h1{
-  margin:0!important;
-  font-size:clamp(1.35rem,2vw,2rem)!important;
-  line-height:1.15!important;
-}
-.grid{gap:10px!important}
-.card{padding:12px!important}
-.meta{margin-bottom:4px!important}
-.metaInfo,.metaRates{gap:5px!important}
-.badge,.metricBadge{
-  padding:5px 9px!important;
-  font-size:.78rem!important;
-  min-width:auto!important;
-}
-.question{
-  margin:10px 0 12px!important;
-  font-size:clamp(1.26rem,1.75vw,1.82rem)!important;
-  line-height:1.48!important;
-}
-.options{gap:7px!important}
-.option{
-  min-height:52px!important;
-  padding:8px 12px!important;
-  border-radius:14px!important;
-  font-size:clamp(.98rem,1.18vw,1.12rem)!important;
-  line-height:1.45!important;
-}
-.option .letter{
-  flex-basis:32px!important;
-  width:32px!important;
-  height:32px!important;
-  border-radius:10px!important;
-}
-.timerBox{
-  margin:6px 0 9px!important;
-  padding:7px 10px!important;
-  border-radius:13px!important;
-}
-.timerHead{margin-bottom:5px!important}
-.timerBar{height:7px!important}
-.cardActions{
-  margin-top:8px!important;
-  gap:5px!important;
-}
-.cardActions .btn{
-  min-height:36px!important;
-  padding:6px 10px!important;
-  font-size:.78rem!important;
-  border-radius:11px!important;
-}
-.explainWrap{margin-top:7px!important}
-.explainToggle{min-height:34px!important}
-.answerExplanation{padding:10px 12px!important;line-height:1.75!important}
-.siteFooter{margin-top:8px!important}
-
-/* Lesson progress chip */
-.lessonProgressBadge{
-  display:inline-flex!important;
-  align-items:center;
-  gap:6px;
-  font-weight:800!important;
-}
-.lessonProgressBadge .progressNums{
-  direction:ltr;
-  unicode-bidi:isolate;
-  font-variant-numeric:tabular-nums;
-  font-weight:900;
-  color:var(--brand2);
-}
-
-/* Vertical page controls */
-.themeToggle,.readerToggle,.focusToggle{
-  width:40px!important;
-  height:40px!important;
-  min-height:40px!important;
-}
-
-/* Focus mode prioritizes the question area */
-body.focusQuestions .grid{grid-template-columns:68px 1fr!important}
-body.focusQuestions .panel{padding:5px!important}
-body.focusQuestions .panel::before{
-  content:"رحلة"!important;
-  font-size:.75rem!important;
-}
-body.focusQuestions .header{
-  min-height:52px!important;
-  padding:7px 12px!important;
-}
-body.focusQuestions .header h1{font-size:1.18rem!important}
-
-/* Old sticky controls are intentionally retired */
+/* === Verified compact study layout === */
+.header{padding:10px 16px!important;min-height:64px!important}
+.header h1{margin:0!important;font-size:clamp(1.35rem,2vw,2rem)!important;line-height:1.15!important}
+.grid{gap:10px!important}.card{padding:12px!important}.meta{margin-bottom:4px!important}
+.metaInfo,.metaRates{gap:5px!important}.badge,.metricBadge{padding:5px 9px!important;font-size:.78rem!important;min-width:auto!important}
+.question{margin:10px 0 12px!important;font-size:clamp(1.26rem,1.75vw,1.82rem)!important;line-height:1.48!important}
+.options{gap:7px!important}.option{min-height:52px!important;padding:8px 12px!important;border-radius:14px!important;font-size:clamp(.98rem,1.18vw,1.12rem)!important;line-height:1.45!important}
+.option .letter{flex-basis:32px!important;width:32px!important;height:32px!important;border-radius:10px!important}
+.timerBox{margin:6px 0 9px!important;padding:7px 10px!important;border-radius:13px!important}.timerHead{margin-bottom:5px!important}.timerBar{height:7px!important}
+.cardActions{margin-top:8px!important;gap:5px!important}.cardActions .btn{min-height:36px!important;padding:6px 10px!important;font-size:.78rem!important;border-radius:11px!important}
+.explainWrap{margin-top:7px!important}.explainToggle{min-height:34px!important}.answerExplanation{padding:10px 12px!important;line-height:1.75!important}.siteFooter{margin-top:8px!important}
+.lessonProgressBadge{display:inline-flex!important;align-items:center;gap:6px;font-weight:800!important}.lessonProgressBadge .progressNums{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;font-weight:900;color:var(--brand2)}
 .stickyQuestionNav{display:none!important}
-
+body.focusQuestions .grid{grid-template-columns:68px 1fr!important}body.focusQuestions .panel{padding:5px!important}body.focusQuestions .panel::before{content:"رحلة"!important;font-size:.75rem!important}
+body.focusQuestions .header{min-height:52px!important;padding:7px 12px!important}body.focusQuestions .header h1{font-size:1.18rem!important}
+.themeToggle{left:14px!important;top:14px!important;width:40px!important;height:40px!important;min-height:40px!important}
+.readerToggle{left:14px!important;top:62px!important;width:40px!important;height:40px!important;min-height:40px!important}
+.focusToggle{left:14px!important;top:110px!important;width:40px!important;height:40px!important;min-height:40px!important}
 @media(max-width:860px){
-  .header{min-height:56px!important;padding:8px 10px!important}
-  .header h1{font-size:1.15rem!important}
-  .card{padding:9px!important}
-  .question{
-    font-size:1.16rem!important;
-    line-height:1.45!important;
-    margin:8px 0 10px!important;
-  }
-  .option{
-    min-height:48px!important;
-    padding:7px 9px!important;
-    font-size:.96rem!important;
-  }
-  .timerBox{padding:6px 8px!important;margin:5px 0 7px!important}
-  .badge,.metricBadge{font-size:.72rem!important;padding:4px 7px!important}
-  .cardActions .btn{font-size:.72rem!important;padding:5px 8px!important}
+ .header{min-height:56px!important;padding:8px 10px!important}.header h1{font-size:1.15rem!important}.card{padding:9px!important}.question{font-size:1.16rem!important;line-height:1.45!important;margin:8px 0 10px!important}
+ .option{min-height:48px!important;padding:7px 9px!important;font-size:.96rem!important}.timerBox{padding:6px 8px!important;margin:5px 0 7px!important}.badge,.metricBadge{font-size:.72rem!important;padding:4px 7px!important}.cardActions .btn{font-size:.72rem!important;padding:5px 8px!important}
+ .themeToggle{left:8px!important;top:calc(8px + env(safe-area-inset-top))!important}.readerToggle{left:8px!important;top:calc(54px + env(safe-area-inset-top))!important}.focusToggle{left:8px!important;top:calc(100px + env(safe-area-inset-top))!important}
 }
 
 /* Dark / light theme toggle */
@@ -961,7 +868,8 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
 
     <div class="questionColumn">
       <section id="quizCard" class="card"></section>
-<footer class="siteFooter">
+
+      <footer class="siteFooter">
         <div class="siteFooterOwner">هذا البرنامج صناعة أبوقصي</div>
         <div><a class="siteFooterMail" href="mailto:3moory@gmail.com">3moory@gmail.com</a></div>
         <div>© <span id="copyrightYear"></span></div>
@@ -1598,7 +1506,6 @@ function renderCard(){
     btn.addEventListener("touchcancel",()=>clearTimeout(touchTimer));
   });
   $("prevInCard").onclick=prev;$("nextInCard").onclick=next;$("showInCard").onclick=showAnswer;$("starInCard").onclick=toggleStar;
-
   const explainBtn=$("explainInCard"),explainBox=$("answerExplanation");
   if(explainBtn&&explainBox){
     explainBtn.onclick=()=>{
@@ -1631,10 +1538,18 @@ function pick(selected){
   if(view.mistakePractice)view.practiceAnswers[key(q)]=record;
   view.forceShow=true;rememberCurrent(q);save();markGhDirty();render();
 }
-function showAnswer(){
-  if(exam.active)return;
-  view.forceShow=!view.forceShow;
-  render();
+function showAnswer(){if(exam.active){alert("الإجابات الصحيحة تظهر بعد انتهاء الاختبار فقط.");return;}view.forceShow=!view.forceShow;render();}
+function toggleStar(){const q=current();if(!q)return;const k=key(q);state.stars[k]?delete state.stars[k]:state.stars[k]=true;save();markGhDirty();render();}
+function next(){if(exam.active){examNext();return;}const list=currentList();if(!list.length)return;view.index=(view.index+1)%list.length;view.forceShow=false;reshuffleStudyQuestion(list[view.index]);rememberCurrent(list[view.index]);markGhDirty(5000);render();}
+function prev(){if(exam.active){examPrev();return;}const list=currentList();if(!list.length)return;view.index=(view.index-1+list.length)%list.length;view.forceShow=false;reshuffleStudyQuestion(list[view.index]);rememberCurrent(list[view.index]);markGhDirty(5000);render();}
+function randomQ(){if(exam.active)return;const list=currentList();if(!list.length)return;view.index=Math.floor(Math.random()*list.length);view.forceShow=false;reshuffleStudyQuestion(list[view.index]);rememberCurrent(list[view.index]);markGhDirty(5000);render();}
+
+function setMode(mode){
+  view.mode=mode;view.index=0;view.forceShow=false;view.special="";
+  view.retry=false;view.retryKeys=[];view.retryAnswers={};view.studyOptionOrder={};
+  view.mistakePractice=false;view.practiceAnswers={};
+  if(mode!=="examMistakes"){view.examMistakeOrder=[];view.examMistakeOptionOrder={};}
+  const f=$("modeFilter");if(f)f.value=mode;render();
 }
 function practiceWrong(){
   view.mode="historyMistakes";view.index=0;view.forceShow=false;view.special="";
