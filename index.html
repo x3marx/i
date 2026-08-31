@@ -70,7 +70,7 @@ h1{margin:0 0 10px;font-size:clamp(1.25rem,4.5vw,2rem);letter-spacing:-.01em;lin
 label{color:var(--muted);font-size:.86rem;font-weight:500}
 select,input{width:100%;min-height:46px;border-radius:14px;border:1px solid var(--line);background:#0e1627;color:var(--text);padding:9px 12px;outline:none;font-weight:500}
 select:focus,input:focus{border-color:var(--brand2)}
-.miniStats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.miniStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
 .stat{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:16px;padding:10px}
 .stat b{display:block;font-size:1.18rem;color:var(--brand);font-weight:800}
 .stat span{color:var(--muted);font-size:.82rem;font-weight:500}
@@ -283,7 +283,10 @@ html[data-theme="light"] .metricChip .label{color:#4b5563!important}
 @media(max-width:860px){
   .readerToggle{left:56px;top:calc(8px + env(safe-area-inset-top));width:38px;height:38px;min-height:38px}
   .focusToggle{left:100px;top:calc(8px + env(safe-area-inset-top));width:38px;height:38px;min-height:38px}
-  .stickyQuestionNav{bottom:calc(74px + env(safe-area-inset-bottom))}
+  .stickyQuestionNav{
+    bottom:calc(74px + env(safe-area-inset-bottom));
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
   body.focusQuestions .panel{display:none!important}
 }
 
@@ -825,6 +828,8 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
       <div class="stickyQuestionNav" id="stickyQuestionNav">
         <button class="btn" id="prevStickyBtn" type="button">السابق</button>
         <button class="btn primary" id="nextStickyBtn" type="button">التالي</button>
+        <button class="btn" id="showStickyBtn" type="button">إظهار الإجابة</button>
+        <button class="btn warn" id="starStickyBtn" type="button">مراجعة لاحقًا</button>
       </div>
       <footer class="siteFooter">
         <div class="siteFooterOwner">هذا البرنامج صناعة أبوقصي</div>
@@ -1452,6 +1457,8 @@ function renderCard(){
   }
   parts.push(`<div class="cardActions"><button class="btn" id="prevInCard">السابق</button><button class="btn primary" id="nextInCard">التالي</button><button class="btn" id="showInCard">إظهار الإجابة</button><button class="btn warn" id="starInCard">${isStarred(q)?'إزالة من المراجعة':'مراجعة لاحقاً'}</button></div>`);
   card.innerHTML=parts.join("");
+  const stickyShow=$("showStickyBtn");
+  if(stickyShow)stickyShow.textContent=show?"الإجابة ظاهرة":"إظهار الإجابة";
 
   card.querySelectorAll("[data-pick]").forEach(btn=>{
     btn.addEventListener("click",()=>{if(!btn.classList.contains("eliminated"))pick(btn.dataset.pick);});
@@ -1462,6 +1469,13 @@ function renderCard(){
     btn.addEventListener("touchcancel",()=>clearTimeout(touchTimer));
   });
   $("prevInCard").onclick=prev;$("nextInCard").onclick=next;$("showInCard").onclick=showAnswer;$("starInCard").onclick=toggleStar;
+  const stickyStar=$("starStickyBtn");
+  if(stickyStar){
+    const starred=isStarred(q);
+    stickyStar.textContent=starred?"إزالة من المراجعة":"مراجعة لاحقًا";
+    stickyStar.classList.toggle("bad",starred);
+    stickyStar.classList.toggle("warn",!starred);
+  }
   const explainBtn=$("explainInCard"),explainBox=$("answerExplanation");
   if(explainBtn&&explainBox){
     explainBtn.onclick=()=>{
@@ -1957,6 +1971,8 @@ const compactUseCloudBtn=$("compactUseCloudBtn");if(compactUseCloudBtn)compactUs
 const compactUseDeviceBtn=$("compactUseDeviceBtn");if(compactUseDeviceBtn)compactUseDeviceBtn.onclick=forceUseDevice;
 const prevStickyBtn=$("prevStickyBtn");if(prevStickyBtn)prevStickyBtn.onclick=prev;
 const nextStickyBtn=$("nextStickyBtn");if(nextStickyBtn)nextStickyBtn.onclick=next;
+const showStickyBtn=$("showStickyBtn");if(showStickyBtn)showStickyBtn.onclick=showAnswer;
+const starStickyBtn=$("starStickyBtn");if(starStickyBtn)starStickyBtn.onclick=toggleStar;
 
 const themeBtn=$("themeToggle");if(themeBtn)themeBtn.onclick=toggleTheme;
 
