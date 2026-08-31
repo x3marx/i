@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788180257758,
+  "updatedAt": 1788180467587,
   "deviceId": "device-4us0t1ci-mtfbc1ss",
   "state": {
     "version": 4,
@@ -896,8 +896,8 @@
       "form1:127": {
         "selected": "D",
         "correct": false,
-        "elapsed": 35,
-        "ts": 1788164943031
+        "elapsed": 60,
+        "ts": 1788180461773
       },
       "form1:132": {
         "selected": "B",
@@ -4306,12 +4306,12 @@
         "lastTs": 1788164906689
       },
       "form1:127": {
-        "attempts": 1,
+        "attempts": 2,
         "correct": 0,
-        "wrong": 1,
-        "studyAttempts": 1,
+        "wrong": 2,
+        "studyAttempts": 2,
         "studyCorrect": 0,
-        "studyWrong": 1,
+        "studyWrong": 2,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
@@ -4320,7 +4320,7 @@
         "lastSelected": "D",
         "lastCorrect": false,
         "lastContext": "study",
-        "lastTs": 1788164943031
+        "lastTs": 1788180461773
       },
       "form1:132": {
         "attempts": 1,
