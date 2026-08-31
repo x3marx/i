@@ -824,7 +824,7 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
           <option value="all">كل أسئلة الدرس</option>
           <option value="unanswered">غير المجابة</option>
           <option value="wrong">الأخطاء الحالية فقط</option>
-          <option value="historyMistakes">كل الأخطاء المسجلة</option>
+          <option value="historyMistakes">مجموعة الأخطاء النشطة</option>
           <option value="starred">المراجعة لاحقاً</option>
           <option value="examMistakes">أخطاء آخر اختبار</option>
         </select>
@@ -835,7 +835,7 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
       </div>
 
       <div class="quickControls" aria-label="اختصارات التدريب">
-        <button class="btn bad" id="wrongPracticeBtn">تدريب سجل الأخطاء <b id="wrongQuickCount">0</b></button>
+        <button class="btn bad" id="wrongPracticeBtn">تدريب مجموعة الأخطاء <b id="wrongQuickCount">0</b></button>
         <button class="btn warn" id="reviewPracticeBtn">أسئلة المراجعة لاحقاً <b id="reviewQuickCount">0</b></button>
         <button class="btn" id="allPracticeBtn">عرض درس المراجعة</button>
         <button class="btn bad" id="examMistakePracticeBtn">تدريب أخطاء آخر اختبار <b id="examMistakeQuickCount">0</b></button>
@@ -855,7 +855,8 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
         <button class="btn primary" id="backupProgressBtn">نسخة احتياطية من التقدم</button>
         <label class="btn" for="restoreProgressInput">استعادة التقدم</label>
         <input id="restoreProgressInput" type="file" accept=".json,application/json" hidden>
-        <button class="btn bad" id="resetProgressBtn">تصفير تقدم الدرس الحالي</button>
+        <button class="btn" id="restudySetBtn">إعادة مذاكرة الدرس</button>
+        <button class="btn bad" id="resetProgressBtn">حذف كامل بيانات الدرس</button>
       </div>
 </details>
 
@@ -957,7 +958,7 @@ function setGhSyncMeta(profileId,meta){try{localStorage.setItem(GH_SYNC_META_PRE
 function markGhDirty(autoDelay=3500){
   const m=ghSyncMeta(activeProfile);m.dirty=true;m.localUpdatedAt=Date.now();setGhSyncMeta(activeProfile,m);updateGhStatus();queueGhSync(autoDelay);
 }
-function queueGhSync(delay=30000){
+function queueGhSync(delay=300000){
   const s=loadGhSettings();
   if(!s.auto||!s.owner||!s.repo||!s.token)return;
   clearTimeout(ghSyncTimer);
@@ -1140,7 +1141,7 @@ const norm=s=>(s||"").toString().replace(/[إأآا]/g,"ا").replace(/[ىي]/g,"
 function freshState(){
   return {
     version:STATE_VERSION,bankId:BANK_ID,
-    answers:{},stars:{},examMistakeKeys:[],
+    answers:{},stars:{},activeMistakes:{},examMistakeKeys:[],
     history:{},examSessions:{},examResults:{},
     lastExamSetId:"",
     ui:{studySet:"set1",examSet:"set1",lastQuestionBySet:{}}
@@ -1151,6 +1152,12 @@ function normalizeState(raw){
   if(!raw||typeof raw!=="object")return base;
   base.answers=raw.answers&&typeof raw.answers==="object"?raw.answers:{};
   base.stars=raw.stars&&typeof raw.stars==="object"?raw.stars:{};
+  base.activeMistakes=raw.activeMistakes&&typeof raw.activeMistakes==="object"?raw.activeMistakes:{};
+  if(!raw.activeMistakes){
+    Object.entries(base.answers).forEach(([k,a])=>{
+      if(a&&a.correct===false)base.activeMistakes[k]=true;
+    });
+  }
   base.examMistakeKeys=Array.isArray(raw.examMistakeKeys)?raw.examMistakeKeys:[];
   base.history=raw.history&&typeof raw.history==="object"?raw.history:{};
   base.examSessions=raw.examSessions&&typeof raw.examSessions==="object"?raw.examSessions:{};
@@ -1269,6 +1276,9 @@ function isCorrect(q){return state.answers[key(q)]?.correct===true;}
 function isWrong(q){return state.answers[key(q)]?.correct===false;}
 function isStarred(q){return !!state.stars[key(q)];}
 function everWrong(q){return Number(state.history[key(q)]?.wrong||0)>0;}
+function isActiveMistake(q){return !!(state.activeMistakes&&state.activeMistakes[key(q)]);}
+function addActiveMistake(q){if(!state.activeMistakes)state.activeMistakes={};state.activeMistakes[key(q)]=true;}
+function removeActiveMistake(q){if(state.activeMistakes)delete state.activeMistakes[key(q)];}
 function pct(n,d){return d?Math.round(n/d*100):0;}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function shuffleArray(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -1283,7 +1293,7 @@ function baseList(){
   if(view.lesson!=="all")list=list.filter(q=>(q.lesson||"")===view.lesson);
   if(view.mode==="unanswered")list=list.filter(q=>!answered(q));
   if(view.mode==="wrong")list=list.filter(q=>isWrong(q));
-  if(view.mode==="historyMistakes")list=list.filter(q=>everWrong(q));
+  if(view.mode==="historyMistakes")list=list.filter(q=>isActiveMistake(q));
   if(view.mode==="starred")list=list.filter(q=>isStarred(q));
   if(view.mode==="examMistakes"){
     const mistakeSet=new Set(state.examMistakeKeys||[]);
@@ -1303,7 +1313,7 @@ function clampIndex(){const list=currentList();if(view.index<0)view.index=0;if(v
 
 function reviewStatsForSet(setId){
   const qs=setQuestions(setId),done=qs.filter(answered).length,ok=qs.filter(isCorrect).length;
-  return {total:qs.length,done,ok,wrong:qs.filter(isWrong).length,mistakes:qs.filter(everWrong).length,starred:qs.filter(isStarred).length,accuracy:pct(ok,done)};
+  return {total:qs.length,done,ok,wrong:qs.filter(isWrong).length,mistakes:qs.filter(isActiveMistake).length,starred:qs.filter(isStarred).length,accuracy:pct(ok,done)};
 }
 function latestExamResult(setId){
   const arr=Array.isArray(state.examResults[setId])?state.examResults[setId]:[];
@@ -1397,7 +1407,7 @@ function renderJourney(){
 
 function stats(){
   const scope=setQuestions(view.studySet).filter(q=>(view.form==="all"||q.form===view.form)&&(view.lesson==="all"||(q.lesson||"")===view.lesson));
-  setText("wrongQuickCount",scope.filter(everWrong).length);
+  setText("wrongQuickCount",scope.filter(isActiveMistake).length);
   setText("reviewQuickCount",scope.filter(isStarred).length);
   setText("examMistakeQuickCount",(state.examMistakeKeys||[]).length);
 }
@@ -1485,7 +1495,7 @@ function renderCard(){
   const displayOptions=(view.mode==="examMistakes"&&view.examMistakeOptionOrder[k])?view.examMistakeOptionOrder[k]:getStudyOptions(q);
   displayOptions.forEach((o,optionIndex)=>{
     let cls="option";
-    if(show&&ans&&ans.selected===o.key)cls+=" selected";
+    if(ans&&ans.selected===o.key)cls+=" selected";
     if(show&&o.key===q.answer)cls+=" correct";
     if(show&&ans&&ans.selected===o.key&&o.key!==q.answer)cls+=" wrong";
     parts.push(`<button class="${cls}" data-pick="${o.key}"><span class="letter">${fixedOptionLetter(optionIndex)}</span><span>${escapeHtml(o.text)}</span></button>`);
@@ -1494,7 +1504,7 @@ function renderCard(){
   if(String(q.explanation||"").trim()){
     parts.push(`<div class="explainWrap"><button class="explainToggle" id="explainInCard" type="button">شرح الإجابة</button><div class="answerExplanation" id="answerExplanation" hidden><div class="answerExplanationTitle">شرح الإجابة</div>${escapeHtml(q.explanation)}</div></div>`);
   }
-  parts.push(`<div class="cardActions"><button class="btn" id="prevInCard">السابق</button><button class="btn primary" id="nextInCard">التالي</button><button class="btn" id="showInCard">${show?"إخفاء الإجابة":"إظهار الإجابة"}</button><button class="btn warn" id="starInCard">${isStarred(q)?'إزالة من المراجعة':'مراجعة لاحقاً'}</button></div>`);
+  parts.push(`<div class="cardActions"><button class="btn" id="prevInCard">السابق</button><button class="btn primary" id="nextInCard">التالي</button><button class="btn" id="showInCard">${show?"إخفاء الإجابة":"إظهار الإجابة"}</button><button class="btn warn" id="starInCard">${isStarred(q)?'إزالة من المراجعة':'مراجعة لاحقاً'}</button>${view.mode==="historyMistakes"?'<button class="btn bad" id="removeMistakeInCard">حذف من مجموعة الأخطاء</button>':""}</div>`);
   card.innerHTML=parts.join("");
 
   card.querySelectorAll("[data-pick]").forEach(btn=>{
@@ -1506,6 +1516,14 @@ function renderCard(){
     btn.addEventListener("touchcancel",()=>clearTimeout(touchTimer));
   });
   $("prevInCard").onclick=prev;$("nextInCard").onclick=next;$("showInCard").onclick=showAnswer;$("starInCard").onclick=toggleStar;
+  const removeMistakeBtn=$("removeMistakeInCard");
+  if(removeMistakeBtn)removeMistakeBtn.onclick=()=>{
+    removeActiveMistake(q);
+    save();markGhDirty();
+    const remaining=currentList();
+    if(view.index>=remaining.length)view.index=Math.max(0,remaining.length-1);
+    render();
+  };
   const explainBtn=$("explainInCard"),explainBox=$("answerExplanation");
   if(explainBtn&&explainBox){
     explainBtn.onclick=()=>{
@@ -1534,6 +1552,7 @@ function pick(selected){
   const elapsed=Math.max(0,Math.min(60,60-Number(view.timerLeft||0))),ts=Date.now(),correct=selected===q.answer;
   const record={selected,correct,elapsed,ts};
   state.answers[key(q)]=record;
+  if(correct)removeActiveMistake(q);else addActiveMistake(q);
   updateHistoryStudy(q,selected,correct,ts);
   if(view.mistakePractice)view.practiceAnswers[key(q)]=record;
   view.forceShow=true;rememberCurrent(q);save();markGhDirty();render();
@@ -1571,11 +1590,21 @@ function startExamMistakePractice(){
   const f=$("modeFilter");if(f)f.value="examMistakes";render();
 }
 
+function restudyCurrentSet(){
+  const set=setDef(view.studySet);
+  if(!confirm(`إعادة مذاكرة ${set.label} من البداية؟\nسيتم تصفير إجابات المراجعة لهذا الدرس فقط، مع الاحتفاظ بمجموعة الأخطاء والنجوم وسجل المحاولات ونتائج الاختبارات.`))return;
+  setQuestions(view.studySet).forEach(q=>{delete state.answers[key(q)];});
+  delete state.ui.lastQuestionBySet[view.studySet];
+  view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;
+  view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};
+  save();markGhDirty(100);buildDynamicControls();render();
+}
+
 function resetProgress(){
   const set=setDef(view.studySet);
   if(!confirm(`هل تريد تصفير تقدم ${set.label} فقط؟\nسيتم حذف إجابات المراجعة وسجل الأخطاء والنجوم والاختبار الخاص بهذه المجموعة.`))return;
   setQuestions(view.studySet).forEach(q=>{
-    const k=key(q);delete state.answers[k];delete state.stars[k];delete state.history[k];
+    const k=key(q);delete state.answers[k];delete state.stars[k];delete state.history[k];if(state.activeMistakes)delete state.activeMistakes[k];
   });
   delete state.examSessions[view.studySet];delete state.examResults[view.studySet];
   if(state.lastExamSetId===view.studySet){state.lastExamSetId="";state.examMistakeKeys=[];}
@@ -1715,9 +1744,9 @@ function applyExamHistory(session){
     };
     if(ans){
       h.attempts++;h.examAttempts++;
-      if(correct){h.correct++;h.examCorrect++;}else{h.wrong++;h.examWrong++;h.everWrong=true;}
+      if(correct){h.correct++;h.examCorrect++;removeActiveMistake(q);}else{h.wrong++;h.examWrong++;h.everWrong=true;addActiveMistake(q);}
       h.lastSelected=ans.selected;h.lastCorrect=correct;h.lastTs=Number(ans.ts)||Date.now();
-    }else{h.examUnanswered++;h.lastSelected="";h.lastCorrect=false;h.lastTs=Date.now();}
+    }else{h.examUnanswered++;h.lastSelected="";h.lastCorrect=false;h.lastTs=Date.now();addActiveMistake(q);}
     h.lastContext="exam";state.history[k]=h;
   });
 }
@@ -1831,7 +1860,7 @@ function renderProgressDashboard(){
       <div class="progressKpi"><b>${totalMistakes}</b><span>ضمن سجل الأخطاء</span></div>
       <div class="progressKpi"><b>${testsCompleted}/4</b><span>اختبارات مكتملة</span></div>
     </div>
-    <div class="recordHint">سجل الأخطاء تراكمي: السؤال يبقى معروفاً بأنه أخطأت فيه سابقاً حتى لو أجبته بشكل صحيح لاحقاً. يمكن الوصول إليه من «تدريب سجل الأخطاء».</div>
+    <div class="recordHint">سجل الأخطاء تراكمي: السؤال يبقى معروفاً بأنه أخطأت فيه سابقاً حتى لو أجبته بشكل صحيح لاحقاً. يمكن الوصول إليه من «تدريب مجموعة الأخطاء».</div>
     <div class="progressTableWrap"><table class="progressTable"><thead><tr><th>المجموعة</th><th>تقدم المراجعة</th><th>دقة المراجعة</th><th>أخطاء مسجلة</th><th>آخر موضع</th><th>الاختبار</th><th>فتح</th></tr></thead><tbody>${rows}</tbody></table></div>
     ${SETS.map(s=>renderExamHistoryBox(s.id)).join("")}
     <div class="backupRow"><button class="btn primary" id="backupProgressCardBtn">نسخة احتياطية من التقدم</button><button class="btn" id="returnToStudyBtn">العودة للمراجعة الحالية</button></div>
@@ -1954,7 +1983,7 @@ $("searchBox").addEventListener("input",e=>{view.search=e.target.value;view.inde
   ["prevBtnSide",prev],["nextBtnSide",next],["prevBtnBottom",prev],["nextBtnBottom",next],["randomBtnBottom",randomQ],["showBtnBottom",showAnswer],
   ["wrongPracticeBtn",practiceWrong],["reviewPracticeBtn",showReview],["allPracticeBtn",showAll],["examMistakePracticeBtn",startExamMistakePractice],
   ["exportExamMistakesBtn",exportExamMistakes],["startExamBtn",()=>startExam(view.examSet)],["progressDashboardBtn",showProgressDashboard],
-  ["backupProgressBtn",backupProgress],["resetProgressBtn",resetProgress]
+  ["backupProgressBtn",backupProgress],["restudySetBtn",restudyCurrentSet],["resetProgressBtn",resetProgress]
 ].forEach(([id,fn])=>{const el=$(id);if(el)el.onclick=fn;});
 $("restoreProgressInput").addEventListener("change",e=>{const file=e.target.files&&e.target.files[0];restoreProgressFile(file);e.target.value="";});
 
