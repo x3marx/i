@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788193117913,
+  "updatedAt": 1788194561066,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -1378,9 +1378,7 @@
       "form1:221": true,
       "form4:289": true
     },
-    "activeMistakes": {
-      "form3:179": true
-    },
+    "activeMistakes": {},
     "examMistakeKeys": [
       "form4:314"
     ],
@@ -5143,21 +5141,21 @@
         "lastTs": 1788192953971
       },
       "form3:179": {
-        "attempts": 2,
-        "correct": 1,
+        "attempts": 3,
+        "correct": 2,
         "wrong": 1,
-        "studyAttempts": 2,
-        "studyCorrect": 1,
+        "studyAttempts": 3,
+        "studyCorrect": 2,
         "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "A",
-        "lastCorrect": false,
+        "lastSelected": "B",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788192991410
+        "lastTs": 1788193118151
       },
       "form3:184": {
         "attempts": 2,
@@ -7815,12 +7813,12 @@
     },
     "lastExamSetId": "set3",
     "ui": {
-      "studySet": "set2",
-      "studySubgroup": "m3",
+      "studySet": "set3",
+      "studySubgroup": "all",
       "examSet": "set2",
       "lastQuestionBySet": {
         "set1": "form1:1",
-        "set3": "form4:314",
+        "set3": "form1:202",
         "set2": "form3:179",
         "set5": "form3:475"
       }
