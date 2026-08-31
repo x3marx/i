@@ -6,7 +6,7 @@ APP CHANGELOG / MAINTENANCE NOTES
 Version: 2026-08-31-subgroups-v1
 
 Additional UI update:
-- Lesson cards in "رحلة المذاكرة والاختبار" now show direct subgroup buttons (م1، م2...) with subgroup progress.
+- Lesson cards in "رحلة المذاكرة والاختبار" show compact direct subgroup buttons (م1، م2...) only; subgroup progress remains available in the button tooltip and study progress logic.
 - Clicking a subgroup button opens that subgroup directly; "فتح المراجعة" still opens the complete lesson.
 
 Purpose:
@@ -255,11 +255,15 @@ html,body,button,input,select,textarea{font-family:'Cairo',system-ui,-apple-syst
 .journeyActions .btn{min-height:38px;padding:6px 8px;font-size:.78rem;border-radius:12px}
 .journeySubgroups{display:flex;flex-wrap:wrap;gap:5px}
 .journeySubgroups .subgroupChip{
-  min-height:32px;padding:4px 8px;border-radius:10px;font-size:.74rem;
-  display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:1 1 64px
-}
-.journeySubgroups .subgroupChip span{
-  direction:ltr;unicode-bidi:isolate;font-size:.68rem;color:var(--muted);font-weight:800
+  min-height:28px;
+  min-width:42px;
+  padding:3px 8px;
+  border-radius:9px;
+  font-size:.72rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
 }
 .progressDashboard{display:grid;gap:12px}
 .progressKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -1485,7 +1489,7 @@ function renderJourney(){
     const subgroupButtons=defs.length?`<div class="journeySubgroups">${defs.map(d=>{
       const qs=subgroupQuestions(s.id,d.id),done=qs.filter(answered).length;
       const active=view.studySet===s.id&&view.studySubgroup===d.id;
-      return `<button class="btn subgroupChip ${active?"primary":""}" data-review-set="${s.id}" data-review-subgroup="${d.id}" title="${s.label} — ${d.label}">${d.label}<span>${done}/${d.size}</span></button>`;
+      return `<button class="btn subgroupChip ${active?"primary":""}" data-review-set="${s.id}" data-review-subgroup="${d.id}" title="${s.label} — ${d.label} · ${done}/${d.size}">${d.label}</button>`;
     }).join("")}</div>`:"";
     return `<div class="journeyItem">
       <div class="journeyHead"><b>${s.label} <span style="color:var(--muted)">(${s.range})</span></b><span class="journeyStatus">مراجعة ${r.done}/${r.total}</span></div>
