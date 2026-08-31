@@ -1,4 +1,41 @@
 <!doctype html>
+
+<!--
+APP CHANGELOG / MAINTENANCE NOTES
+================================
+Version: 2026-08-31-subgroups-v1
+
+Purpose:
+- Reduce study-session size without changing the lesson bank or final lesson exams.
+- Keep large lessons divided into stable study subgroups of no more than 40 questions.
+- Preserve all existing progress, active mistakes, stars, exam history, GitHub sync, and Cloudflare counter.
+
+Study subgroup design:
+- تحليل البيانات (39): no subgroup split.
+- تكنولوجيا المعلومات (162): م1=33, م2=33, م3=32, م4=32, م5=32.
+- المالية (129): م1=33, م2=32, م3=32, م4=32.
+- الهياكل والتحفيز (80): م1=40, م2=40.
+- المشاريع والتخطيط (122): م1=31, م2=31, م3=30, م4=30.
+- الاختبار التجريبي (136): no subgroup split.
+
+Rules:
+1) Subgroups affect study/review only.
+2) Final exam for each lesson still uses the complete lesson set.
+3) Subgroup assignment is deterministic based on the existing question order inside each lesson.
+4) Existing question keys are unchanged, so saved answers/history remain compatible.
+5) GitHub automatic sync interval remains 5 minutes; manual sync remains immediate.
+6) Active mistake behavior remains:
+   - wrong answer -> added to active mistakes
+   - later correct answer -> removed from active mistakes
+   - manual removal is available in active mistake mode
+7) "إعادة مذاكرة الدرس" clears study answers for the whole selected lesson, not only the current subgroup.
+8) Do not rename set IDs, question IDs, form IDs, BANK_ID, or cloud progress paths unless a migration is intentionally implemented.
+
+Maintenance warning:
+- If subgroup sizes are changed later, do not alter question keys.
+- Re-test resume, progress counts, active-mistake filtering, timer, show/hide answer, and GitHub sync after any UI change.
+-->
+
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -792,6 +829,12 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
           <option value="set6">الاختبار التجريبي — 136 سؤال</option>
         </select>
       </div>
+      <div class="field" id="subgroupField">
+        <label for="subgroupFilter">مجموعة المذاكرة</label>
+        <select id="subgroupFilter">
+          <option value="all">كامل الدرس</option>
+        </select>
+      </div>
 
       <div class="field">
         <label for="examSetFilter">اختبار الدرس</label>
@@ -1022,7 +1065,7 @@ function validateCloudPayload(payload){
 function applyCloudPayload(payload){
   validateCloudPayload(payload);
   state=prepareLoadedState(payload.state);storedStateRaw=payload.state;
-  view.studySet=state.ui.studySet;view.examSet=state.ui.examSet;view.form="all";view.lesson="all";view.mode="all";view.search="";view.index=0;view.forceShow=false;view.retry=false;view.retryKeys=[];view.retryAnswers={};view.examMistakeOrder=[];view.examMistakeOptionOrder={};view.studyOptionOrder={};view.special="";
+  view.studySet=state.ui.studySet;view.studySubgroup=state.ui.studySubgroup||"all";view.examSet=state.ui.examSet;view.form="all";view.lesson="all";view.mode="all";view.search="";view.index=0;view.forceShow=false;view.retry=false;view.retryKeys=[];view.retryAnswers={};view.examMistakeOrder=[];view.examMistakeOptionOrder={};view.studyOptionOrder={};view.special="";
   clearInterval(exam.timerId);exam={active:false,setId:"",session:null,questions:[],index:0,timerId:null};
   save();buildDynamicControls();restoreIndexForSet(view.studySet);render();
   const cloudTs=Number(payload.updatedAt)||Date.now();setGhSyncMeta(activeProfile,{dirty:false,localUpdatedAt:cloudTs,lastSyncedCloudUpdatedAt:cloudTs,lastSyncedAt:Date.now()});
@@ -1130,6 +1173,42 @@ const SETS=[
   {id:"set6",number:6,label:"الاختبار التجريبي",range:"136 سؤال",total:136}
 ];
 
+const STUDY_SUBGROUPS={
+  set1:[39],
+  set2:[33,33,32,32,32],
+  set3:[33,32,32,32],
+  set4:[40,40],
+  set5:[31,31,30,30],
+  set6:[136]
+};
+
+function subgroupDefs(setId){
+  const sizes=STUDY_SUBGROUPS[setId]||[];
+  if(sizes.length<=1)return [];
+  let start=0;
+  return sizes.map((size,i)=>{
+    const def={id:`m${i+1}`,label:`م${i+1}`,size,start,end:start+size};
+    start+=size;
+    return def;
+  });
+}
+function subgroupQuestions(setId,subgroupId){
+  const all=setQuestions(setId);
+  const defs=subgroupDefs(setId);
+  if(!defs.length||!subgroupId||subgroupId==="all")return all;
+  const def=defs.find(d=>d.id===subgroupId);
+  return def?all.slice(def.start,def.end):all;
+}
+function subgroupForQuestion(setId,q){
+  const defs=subgroupDefs(setId);
+  if(!defs.length||!q)return "all";
+  const all=setQuestions(setId);
+  const idx=all.findIndex(x=>key(x)===key(q));
+  const found=defs.find(d=>idx>=d.start&&idx<d.end);
+  return found?found.id:"all";
+}
+
+
 let QUESTIONS=EMBEDDED_QUESTIONS.map(q=>Object.assign({},q));
 let FORM_TITLE={};
 QUESTIONS.forEach(q=>{FORM_TITLE[q.form]=q.formTitle||q.form;});
@@ -1144,7 +1223,7 @@ function freshState(){
     answers:{},stars:{},activeMistakes:{},examMistakeKeys:[],
     history:{},examSessions:{},examResults:{},
     lastExamSetId:"",
-    ui:{studySet:"set1",examSet:"set1",lastQuestionBySet:{}}
+    ui:{studySet:"set1",studySubgroup:"all",examSet:"set1",lastQuestionBySet:{}}
   };
 }
 function normalizeState(raw){
@@ -1170,6 +1249,7 @@ function normalizeState(raw){
   base.ui=Object.assign(base.ui,raw.ui&&typeof raw.ui==="object"?raw.ui:{});
   if(!SETS.some(s=>s.id===base.ui.studySet))base.ui.studySet="set1";
   if(!SETS.some(s=>s.id===base.ui.examSet))base.ui.examSet=base.ui.studySet;
+  if(typeof base.ui.studySubgroup!=="string")base.ui.studySubgroup="all";
   if(!base.ui.lastQuestionBySet||typeof base.ui.lastQuestionBySet!=="object")base.ui.lastQuestionBySet={};
   base.version=STATE_VERSION;base.bankId=BANK_ID;
   return base;
@@ -1253,7 +1333,7 @@ storedStateRaw=loadedProfile.raw;
 let state=loadedProfile.state;
 
 let view={
-  studySet:state.ui.studySet,examSet:state.ui.examSet,
+  studySet:state.ui.studySet,studySubgroup:state.ui.studySubgroup||"all",examSet:state.ui.examSet,
   form:"all",lesson:"all",mode:"all",search:"",index:0,forceShow:false,
   retry:false,retryKeys:[],retryAnswers:{},
   mistakePractice:false,practiceAnswers:{},
@@ -1265,7 +1345,7 @@ let exam={active:false,setId:"",session:null,questions:[],index:0,timerId:null};
 
 function save(){
   state.version=STATE_VERSION;state.bankId=BANK_ID;
-  state.ui.studySet=view.studySet;state.ui.examSet=view.examSet;
+  state.ui.studySet=view.studySet;state.ui.studySubgroup=view.studySubgroup||"all";state.ui.examSet=view.examSet;
   try{localStorage.setItem(profileStoreKey(activeProfile),JSON.stringify(state));}catch(e){console.error("Save failed",e);}
 }
 function setText(id,val){const el=$(id);if(el)el.textContent=val;}
@@ -1288,7 +1368,7 @@ function getStudyOptions(q){const k=key(q);if(!view.studyOptionOrder[k])view.stu
 function reshuffleStudyQuestion(q){if(q&&view.studyOptionOrder)delete view.studyOptionOrder[key(q)];}
 
 function baseList(){
-  let list=setQuestions(view.studySet);
+  let list=subgroupQuestions(view.studySet,view.studySubgroup);
   if(view.form!=="all")list=list.filter(q=>q.form===view.form);
   if(view.lesson!=="all")list=list.filter(q=>(q.lesson||"")===view.lesson);
   if(view.mode==="unanswered")list=list.filter(q=>!answered(q));
@@ -1433,6 +1513,7 @@ function restoreIndexForSet(setId){
 function switchStudySet(setId){
   if(!SETS.some(s=>s.id===setId))return;
   view.studySet=setId;state.ui.studySet=setId;
+  view.studySubgroup="all";state.ui.studySubgroup="all";
   view.form="all";view.lesson="all";view.mode="all";view.search="";view.forceShow=false;view.special="";
   view.retry=false;view.retryKeys=[];view.retryAnswers={};view.studyOptionOrder={};view.examMistakeOrder=[];view.examMistakeOptionOrder={};
   view.mistakePractice=false;view.practiceAnswers={};
@@ -1455,6 +1536,22 @@ function buildDynamicControls(){
     select.innerHTML='<option value="all">كل النماذج</option>'+forms.map(f=>`<option value="${escapeHtml(f)}">${escapeHtml(FORM_TITLE[f]||f)}</option>`).join("");
     if(!forms.includes(view.form))view.form="all";
     select.value=view.form;
+  }
+  const subgroupSel=$("subgroupFilter");
+  const subgroupField=$("subgroupField");
+  if(subgroupSel){
+    const defs=subgroupDefs(view.studySet);
+    if(defs.length){
+      if(subgroupField)subgroupField.style.display="";
+      subgroupSel.innerHTML='<option value="all">كامل الدرس</option>'+defs.map(d=>`<option value="${d.id}">${d.label} — ${d.size} سؤال</option>`).join("");
+      if(!defs.some(d=>d.id===view.studySubgroup)&&view.studySubgroup!=="all")view.studySubgroup="all";
+      subgroupSel.value=view.studySubgroup||"all";
+    }else{
+      view.studySubgroup="all";
+      subgroupSel.innerHTML='<option value="all">كامل الدرس</option>';
+      subgroupSel.value="all";
+      if(subgroupField)subgroupField.style.display="none";
+    }
   }
   view.lesson="all";
   const mode=$("modeFilter");if(mode)mode.value=view.mode;
@@ -1489,7 +1586,10 @@ function renderCard(){
   const show=!!view.forceShow,metrics=cardMetrics(),set=setDef(view.studySet);
   const parts=[];
   const lessonProgress=reviewStatsForSet(view.studySet);
-  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">سؤال ${escapeHtml(q.id)}</span><span class="badge lessonProgressBadge">${escapeHtml(set.label)} <span class="progressNums">${lessonProgress.done}/${lessonProgress.total}</span></span>${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${everWrong(q)?'<span class="badge resumeBadge">ضمن سجل الأخطاء</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
+  const sgDefs=subgroupDefs(view.studySet),sg=sgDefs.find(d=>d.id===view.studySubgroup);
+  const sgList=sg?subgroupQuestions(view.studySet,view.studySubgroup):[];
+  const sgDone=sg?sgList.filter(answered).length:0;
+  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">سؤال ${escapeHtml(q.id)}</span><span class="badge lessonProgressBadge">${escapeHtml(set.label)} <span class="progressNums">${lessonProgress.done}/${lessonProgress.total}</span></span>${sg?`<span class="badge lessonProgressBadge">${sg.label} <span class="progressNums">${sgDone}/${sg.size}</span></span>`:""}${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${everWrong(q)?'<span class="badge resumeBadge">ضمن سجل الأخطاء</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
   parts.push(`<div class="timerBox" id="timerBox"><div class="timerHead"><span>مؤقت السؤال</span><span class="timerText" id="timerText">60 ثانية</span></div><div class="timerBar"><i class="timerFill" id="timerFill"></i></div></div>`);
   parts.push(`<div class="question">${escapeHtml(q.question)}</div><div class="options">`);
   const displayOptions=(view.mode==="examMistakes"&&view.examMistakeOptionOrder[k])?view.examMistakeOptionOrder[k]:getStudyOptions(q);
@@ -1590,6 +1690,7 @@ function startExamMistakePractice(){
   const f=$("modeFilter");if(f)f.value="examMistakes";render();
 }
 
+/* Restudy intentionally clears the entire selected lesson, not only the current subgroup. */
 function restudyCurrentSet(){
   const set=setDef(view.studySet);
   if(!confirm(`إعادة مذاكرة ${set.label} من البداية؟\nسيتم تصفير إجابات المراجعة لهذا الدرس فقط، مع الاحتفاظ بمجموعة الأخطاء والنجوم وسجل المحاولات ونتائج الاختبارات.`))return;
@@ -1910,6 +2011,7 @@ function switchProfile(profileId){
   state=loaded.state;
 
   view.studySet=state.ui.studySet;
+  view.studySubgroup=state.ui.studySubgroup||"all";
   view.examSet=state.ui.examSet;
   view.form="all";
   view.lesson="all";
@@ -1985,6 +2087,17 @@ $("searchBox").addEventListener("input",e=>{view.search=e.target.value;view.inde
   ["exportExamMistakesBtn",exportExamMistakes],["startExamBtn",()=>startExam(view.examSet)],["progressDashboardBtn",showProgressDashboard],
   ["backupProgressBtn",backupProgress],["restudySetBtn",restudyCurrentSet],["resetProgressBtn",resetProgress]
 ].forEach(([id,fn])=>{const el=$(id);if(el)el.onclick=fn;});
+
+const subgroupFilter=$("subgroupFilter");
+if(subgroupFilter)subgroupFilter.addEventListener("change",()=>{
+  view.studySubgroup=subgroupFilter.value||"all";
+  state.ui.studySubgroup=view.studySubgroup;
+  view.index=0;
+  view.forceShow=false;
+  view.studyOptionOrder={};
+  save();
+  render();
+});
 $("restoreProgressInput").addEventListener("change",e=>{const file=e.target.files&&e.target.files[0];restoreProgressFile(file);e.target.value="";});
 
 /* Keyboard shortcuts: displayed-position mapping is preserved after option shuffling. */
@@ -2120,3 +2233,6 @@ window.addEventListener('resize',()=>{
 </script>
 </body>
 </html>
+<style id="subgroupStudyStyles">
+#subgroupField select{font-weight:800}
+</style>
