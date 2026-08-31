@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788177622892,
+  "updatedAt": 1788178519263,
   "deviceId": "device-4us0t1ci-mtfbc1ss",
   "state": {
     "version": 4,
@@ -7847,6 +7847,7 @@
     "lastExamSetId": "set3",
     "ui": {
       "studySet": "set2",
+      "studySubgroup": "all",
       "examSet": "set2",
       "lastQuestionBySet": {
         "set1": "form1:1",
