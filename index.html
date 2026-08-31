@@ -46,6 +46,10 @@ Deferred mistake removal update (2026-08-31):
 - NEXT opens the following mistake with answer reveal OFF.
 - PREVIOUS, RANDOM, or changing mode cancels the pending removal; they never delete it silently.
 
+Question action button sizing update (2026-08-31):
+- Previous / Next / Show-Hide Answer / Review Later buttons now use consistent medium sizing.
+- The goal is visual balance with the question card without returning to oversized controls.
+
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
 - Re-test resume, progress counts, active-mistake filtering, timer, show/hide answer, and GitHub sync after any UI change.
@@ -2334,4 +2338,28 @@ window.addEventListener('resize',()=>{
 </html>
 <style id="subgroupStudyStyles">
 #subgroupField select{font-weight:800}
+</style>
+
+<style id="balancedQuestionButtons">
+.cardActions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+  align-items:center!important;
+}
+.cardActions .btn{
+  min-height:42px!important;
+  padding:8px 14px!important;
+  border-radius:12px!important;
+  font-size:.9rem!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+}
+@media(max-width:860px){
+  .cardActions .btn{
+    min-height:40px!important;
+    padding:7px 11px!important;
+    font-size:.84rem!important;
+  }
+}
 </style>
