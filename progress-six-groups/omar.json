@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788193068792,
+  "updatedAt": 1788193080992,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -1184,8 +1184,8 @@
       "form3:49": {
         "selected": "C",
         "correct": true,
-        "elapsed": 28,
-        "ts": 1788192506104
+        "elapsed": 7,
+        "ts": 1788193080593
       },
       "form3:54": {
         "selected": "B",
@@ -1366,6 +1366,12 @@
         "correct": true,
         "elapsed": 8,
         "ts": 1788193061074
+      },
+      "form4:45": {
+        "selected": "D",
+        "correct": true,
+        "elapsed": 10,
+        "ts": 1788193072293
       }
     },
     "stars": {
@@ -4698,11 +4704,11 @@
         "lastTs": 1788192390822
       },
       "form3:49": {
-        "attempts": 4,
-        "correct": 2,
+        "attempts": 5,
+        "correct": 3,
         "wrong": 2,
-        "studyAttempts": 4,
-        "studyCorrect": 2,
+        "studyAttempts": 5,
+        "studyCorrect": 3,
         "studyWrong": 2,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -4712,7 +4718,7 @@
         "lastSelected": "C",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788192506104
+        "lastTs": 1788193080593
       },
       "form3:54": {
         "attempts": 2,
@@ -5225,11 +5231,11 @@
         "lastTs": 1788193061074
       },
       "form4:45": {
-        "attempts": 1,
-        "correct": 1,
+        "attempts": 2,
+        "correct": 2,
         "wrong": 0,
-        "studyAttempts": 1,
-        "studyCorrect": 1,
+        "studyAttempts": 2,
+        "studyCorrect": 2,
         "studyWrong": 0,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -5239,7 +5245,7 @@
         "lastSelected": "D",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788173453796
+        "lastTs": 1788193072293
       },
       "form4:50": {
         "attempts": 2,
@@ -7818,7 +7824,7 @@
       "lastQuestionBySet": {
         "set1": "form1:1",
         "set3": "form4:314",
-        "set2": "form4:45",
+        "set2": "form3:49",
         "set5": "form3:475"
       }
     }
