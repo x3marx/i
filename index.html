@@ -5,6 +5,10 @@ APP CHANGELOG / MAINTENANCE NOTES
 ================================
 Version: 2026-08-31-subgroups-v1
 
+Additional UI update:
+- Lesson cards in "رحلة المذاكرة والاختبار" now show direct subgroup buttons (م1، م2...) with subgroup progress.
+- Clicking a subgroup button opens that subgroup directly; "فتح المراجعة" still opens the complete lesson.
+
 Purpose:
 - Reduce study-session size without changing the lesson bank or final lesson exams.
 - Keep large lessons divided into stable study subgroups of no more than 40 questions.
@@ -249,6 +253,14 @@ html,body,button,input,select,textarea{font-family:'Cairo',system-ui,-apple-syst
 .progressTrack i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand2),var(--brand))}
 .journeyActions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .journeyActions .btn{min-height:38px;padding:6px 8px;font-size:.78rem;border-radius:12px}
+.journeySubgroups{display:flex;flex-wrap:wrap;gap:5px}
+.journeySubgroups .subgroupChip{
+  min-height:32px;padding:4px 8px;border-radius:10px;font-size:.74rem;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:1 1 64px
+}
+.journeySubgroups .subgroupChip span{
+  direction:ltr;unicode-bidi:isolate;font-size:.68rem;color:var(--muted);font-weight:800
+}
 .progressDashboard{display:grid;gap:12px}
 .progressKpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .progressKpi{border:1px solid var(--line);background:rgba(255,255,255,.045);border-radius:17px;padding:12px;text-align:center}
@@ -1469,19 +1481,33 @@ function examStatusForSet(setId){
 function renderJourney(){
   const box=$("journeyProgress");if(!box)return;
   box.innerHTML=SETS.map(s=>{
-    const r=reviewStatsForSet(s.id),e=examStatusForSet(s.id);
+    const r=reviewStatsForSet(s.id),e=examStatusForSet(s.id),defs=subgroupDefs(s.id);
+    const subgroupButtons=defs.length?`<div class="journeySubgroups">${defs.map(d=>{
+      const qs=subgroupQuestions(s.id,d.id),done=qs.filter(answered).length;
+      const active=view.studySet===s.id&&view.studySubgroup===d.id;
+      return `<button class="btn subgroupChip ${active?"primary":""}" data-review-set="${s.id}" data-review-subgroup="${d.id}" title="${s.label} — ${d.label}">${d.label}<span>${done}/${d.size}</span></button>`;
+    }).join("")}</div>`:"";
     return `<div class="journeyItem">
       <div class="journeyHead"><b>${s.label} <span style="color:var(--muted)">(${s.range})</span></b><span class="journeyStatus">مراجعة ${r.done}/${r.total}</span></div>
       <div class="progressTrack"><i style="width:${pct(r.done,r.total)}%"></i></div>
+      ${subgroupButtons}
       <div class="journeyHead"><span class="journeyStatus">الاختبار ${e.text}</span><span class="journeyStatus">${r.accuracy}% دقة المراجعة</span></div>
       ${renderExamTrendInline(s.id)}
       <div class="journeyActions">
-        <button class="btn ${view.studySet===s.id?"primary":""}" data-review-set="${s.id}">فتح المراجعة</button>
+        <button class="btn ${view.studySet===s.id&&view.studySubgroup==="all"?"primary":""}" data-review-set="${s.id}" data-review-subgroup="all">فتح المراجعة</button>
         <button class="btn ${e.kind==="progress"?"warn":""}" data-exam-set="${s.id}">${e.kind==="progress"?"استئناف الاختبار":"فتح الاختبار"}</button>
       </div>
     </div>`;
   }).join("");
-  box.querySelectorAll("[data-review-set]").forEach(b=>b.onclick=()=>switchStudySet(b.dataset.reviewSet));
+  box.querySelectorAll("[data-review-set]").forEach(b=>b.onclick=()=>{
+    const setId=b.dataset.reviewSet,subgroupId=b.dataset.reviewSubgroup||"all";
+    switchStudySet(setId);
+    view.studySubgroup=subgroupId;
+    state.ui.studySubgroup=subgroupId;
+    view.index=0;view.forceShow=false;view.studyOptionOrder={};
+    const subgroupSel=$("subgroupFilter");if(subgroupSel)subgroupSel.value=subgroupId;
+    save();render();
+  });
   box.querySelectorAll("[data-exam-set]").forEach(b=>b.onclick=()=>{view.examSet=b.dataset.examSet;state.ui.examSet=view.examSet;const sel=$("examSetFilter");if(sel)sel.value=view.examSet;save();startExam(view.examSet);});
 }
 
