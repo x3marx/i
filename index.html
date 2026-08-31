@@ -40,6 +40,12 @@ Mistake-practice correction (2026-08-31):
 - A correct retry removes the question from active mistakes but preserves the original study record/history.
 - After a correct retry, the next mistake opens with answer reveal OFF to prevent accidental highlighting.
 
+Deferred mistake removal update (2026-08-31):
+- A correct retry in the active-mistake group stays visible on the current question.
+- The question is removed from active mistakes only when NEXT is pressed.
+- NEXT opens the following mistake with answer reveal OFF.
+- PREVIOUS, RANDOM, or changing mode cancels the pending removal; they never delete it silently.
+
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
 - Re-test resume, progress counts, active-mistake filtering, timer, show/hide answer, and GitHub sync after any UI change.
@@ -1357,7 +1363,7 @@ let view={
   studySet:state.ui.studySet,studySubgroup:state.ui.studySubgroup||"all",examSet:state.ui.examSet,
   form:"all",lesson:"all",mode:"all",search:"",index:0,forceShow:false,
   retry:false,retryKeys:[],retryAnswers:{},
-  mistakePractice:false,practiceAnswers:{},
+  mistakePractice:false,practiceAnswers:{},pendingMistakeRemovalKey:"",
   examMistakeOrder:[],examMistakeOptionOrder:{},studyOptionOrder:{},
   timerKey:"",timerLeft:60,timerId:null,
   special:""
@@ -1551,7 +1557,7 @@ function switchStudySet(setId){
   view.studySubgroup="all";state.ui.studySubgroup="all";
   view.form="all";view.lesson="all";view.mode="all";view.search="";view.forceShow=false;view.special="";
   view.retry=false;view.retryKeys=[];view.retryAnswers={};view.studyOptionOrder={};view.examMistakeOrder=[];view.examMistakeOptionOrder={};
-  view.mistakePractice=false;view.practiceAnswers={};
+  view.mistakePractice=false;view.practiceAnswers={};view.pendingMistakeRemovalKey="";
   buildDynamicControls();restoreIndexForSet(setId);save();markGhDirty(4000);render();
 }
 
@@ -1624,7 +1630,7 @@ function renderCard(){
   const sgDefs=subgroupDefs(view.studySet),sg=sgDefs.find(d=>d.id===view.studySubgroup);
   const sgList=sg?subgroupQuestions(view.studySet,view.studySubgroup):[];
   const sgDone=sg?sgList.filter(answered).length:0;
-  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">سؤال ${escapeHtml(q.id)}</span><span class="badge lessonProgressBadge">${escapeHtml(set.label)} <span class="progressNums">${lessonProgress.done}/${lessonProgress.total}</span></span>${sg?`<span class="badge lessonProgressBadge">${sg.label} <span class="progressNums">${sgDone}/${sg.size}</span></span>`:""}${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${everWrong(q)?'<span class="badge resumeBadge">ضمن سجل الأخطاء</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
+  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">سؤال ${escapeHtml(q.id)}</span><span class="badge lessonProgressBadge">${escapeHtml(set.label)} <span class="progressNums">${lessonProgress.done}/${lessonProgress.total}</span></span>${sg?`<span class="badge lessonProgressBadge">${sg.label} <span class="progressNums">${sgDone}/${sg.size}</span></span>`:""}${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${everWrong(q)?'<span class="badge resumeBadge">ضمن سجل الأخطاء</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}${view.pendingMistakeRemovalKey===k?'<span class="badge good">إجابة صحيحة — اضغط التالي لاعتمادها وإزالتها من الأخطاء</span>':""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
   parts.push(`<div class="timerBox" id="timerBox"><div class="timerHead"><span>مؤقت السؤال</span><span class="timerText" id="timerText">60 ثانية</span></div><div class="timerBar"><i class="timerFill" id="timerFill"></i></div></div>`);
   parts.push(`<div class="question">${escapeHtml(q.question)}</div><div class="options">`);
   const displayOptions=(view.mode==="examMistakes"&&view.examMistakeOptionOrder[k])?view.examMistakeOptionOrder[k]:getStudyOptions(q);
@@ -1692,18 +1698,15 @@ function pick(selected){
     /* Mistake training is a separate retry:
        do not overwrite the original study answer/progress. */
     view.practiceAnswers[key(q)]=record;
-    if(correct)removeActiveMistake(q);else addActiveMistake(q);
     updateHistoryStudy(q,selected,correct,ts);
 
     if(correct){
-      /* The solved item leaves the active-mistake pool immediately.
-         Reset reveal state before rendering the next remaining mistake,
-         so the next question never inherits the previous answer reveal. */
-      view.forceShow=false;
-      const remaining=currentList();
-      if(view.index>=remaining.length)view.index=Math.max(0,remaining.length-1);
-      save();markGhDirty();render();
-      return;
+      /* Keep this solved mistake visible now.
+         Remove it only when the user explicitly presses NEXT. */
+      view.pendingMistakeRemovalKey=key(q);
+    }else{
+      view.pendingMistakeRemovalKey="";
+      addActiveMistake(q);
     }
 
     view.forceShow=true;
@@ -1718,9 +1721,46 @@ function pick(selected){
 }
 function showAnswer(){if(exam.active){alert("الإجابات الصحيحة تظهر بعد انتهاء الاختبار فقط.");return;}view.forceShow=!view.forceShow;render();}
 function toggleStar(){const q=current();if(!q)return;const k=key(q);state.stars[k]?delete state.stars[k]:state.stars[k]=true;save();markGhDirty();render();}
-function next(){if(exam.active){examNext();return;}const list=currentList();if(!list.length)return;view.index=(view.index+1)%list.length;view.forceShow=false;reshuffleStudyQuestion(list[view.index]);rememberCurrent(list[view.index]);markGhDirty(5000);render();}
-function prev(){if(exam.active){examPrev();return;}const list=currentList();if(!list.length)return;view.index=(view.index-1+list.length)%list.length;view.forceShow=false;reshuffleStudyQuestion(list[view.index]);rememberCurrent(list[view.index]);markGhDirty(5000);render();}
-function randomQ(){if(exam.active)return;const list=currentList();if(!list.length)return;view.index=Math.floor(Math.random()*list.length);view.forceShow=false;reshuffleStudyQuestion(list[view.index]);rememberCurrent(list[view.index]);markGhDirty(5000);render();}
+function next(){
+  if(exam.active){examNext();return;}
+  const listBefore=currentList();if(!listBefore.length)return;
+  const currentQ=current();
+  const inMistakeRun=view.mistakePractice&&(view.mode==="historyMistakes"||view.mode==="examMistakes");
+
+  if(inMistakeRun&&currentQ&&view.pendingMistakeRemovalKey===key(currentQ)){
+    removeActiveMistake(currentQ);
+    delete view.practiceAnswers[key(currentQ)];
+    view.pendingMistakeRemovalKey="";
+    save();markGhDirty();
+
+    const remaining=currentList();
+    view.forceShow=false;
+    if(!remaining.length){
+      view.index=0;
+      render();
+      return;
+    }
+
+    /* Because the solved question was removed, the same index now points
+       to the next remaining mistake. Wrap to zero if it was the last item. */
+    if(view.index>=remaining.length)view.index=0;
+    reshuffleStudyQuestion(remaining[view.index]);
+    rememberCurrent(remaining[view.index]);
+    render();
+    return;
+  }
+
+  const list=currentList();if(!list.length)return;
+  view.pendingMistakeRemovalKey="";
+  view.index=(view.index+1)%list.length;
+  view.forceShow=false;
+  reshuffleStudyQuestion(list[view.index]);
+  rememberCurrent(list[view.index]);
+  markGhDirty(5000);
+  render();
+}
+function prev(){if(exam.active){examPrev();return;}const list=currentList();if(!list.length)return;view.pendingMistakeRemovalKey="";view.index=(view.index-1+list.length)%list.length;view.forceShow=false;reshuffleStudyQuestion(list[view.index]);rememberCurrent(list[view.index]);markGhDirty(5000);render();}
+function randomQ(){if(exam.active)return;const list=currentList();if(!list.length)return;view.pendingMistakeRemovalKey="";view.index=Math.floor(Math.random()*list.length);view.forceShow=false;reshuffleStudyQuestion(list[view.index]);rememberCurrent(list[view.index]);markGhDirty(5000);render();}
 
 function setMode(mode){
   view.mode=mode;view.index=0;view.forceShow=false;view.special="";
@@ -1732,7 +1772,7 @@ function setMode(mode){
 function practiceWrong(){
   view.mode="historyMistakes";view.index=0;view.forceShow=false;view.special="";
   view.retry=false;view.retryKeys=[];view.retryAnswers={};view.studyOptionOrder={};
-  view.mistakePractice=true;view.practiceAnswers={};view.examMistakeOrder=[];view.examMistakeOptionOrder={};
+  view.mistakePractice=true;view.practiceAnswers={};view.pendingMistakeRemovalKey="";view.examMistakeOrder=[];view.examMistakeOptionOrder={};
   const f=$("modeFilter");if(f)f.value="historyMistakes";render();
 }
 function showReview(){setMode("starred");}
@@ -1743,7 +1783,7 @@ function startExamMistakePractice(){
   const setId=state.lastExamSetId&&SETS.some(s=>s.id===state.lastExamSetId)?state.lastExamSetId:QUESTION_BY_KEY.get(keys[0])?.setId;
   if(setId)switchStudySet(setId);
   view.mode="examMistakes";view.index=0;view.forceShow=false;view.special="";view.studyOptionOrder={};
-  view.mistakePractice=true;view.practiceAnswers={};
+  view.mistakePractice=true;view.practiceAnswers={};view.pendingMistakeRemovalKey="";
   view.examMistakeOrder=shuffleArray(keys);view.examMistakeOptionOrder={};
   keys.forEach(k=>{const q=QUESTION_BY_KEY.get(k);if(q)view.examMistakeOptionOrder[k]=shuffleArray(q.options);});
   const f=$("modeFilter");if(f)f.value="examMistakes";render();
