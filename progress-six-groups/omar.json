@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788175429389,
+  "updatedAt": 1788177161763,
   "deviceId": "device-4us0t1ci-mtfbc1ss",
   "state": {
     "version": 4,
@@ -1558,11 +1558,53 @@
         "correct": false,
         "elapsed": 60,
         "ts": 1788175398775
+      },
+      "form4:180": {
+        "selected": "C",
+        "correct": true,
+        "elapsed": 34,
+        "ts": 1788177151704
       }
     },
     "stars": {
       "form1:221": true,
       "form4:289": true
+    },
+    "activeMistakes": {
+      "form1:72": true,
+      "form1:82": true,
+      "form1:87": true,
+      "form1:92": true,
+      "form1:117": true,
+      "form1:127": true,
+      "form1:152": true,
+      "form1:172": true,
+      "form1:187": true,
+      "form2:58": true,
+      "form2:73": true,
+      "form2:103": true,
+      "form2:153": true,
+      "form2:163": true,
+      "form2:168": true,
+      "form3:49": true,
+      "form3:74": true,
+      "form3:89": true,
+      "form3:139": true,
+      "form3:149": true,
+      "form3:154": true,
+      "form3:174": true,
+      "form3:199": true,
+      "form4:50": true,
+      "form4:65": true,
+      "form4:85": true,
+      "form4:100": true,
+      "form4:105": true,
+      "form4:110": true,
+      "form4:115": true,
+      "form4:125": true,
+      "form4:145": true,
+      "form4:155": true,
+      "form4:175": true
     },
     "examMistakeKeys": [
       "form4:314"
@@ -5953,6 +5995,23 @@
         "lastCorrect": false,
         "lastContext": "study",
         "lastTs": 1788175398775
+      },
+      "form4:180": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "C",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1788177151704
       }
     },
     "examSessions": {
@@ -7442,7 +7501,7 @@
       "lastQuestionBySet": {
         "set1": "form1:1",
         "set3": "form4:314",
-        "set2": "form4:180"
+        "set2": "form4:185"
       }
     }
   }
