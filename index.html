@@ -9,8 +9,8 @@
 (function(){
   try{
     const savedTheme=localStorage.getItem("arabic_test_bank_all_forms_v2_theme");
-    document.documentElement.dataset.theme=savedTheme==="light"?"light":"dark";
-  }catch(e){document.documentElement.dataset.theme="dark";}
+    document.documentElement.dataset.theme=savedTheme==="dark"?"dark":"light";
+  }catch(e){document.documentElement.dataset.theme="light";}
 })();
 </script>
 
@@ -231,6 +231,61 @@ html,body,button,input,select,textarea{font-family:'Cairo',system-ui,-apple-syst
 .backupRow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media(max-width:860px){.progressKpis{grid-template-columns:1fr 1fr}.backupRow{grid-template-columns:1fr}.journeyActions{grid-template-columns:1fr 1fr}}
 @media(max-width:430px){.progressKpis{grid-template-columns:1fr 1fr}.journeyActions{grid-template-columns:1fr}}
+
+
+/* Reading focus controls */
+.readerToggle,.focusToggle{
+  position:fixed;top:14px;z-index:20;width:42px;height:42px;min-height:42px;padding:0;
+  border:1px solid var(--line);border-radius:50%;background:rgba(18,26,44,.90);color:var(--text);
+  box-shadow:0 8px 24px rgba(0,0,0,.22);backdrop-filter:blur(14px);
+  display:flex;align-items:center;justify-content:center;font-weight:900;
+  transition:transform .15s,border-color .15s,background .2s,color .2s
+}
+.readerToggle{left:62px;font-family:Arial,sans-serif!important}
+.focusToggle{left:110px}
+.readerToggle.active,.focusToggle.active{
+  border-color:var(--brand2);background:rgba(2,132,199,.12);color:var(--brand2)
+}
+html[data-theme="light"] .readerToggle,html[data-theme="light"] .focusToggle{
+  background:rgba(255,255,255,.96);color:#172033;box-shadow:0 8px 24px rgba(15,23,42,.12)
+}
+.stickyQuestionNav{
+  position:sticky;bottom:10px;z-index:6;display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  padding:9px;border:1px solid var(--line);border-radius:16px;background:rgba(11,16,32,.90);
+  backdrop-filter:blur(14px);box-shadow:0 10px 28px rgba(0,0,0,.18)
+}
+html[data-theme="light"] .stickyQuestionNav{
+  background:rgba(255,255,255,.96);box-shadow:0 10px 28px rgba(15,23,42,.10)
+}
+body.focusQuestions .grid{grid-template-columns:92px 1fr}
+body.focusQuestions .panel{padding:8px;overflow:hidden}
+body.focusQuestions .panel details{display:none!important}
+body.focusQuestions .panel::before{
+  content:"رحلة المذاكرة";display:block;writing-mode:vertical-rl;transform:rotate(180deg);
+  margin:auto;color:var(--muted);font-weight:900
+}
+body.readerStrong .question{font-weight:900!important}
+body.readerStrong .option,
+body.readerStrong .answerExplanation,
+body.readerStrong .feedback,
+body.readerStrong .examMistakeQuestion,
+body.readerStrong .examAnswerLine{font-weight:800!important}
+html[data-theme="light"] .option{color:#111827!important}
+html[data-theme="light"] .answerExplanation{color:#111827!important}
+html[data-theme="light"] .feedback{color:#1f2937!important}
+html[data-theme="light"] label,
+html[data-theme="light"] .journeyStatus,
+html[data-theme="light"] .specialSub,
+html[data-theme="light"] .examNavHint,
+html[data-theme="light"] .progressKpi span,
+html[data-theme="light"] .stat span,
+html[data-theme="light"] .metricChip .label{color:#4b5563!important}
+@media(max-width:860px){
+  .readerToggle{left:56px;top:calc(8px + env(safe-area-inset-top));width:38px;height:38px;min-height:38px}
+  .focusToggle{left:100px;top:calc(8px + env(safe-area-inset-top));width:38px;height:38px;min-height:38px}
+  .stickyQuestionNav{bottom:calc(74px + env(safe-area-inset-bottom))}
+  body.focusQuestions .panel{display:none!important}
+}
 
 /* Dark / light theme toggle */
 .themeToggle{
@@ -662,6 +717,8 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
   </div>
 </div>
 <button class="themeToggle" id="themeToggle" type="button" aria-label="تبديل الوضع الفاتح والداكن" title="تبديل الوضع الفاتح والداكن">☀️</button>
+<button class="readerToggle" id="readerToggle" type="button" aria-label="تقوية الخط" title="تقوية الخط">B</button>
+<button class="focusToggle" id="focusToggle" type="button" aria-label="تكبير منطقة الأسئلة" title="تكبير منطقة الأسئلة">⛶</button>
 <div class="app">
   <header class="hero">
     <div class="box compactHero">
@@ -765,6 +822,10 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
 
     <div class="questionColumn">
       <section id="quizCard" class="card"></section>
+      <div class="stickyQuestionNav" id="stickyQuestionNav">
+        <button class="btn" id="prevStickyBtn" type="button">السابق</button>
+        <button class="btn primary" id="nextStickyBtn" type="button">التالي</button>
+      </div>
       <footer class="siteFooter">
         <div class="siteFooterOwner">هذا البرنامج صناعة أبوقصي</div>
         <div><a class="siteFooterMail" href="mailto:3moory@gmail.com">3moory@gmail.com</a></div>
@@ -1374,7 +1435,7 @@ function renderCard(){
   const ans=inMistakePractice?(view.practiceAnswers[k]||null):state.answers[k];
   const show=view.forceShow||!!ans,metrics=cardMetrics(),set=setDef(view.studySet);
   const parts=[];
-  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">${set.label} — ${set.range}</span><span class="badge">${escapeHtml(FORM_TITLE[q.form]||q.form)}</span><span class="badge">سؤال ${escapeHtml(q.id)}</span>${q.lesson?`<span class="badge">${escapeHtml(q.lesson)}</span>`:""}${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${everWrong(q)?'<span class="badge resumeBadge">ضمن سجل الأخطاء</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
+  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">${escapeHtml(FORM_TITLE[q.form]||q.form)}</span><span class="badge">سؤال ${escapeHtml(q.id)}</span>${q.lesson?`<span class="badge">${escapeHtml(q.lesson)}</span>`:""}${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${everWrong(q)?'<span class="badge resumeBadge">ضمن سجل الأخطاء</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
   parts.push(`<div class="timerBox" id="timerBox"><div class="timerHead"><span>مؤقت السؤال</span><span class="timerText" id="timerText">60 ثانية</span></div><div class="timerBar"><i class="timerFill" id="timerFill"></i></div></div>`);
   parts.push(`<div class="question">${escapeHtml(q.question)}</div><div class="options">`);
   const displayOptions=(view.mode==="examMistakes"&&view.examMistakeOptionOrder[k])?view.examMistakeOptionOrder[k]:getStudyOptions(q);
@@ -1535,7 +1596,7 @@ function renderExamCard(){
   const k=key(q),selected=exam.session.answers[k]?.selected,set=setDef(exam.setId),reviewCount=Object.keys(exam.session.review||{}).length;
   const parts=[];
   parts.push(`<div class="examTop"><div class="examHeaderLine"><div class="examProgress">الاختبار النهائي ${set.number} — <b>${exam.index+1}</b> / ${exam.questions.length}</div><div class="examTimer" id="examTimer">⏱ ${secondsToClock(exam.session.remaining)}</div></div><div class="examNavHint">الترتيب عشوائي داخل هذه المجموعة فقط. يمكنك إيقاف الاختبار مؤقتاً واستئنافه لاحقاً، ولن تظهر الإجابة الصحيحة قبل الإنهاء.</div></div>`);
-  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">${set.label} — ${set.range}</span><span class="badge">${escapeHtml(FORM_TITLE[q.form]||q.form)}</span><span class="badge">سؤال البنك ${escapeHtml(q.id)}</span>${q.lesson?`<span class="badge">${escapeHtml(q.lesson)}</span>`:""}${exam.session.review[k]?'<span class="badge good">للمراجعة لاحقاً</span>':""}</div></div>`);
+  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">${escapeHtml(FORM_TITLE[q.form]||q.form)}</span><span class="badge">سؤال البنك ${escapeHtml(q.id)}</span>${q.lesson?`<span class="badge">${escapeHtml(q.lesson)}</span>`:""}${exam.session.review[k]?'<span class="badge good">للمراجعة لاحقاً</span>':""}</div></div>`);
   parts.push(`<div class="question">${escapeHtml(q.question)}</div><div class="options">`);
   examDisplayOptions(q).forEach((o,optionIndex)=>{let cls="option examOption"+(selected===o.key?" selected":"");parts.push(`<button class="${cls}" data-exam-pick="${o.key}"><span class="letter">${fixedOptionLetter(optionIndex)}</span><span>${escapeHtml(o.text)}</span></button>`);});
   parts.push(`</div><div class="examActions"><button class="btn" id="examPrevBtn">السابق</button><button class="btn primary" id="examNextBtn">التالي</button><button class="btn warn ${exam.session.review[k]?"examReviewFlag":""}" id="examReviewBtn">${exam.session.review[k]?"إزالة المراجعة":"مراجعة لاحقاً"}</button><button class="btn examReviewJump" id="examNextReviewBtn">الانتقال للمراجعة التالية (${reviewCount})</button><button class="btn warn" id="examPauseBtn">إيقاف مؤقت وحفظ</button><button class="btn bad" id="examFinishBtn">إنهاء الاختبار</button></div>`);
@@ -1802,6 +1863,8 @@ function switchProfile(profileId){
 }
 
 const THEME_KEY=BASE_STORE_KEY+"_theme";
+const READER_STRONG_KEY=BASE_STORE_KEY+"_reader_strong";
+const FOCUS_QUESTIONS_KEY=BASE_STORE_KEY+"_focus_questions";
 function currentTheme(){return document.documentElement.dataset.theme==="light"?"light":"dark";}
 function updateThemeToggle(){
   const btn=$("themeToggle");if(!btn)return;
@@ -1892,10 +1955,52 @@ if(profileSyncBtn){
 }
 const compactUseCloudBtn=$("compactUseCloudBtn");if(compactUseCloudBtn)compactUseCloudBtn.onclick=forceUseCloud;
 const compactUseDeviceBtn=$("compactUseDeviceBtn");if(compactUseDeviceBtn)compactUseDeviceBtn.onclick=forceUseDevice;
+const prevStickyBtn=$("prevStickyBtn");if(prevStickyBtn)prevStickyBtn.onclick=prev;
+const nextStickyBtn=$("nextStickyBtn");if(nextStickyBtn)nextStickyBtn.onclick=next;
 
 const themeBtn=$("themeToggle");if(themeBtn)themeBtn.onclick=toggleTheme;
+
+const readerBtn=$("readerToggle");
+if(readerBtn)readerBtn.onclick=()=>{
+  const active=!document.body.classList.contains("readerStrong");
+  document.body.classList.toggle("readerStrong",active);
+  readerBtn.classList.toggle("active",active);
+  try{localStorage.setItem(READER_STRONG_KEY,active?"1":"0");}catch(e){}
+};
+
+const focusBtn=$("focusToggle");
+if(focusBtn)focusBtn.onclick=()=>{
+  const active=!document.body.classList.contains("focusQuestions");
+  document.body.classList.toggle("focusQuestions",active);
+  focusBtn.classList.toggle("active",active);
+  focusBtn.textContent=active?"↙":"⛶";
+  focusBtn.title=active?"إرجاع رحلة المذاكرة":"تكبير منطقة الأسئلة";
+  try{localStorage.setItem(FOCUS_QUESTIONS_KEY,active?"1":"0");}catch(e){}
+};
+
 applyTheme(currentTheme(),false);
 save();
+try{
+  const strong=localStorage.getItem(READER_STRONG_KEY)==="1";
+  const focus=localStorage.getItem(FOCUS_QUESTIONS_KEY)==="1";
+  document.body.classList.toggle("readerStrong",strong);
+  document.body.classList.toggle("focusQuestions",focus);
+  $("readerToggle")?.classList.toggle("active",strong);
+  $("focusToggle")?.classList.toggle("active",focus);
+  if($("focusToggle")){
+    $("focusToggle").textContent=focus?"↙":"⛶";
+    $("focusToggle").title=focus?"إرجاع رحلة المذاكرة":"تكبير منطقة الأسئلة";
+  }
+}catch(e){}
+
+document.addEventListener("keydown",e=>{
+  const tag=(e.target?.tagName||"").toLowerCase();
+  const editable=e.target?.isContentEditable||tag==="input"||tag==="textarea"||tag==="select";
+  if(editable||e.altKey||e.ctrlKey||e.metaKey)return;
+  if(e.key==="ArrowLeft"){e.preventDefault();next();}
+  else if(e.key==="ArrowRight"){e.preventDefault();prev();}
+});
+
 render();
 updateGhStatus();
 const initialGhSettings=loadGhSettings();
