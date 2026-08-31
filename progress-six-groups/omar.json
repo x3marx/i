@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788198886824,
+  "updatedAt": 1788198899533,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -1134,10 +1134,10 @@
         "ts": 1788198879495
       },
       "form2:168": {
-        "selected": "A",
+        "selected": "C",
         "correct": false,
-        "elapsed": 41,
-        "ts": 1788192282585
+        "elapsed": 14,
+        "ts": 1788198894521
       },
       "form2:173": {
         "selected": "B",
@@ -1378,7 +1378,9 @@
       "form1:221": true,
       "form4:289": true
     },
-    "activeMistakes": {},
+    "activeMistakes": {
+      "form2:168": true
+    },
     "examMistakeKeys": [
       "form4:314"
     ],
@@ -4563,21 +4565,21 @@
         "lastTs": 1788198879495
       },
       "form2:168": {
-        "attempts": 4,
+        "attempts": 5,
         "correct": 2,
-        "wrong": 2,
-        "studyAttempts": 4,
+        "wrong": 3,
+        "studyAttempts": 5,
         "studyCorrect": 2,
-        "studyWrong": 2,
+        "studyWrong": 3,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "B",
-        "lastCorrect": true,
+        "lastSelected": "C",
+        "lastCorrect": false,
         "lastContext": "study",
-        "lastTs": 1788192444300
+        "lastTs": 1788198894521
       },
       "form2:173": {
         "attempts": 2,
