@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788192146460,
+  "updatedAt": 1788192171796,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -1102,13 +1102,27 @@
         "correct": true,
         "elapsed": 12,
         "ts": 1788192139235
+      },
+      "form2:143": {
+        "selected": "B",
+        "correct": true,
+        "elapsed": 6,
+        "ts": 1788192146474
+      },
+      "form2:148": {
+        "selected": "C",
+        "correct": false,
+        "elapsed": 16,
+        "ts": 1788192163003
       }
     },
     "stars": {
       "form1:221": true,
       "form4:289": true
     },
-    "activeMistakes": {},
+    "activeMistakes": {
+      "form2:148": true
+    },
     "examMistakeKeys": [
       "form4:314"
     ],
@@ -4208,11 +4222,11 @@
         "lastTs": 1788192139235
       },
       "form2:143": {
-        "attempts": 1,
-        "correct": 1,
+        "attempts": 2,
+        "correct": 2,
         "wrong": 0,
-        "studyAttempts": 1,
-        "studyCorrect": 1,
+        "studyAttempts": 2,
+        "studyCorrect": 2,
         "studyWrong": 0,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -4222,24 +4236,24 @@
         "lastSelected": "B",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788165657397
+        "lastTs": 1788192146474
       },
       "form2:148": {
-        "attempts": 1,
+        "attempts": 2,
         "correct": 1,
-        "wrong": 0,
-        "studyAttempts": 1,
+        "wrong": 1,
+        "studyAttempts": 2,
         "studyCorrect": 1,
-        "studyWrong": 0,
+        "studyWrong": 1,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
-        "everWrong": false,
-        "lastSelected": "A",
-        "lastCorrect": true,
+        "everWrong": true,
+        "lastSelected": "C",
+        "lastCorrect": false,
         "lastContext": "study",
-        "lastTs": 1788165672881
+        "lastTs": 1788192163003
       },
       "form2:153": {
         "attempts": 2,
@@ -7549,7 +7563,7 @@
       "lastQuestionBySet": {
         "set1": "form1:1",
         "set3": "form4:314",
-        "set2": "form2:143"
+        "set2": "form2:153"
       }
     }
   }
