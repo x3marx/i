@@ -80,6 +80,12 @@ TIMEZONE DISPLAY UPDATE (2026-09-01)
 - Backup JSON now also includes exportedAtRiyadh and timeZone while retaining exportedAt ISO UTC.
 - Backup filenames use the Riyadh calendar date.
 
+Keyboard navigation update (2026-09-01, Asia/Riyadh):
+- Enter moves to the next question.
+- Backspace moves to the previous question and is prevented from opening browser history.
+- Existing ArrowLeft/ArrowRight navigation is preserved.
+- Removed the duplicate arrow-key listener so one key press triggers exactly one navigation action.
+
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
 - Re-test resume, progress counts, active-mistake filtering, timer, show/hide answer, and GitHub sync after any UI change.
@@ -2345,18 +2351,42 @@ if(subgroupFilter)subgroupFilter.addEventListener("change",()=>{
 });
 $("restoreProgressInput").addEventListener("change",e=>{const file=e.target.files&&e.target.files[0];restoreProgressFile(file);e.target.value="";});
 
-/* Keyboard shortcuts: displayed-position mapping is preserved after option shuffling. */
+/* Keyboard shortcuts: one authoritative handler only.
+   Navigation: Enter / ArrowLeft = next, Backspace / ArrowRight = previous.
+   Backspace is prevented from triggering browser-history navigation.
+   Shortcuts are disabled while typing in editable fields. */
 document.addEventListener("keydown",e=>{
-  const active=document.activeElement;if(active&&["INPUT","SELECT","TEXTAREA"].includes(active.tagName))return;
-  if(e.key==="ArrowRight"){e.preventDefault();prev();return;}
-  if(e.key==="ArrowLeft"){e.preventDefault();next();return;}
-  if(e.key===" "){e.preventDefault();showAnswer();return;}
+  const target=e.target;
+  const tag=(target?.tagName||"").toUpperCase();
+  const editable=target?.isContentEditable||["INPUT","SELECT","TEXTAREA"].includes(tag);
+  if(editable||e.altKey||e.ctrlKey||e.metaKey)return;
+
+  if(e.key==="Enter"||e.key==="ArrowLeft"){
+    e.preventDefault();
+    next();
+    return;
+  }
+  if(e.key==="Backspace"||e.key==="ArrowRight"){
+    e.preventDefault();
+    prev();
+    return;
+  }
+  if(e.key===" "){
+    e.preventDefault();
+    showAnswer();
+    return;
+  }
+
   const pressed=String(e.key||"").toLowerCase();
   const indexMap={"1":0,"a":0,"أ":0,"ا":0,"2":1,"b":1,"ب":1,"3":2,"c":2,"ج":2,"4":3,"d":3,"د":3};
-  const optionIndex=indexMap[pressed]??indexMap[e.key];if(optionIndex===undefined)return;e.preventDefault();
+  const optionIndex=indexMap[pressed]??indexMap[e.key];
+  if(optionIndex===undefined)return;
+
+  e.preventDefault();
   if(exam.active){
     const visible=[...document.querySelectorAll("#quizCard [data-exam-pick]")],btn=visible[optionIndex];
-    if(btn&&!btn.classList.contains("eliminated"))examPick(btn.dataset.examPick);return;
+    if(btn&&!btn.classList.contains("eliminated"))examPick(btn.dataset.examPick);
+    return;
   }
   const visible=[...document.querySelectorAll("#quizCard [data-pick]")],btn=visible[optionIndex];
   if(btn&&!btn.classList.contains("eliminated"))pick(btn.dataset.pick);
@@ -2421,14 +2451,6 @@ try{
     $("focusToggle").title=focus?"إرجاع رحلة المذاكرة":"تكبير منطقة الأسئلة";
   }
 }catch(e){}
-
-document.addEventListener("keydown",e=>{
-  const tag=(e.target?.tagName||"").toLowerCase();
-  const editable=e.target?.isContentEditable||tag==="input"||tag==="textarea"||tag==="select";
-  if(editable||e.altKey||e.ctrlKey||e.metaKey)return;
-  if(e.key==="ArrowLeft"){e.preventDefault();next();}
-  else if(e.key==="ArrowRight"){e.preventDefault();prev();}
-});
 
 render();
 updateGhStatus();
