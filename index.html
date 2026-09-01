@@ -3,7 +3,7 @@
 <!--
 APP CHANGELOG / MAINTENANCE NOTES
 ================================
-Current Version: 2026-09-02-unified-mistakes-v1
+Current Version: 2026-09-02-mock-subgroups-v1
 Timezone Policy: All user-visible dates/times use Asia/Riyadh (Saudi Arabia, UTC+3). Internal timestamps remain epoch/ISO for safe sync and comparisons.
 
 CHANGE HISTORY
@@ -94,6 +94,11 @@ Unified mistake-state update (2026-09-02, Asia/Riyadh):
 - Exam-mistake training matches study-mistake training: correct stays visible and is removed on NEXT.
 - Exam mistakes can be removed manually from training and post-exam review.
 - Removing an exam mistake never edits saved exam-result history.
+
+Mock-exam study subgroup update (2026-09-02, Asia/Riyadh):
+- The 136-question mock-exam lesson is now split into four equal study subgroups: 34 / 34 / 34 / 34.
+- This changes study/review navigation only.
+- The final mock exam still uses the full lesson question set and remains 136 questions.
 
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
@@ -1281,7 +1286,7 @@ const STUDY_SUBGROUPS={
   set3:[33,32,32,32],
   set4:[40,40],
   set5:[31,31,30,30],
-  set6:[136]
+  set6:[34,34,34,34]
 };
 
 function subgroupDefs(setId){
