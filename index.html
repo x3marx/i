@@ -3,7 +3,7 @@
 <!--
 APP CHANGELOG / MAINTENANCE NOTES
 ================================
-Current Version: 2026-09-01-reset-sync-guard-v1
+Current Version: 2026-09-02-unified-mistakes-v1
 Timezone Policy: All user-visible dates/times use Asia/Riyadh (Saudi Arabia, UTC+3). Internal timestamps remain epoch/ISO for safe sync and comparisons.
 
 CHANGE HISTORY
@@ -85,6 +85,15 @@ Keyboard navigation update (2026-09-01, Asia/Riyadh):
 - Backspace moves to the previous question and is prevented from opening browser history.
 - Existing ArrowLeft/ArrowRight navigation is preserved.
 - Removed the duplicate arrow-key listener so one key press triggers exactly one navigation action.
+
+Unified mistake-state update (2026-09-02, Asia/Riyadh):
+- Red now means an active study mistake only.
+- Historical everWrong remains preserved but no longer paints the current question red.
+- Successfully retrained mistakes become green while history stays preserved.
+- Exam mistakes are independent from active study mistakes.
+- Exam-mistake training matches study-mistake training: correct stays visible and is removed on NEXT.
+- Exam mistakes can be removed manually from training and post-exam review.
+- Removing an exam mistake never edits saved exam-result history.
 
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
@@ -1529,6 +1538,25 @@ function everWrong(q){return Number(state.history[key(q)]?.wrong||0)>0;}
 function isActiveMistake(q){return !!(state.activeMistakes&&state.activeMistakes[key(q)]);}
 function addActiveMistake(q){if(!state.activeMistakes)state.activeMistakes={};state.activeMistakes[key(q)]=true;}
 function removeActiveMistake(q){if(state.activeMistakes)delete state.activeMistakes[key(q)];}
+function isExamMistake(q){return Array.isArray(state.examMistakeKeys)&&state.examMistakeKeys.includes(key(q));}
+function removeExamMistake(q){
+  const k=key(q);
+  state.examMistakeKeys=(state.examMistakeKeys||[]).filter(x=>x!==k);
+  view.examMistakeOrder=(view.examMistakeOrder||[]).filter(x=>x!==k);
+  if(view.examMistakeOptionOrder)delete view.examMistakeOptionOrder[k];
+}
+function removeFromCurrentMistakePool(q){
+  if(view.mode==="examMistakes")removeExamMistake(q);
+  else removeActiveMistake(q);
+}
+function currentQuestionStatusClass(q){
+  if(isActiveMistake(q))return " no";
+  const h=state.history&&state.history[key(q)];
+  const a=state.answers&&state.answers[key(q)];
+  if((a&&a.correct===true)||(h&&h.lastCorrect===true))return " ok";
+  if(answered(q))return " done";
+  return "";
+}
 function pct(n,d){return d?Math.round(n/d*100):0;}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 function shuffleArray(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -1753,7 +1781,9 @@ function renderNav(){
   list.forEach((q,i)=>{
     const b=document.createElement("button");
     const practiceRecord=view.mistakePractice?view.practiceAnswers[key(q)]:null;
-    const statusClass=view.mistakePractice?(practiceRecord?(practiceRecord.correct?" ok":" no"):""):(isCorrect(q)?" ok":isWrong(q)?" no":answered(q)?" done":"");
+    const statusClass=view.mistakePractice
+      ?(practiceRecord?(practiceRecord.correct?" ok":" no"):" no")
+      :currentQuestionStatusClass(q);
     b.className="qchip"+(cur&&key(q)===key(cur)?" active":"")+statusClass;
     b.textContent=q.id;b.title=(FORM_TITLE[q.form]||q.form)+" - سؤال "+q.id;
     b.onclick=()=>{view.index=i;view.forceShow=false;reshuffleStudyQuestion(q);rememberCurrent(q);render();};
@@ -1775,7 +1805,7 @@ function renderCard(){
   const sgDefs=subgroupDefs(view.studySet),sg=sgDefs.find(d=>d.id===view.studySubgroup);
   const sgList=sg?subgroupQuestions(view.studySet,view.studySubgroup):[];
   const sgDone=sg?sgList.filter(answered).length:0;
-  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">سؤال ${escapeHtml(q.id)}</span><span class="badge lessonProgressBadge">${escapeHtml(set.label)} <span class="progressNums">${lessonProgress.done}/${lessonProgress.total}</span></span>${sg?`<span class="badge lessonProgressBadge">${sg.label} <span class="progressNums">${sgDone}/${sg.size}</span></span>`:""}${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${everWrong(q)?'<span class="badge resumeBadge">ضمن سجل الأخطاء</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}${view.pendingMistakeRemovalKey===k?'<span class="badge good">إجابة صحيحة — اضغط التالي لاعتمادها وإزالتها من الأخطاء</span>':""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
+  parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">سؤال ${escapeHtml(q.id)}</span><span class="badge lessonProgressBadge">${escapeHtml(set.label)} <span class="progressNums">${lessonProgress.done}/${lessonProgress.total}</span></span>${sg?`<span class="badge lessonProgressBadge">${sg.label} <span class="progressNums">${sgDone}/${sg.size}</span></span>`:""}${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${isActiveMistake(q)?'<span class="badge resumeBadge">ضمن مجموعة الأخطاء</span>':""}${isExamMistake(q)?'<span class="badge resumeBadge">ضمن أخطاء الاختبار</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}${view.pendingMistakeRemovalKey===k?`<span class="badge good">إجابة صحيحة — اضغط التالي لاعتمادها وإزالتها من ${view.mode==="examMistakes"?"أخطاء الاختبار":"مجموعة الأخطاء"}</span>`:""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
   parts.push(`<div class="timerBox" id="timerBox"><div class="timerHead"><span>مؤقت السؤال</span><span class="timerText" id="timerText">60 ثانية</span></div><div class="timerBar"><i class="timerFill" id="timerFill"></i></div></div>`);
   parts.push(`<div class="question">${escapeHtml(q.question)}</div><div class="options">`);
   const displayOptions=(view.mode==="examMistakes"&&view.examMistakeOptionOrder[k])?view.examMistakeOptionOrder[k]:getStudyOptions(q);
@@ -1790,7 +1820,7 @@ function renderCard(){
   if(String(q.explanation||"").trim()){
     parts.push(`<div class="explainWrap"><button class="explainToggle" id="explainInCard" type="button">شرح الإجابة</button><div class="answerExplanation" id="answerExplanation" hidden><div class="answerExplanationTitle">شرح الإجابة</div>${escapeHtml(q.explanation)}</div></div>`);
   }
-  parts.push(`<div class="cardActions"><button class="btn" id="prevInCard">السابق</button><button class="btn primary" id="nextInCard">التالي</button><button class="btn" id="showInCard">${show?"إخفاء الإجابة":"إظهار الإجابة"}</button><button class="btn warn" id="starInCard">${isStarred(q)?'إزالة من المراجعة':'مراجعة لاحقاً'}</button>${view.mode==="historyMistakes"?'<button class="btn bad" id="removeMistakeInCard">حذف من مجموعة الأخطاء</button>':""}</div>`);
+  parts.push(`<div class="cardActions"><button class="btn" id="prevInCard">السابق</button><button class="btn primary" id="nextInCard">التالي</button><button class="btn" id="showInCard">${show?"إخفاء الإجابة":"إظهار الإجابة"}</button><button class="btn warn" id="starInCard">${isStarred(q)?'إزالة من المراجعة':'مراجعة لاحقاً'}</button>${view.mode==="historyMistakes"?'<button class="btn bad" id="removeMistakeInCard">حذف من مجموعة الأخطاء</button>':view.mode==="examMistakes"?'<button class="btn bad" id="removeMistakeInCard">إزالة من أخطاء الاختبار</button>':""}</div>`);
   card.innerHTML=parts.join("");
 
   card.querySelectorAll("[data-pick]").forEach(btn=>{
@@ -1804,10 +1834,13 @@ function renderCard(){
   $("prevInCard").onclick=prev;$("nextInCard").onclick=next;$("showInCard").onclick=showAnswer;$("starInCard").onclick=toggleStar;
   const removeMistakeBtn=$("removeMistakeInCard");
   if(removeMistakeBtn)removeMistakeBtn.onclick=()=>{
-    removeActiveMistake(q);
+    removeFromCurrentMistakePool(q);
+    delete view.practiceAnswers[key(q)];
+    if(view.pendingMistakeRemovalKey===key(q))view.pendingMistakeRemovalKey="";
     save();markGhDirty();
     const remaining=currentList();
     if(view.index>=remaining.length)view.index=Math.max(0,remaining.length-1);
+    view.forceShow=false;
     render();
   };
   const explainBtn=$("explainInCard"),explainBox=$("answerExplanation");
@@ -1846,12 +1879,12 @@ function pick(selected){
     updateHistoryStudy(q,selected,correct,ts);
 
     if(correct){
-      /* Keep this solved mistake visible now.
-         Remove it only when the user explicitly presses NEXT. */
+      /* Keep the solved mistake visible now.
+         Remove it from its current pool only when NEXT is pressed. */
       view.pendingMistakeRemovalKey=key(q);
     }else{
       view.pendingMistakeRemovalKey="";
-      addActiveMistake(q);
+      if(view.mode==="historyMistakes")addActiveMistake(q);
     }
 
     view.forceShow=true;
@@ -1873,7 +1906,7 @@ function next(){
   const inMistakeRun=view.mistakePractice&&(view.mode==="historyMistakes"||view.mode==="examMistakes");
 
   if(inMistakeRun&&currentQ&&view.pendingMistakeRemovalKey===key(currentQ)){
-    removeActiveMistake(currentQ);
+    removeFromCurrentMistakePool(currentQ);
     delete view.practiceAnswers[key(currentQ)];
     view.pendingMistakeRemovalKey="";
     save();markGhDirty();
@@ -2150,7 +2183,7 @@ function renderMistakeReview(){
   box.innerHTML='<div class="examMistakes">'+mistakes.map((r,n)=>{
     const q=r.q;
     const explanation=String(q.explanation||"").trim();
-    return `<div class="examMistake ${r.unanswered?'unanswered':''}"><div class="examMistakeHead"><span class="badge">الخطأ ${n+1}</span><span class="badge">سؤال الاختبار ${r.index+1}</span><span class="badge">سؤال البنك ${escapeHtml(q.id)}</span>${q.lesson?`<span class="badge">${escapeHtml(q.lesson)}</span>`:""}</div><div class="examMistakeQuestion">${escapeHtml(q.question)}</div><div class="examAnswerLine user"><strong>إجابتك:</strong> ${escapeHtml(answerText(q,r.selected))}</div><div class="examAnswerLine correct"><strong>الإجابة الصحيحة:</strong> ${escapeHtml(answerText(q,q.answer))}</div>${explanation?`<button class="btn examExplainToggle" type="button" data-exam-explain="${escapeHtml(key(q))}">شرح الإجابة</button><div class="answerExplanation" data-exam-explain-box="${escapeHtml(key(q))}" hidden><div class="answerExplanationTitle">شرح الإجابة</div>${escapeHtml(explanation)}</div>`:""}</div>`;
+    return `<div class="examMistake ${r.unanswered?'unanswered':''}"><div class="examMistakeHead"><span class="badge">الخطأ ${n+1}</span><span class="badge">سؤال الاختبار ${r.index+1}</span><span class="badge">سؤال البنك ${escapeHtml(q.id)}</span>${q.lesson?`<span class="badge">${escapeHtml(q.lesson)}</span>`:""}</div><div class="examMistakeQuestion">${escapeHtml(q.question)}</div><div class="examAnswerLine user"><strong>إجابتك:</strong> ${escapeHtml(answerText(q,r.selected))}</div><div class="examAnswerLine correct"><strong>الإجابة الصحيحة:</strong> ${escapeHtml(answerText(q,q.answer))}</div>${explanation?`<button class="btn examExplainToggle" type="button" data-exam-explain="${escapeHtml(key(q))}">شرح الإجابة</button><div class="answerExplanation" data-exam-explain-box="${escapeHtml(key(q))}" hidden><div class="answerExplanationTitle">شرح الإجابة</div>${escapeHtml(explanation)}</div>`:""}${isExamMistake(q)?`<button class="btn bad" type="button" data-remove-exam-mistake="${escapeHtml(key(q))}">إزالة من أخطاء الاختبار</button>`:'<span class="badge good">تمت إزالته من أخطاء الاختبار</span>'}</div>`;
   }).join("")+'</div>';
   box.querySelectorAll("[data-exam-explain]").forEach(btn=>{
     btn.onclick=()=>{
@@ -2160,6 +2193,16 @@ function renderMistakeReview(){
       const opening=panel.hidden;
       panel.hidden=!opening;
       btn.textContent=opening?"إخفاء شرح الإجابة":"شرح الإجابة";
+    };
+  });
+  box.querySelectorAll("[data-remove-exam-mistake]").forEach(btn=>{
+    btn.onclick=()=>{
+      const q=QUESTION_BY_KEY.get(btn.getAttribute("data-remove-exam-mistake"));
+      if(!q)return;
+      removeExamMistake(q);
+      save();markGhDirty();
+      renderMistakeReview();
+      stats();
     };
   });
 }
@@ -2190,7 +2233,7 @@ function exportExamMistakes(){
 function showProgressDashboard(){view.special="progress";view.forceShow=false;render();}
 function renderProgressDashboard(){
   const card=$("quizCard");
-  const totalDone=QUESTIONS.filter(answered).length,totalMistakes=QUESTIONS.filter(everWrong).length,totalStars=QUESTIONS.filter(isStarred).length;
+  const totalDone=QUESTIONS.filter(answered).length,totalMistakes=QUESTIONS.filter(isActiveMistake).length,totalStars=QUESTIONS.filter(isStarred).length;
   const allHist=Object.values(state.history||{}),attempts=allHist.reduce((s,h)=>s+Number(h.attempts||0),0),correct=allHist.reduce((s,h)=>s+Number(h.correct||0),0);
   const testsCompleted=SETS.filter(s=>latestExamResult(s.id)).length;
   const rows=SETS.map(s=>{
@@ -2208,11 +2251,11 @@ function renderProgressDashboard(){
     <div class="progressKpis">
       <div class="progressKpi"><b>${totalDone}/${QUESTIONS.length}</b><span>تمت مراجعتها</span></div>
       <div class="progressKpi"><b>${pct(correct,attempts)}%</b><span>دقة جميع المحاولات</span></div>
-      <div class="progressKpi"><b>${totalMistakes}</b><span>ضمن سجل الأخطاء</span></div>
+      <div class="progressKpi"><b>${totalMistakes}</b><span>أخطاء نشطة</span></div>
       <div class="progressKpi"><b>${testsCompleted}/4</b><span>اختبارات مكتملة</span></div>
     </div>
-    <div class="recordHint">سجل الأخطاء تراكمي: السؤال يبقى معروفاً بأنه أخطأت فيه سابقاً حتى لو أجبته بشكل صحيح لاحقاً. يمكن الوصول إليه من «تدريب مجموعة الأخطاء».</div>
-    <div class="progressTableWrap"><table class="progressTable"><thead><tr><th>المجموعة</th><th>تقدم المراجعة</th><th>دقة المراجعة</th><th>أخطاء مسجلة</th><th>آخر موضع</th><th>الاختبار</th><th>فتح</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="recordHint">مجموعة الأخطاء تعرض الأخطاء النشطة فقط. يبقى التاريخ السابق محفوظاً للتحليل، لكنه لا يجعل السؤال أحمر ولا يعيده إلى التدريب بعد تجاوزه.</div>
+    <div class="progressTableWrap"><table class="progressTable"><thead><tr><th>المجموعة</th><th>تقدم المراجعة</th><th>دقة المراجعة</th><th>أخطاء نشطة</th><th>آخر موضع</th><th>الاختبار</th><th>فتح</th></tr></thead><tbody>${rows}</tbody></table></div>
     ${SETS.map(s=>renderExamHistoryBox(s.id)).join("")}
     <div class="backupRow"><button class="btn primary" id="backupProgressCardBtn">نسخة احتياطية من التقدم</button><button class="btn" id="returnToStudyBtn">العودة للمراجعة الحالية</button></div>
   </div>`;
