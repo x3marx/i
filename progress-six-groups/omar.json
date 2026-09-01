@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788290947131,
+  "updatedAt": 1788290981022,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -9235,7 +9235,7 @@
         "set3": "form1:221",
         "set2": "form4:50",
         "set4": "form1:331",
-        "set5": "form2:479"
+        "set5": "form2:484"
       }
     }
   }
