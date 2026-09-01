@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788288532163,
+  "updatedAt": 1788288540625,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -2070,7 +2070,6 @@
       "form4:50": true,
       "form2:414": true,
       "form3:485": true,
-      "form3:520": true,
       "form4:516": true
     },
     "examMistakeKeys": [
@@ -7450,21 +7449,21 @@
         "lastTs": 1788287378461
       },
       "form2:414": {
-        "attempts": 2,
-        "correct": 0,
+        "attempts": 3,
+        "correct": 1,
         "wrong": 2,
-        "studyAttempts": 2,
-        "studyCorrect": 0,
+        "studyAttempts": 3,
+        "studyCorrect": 1,
         "studyWrong": 2,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "A",
-        "lastCorrect": false,
+        "lastSelected": "D",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788288249435
+        "lastTs": 1788288539166
       },
       "form2:419": {
         "attempts": 1,
@@ -8232,21 +8231,21 @@
         "lastTs": 1788288273838
       },
       "form3:520": {
-        "attempts": 2,
-        "correct": 0,
+        "attempts": 3,
+        "correct": 1,
         "wrong": 2,
-        "studyAttempts": 2,
-        "studyCorrect": 0,
+        "studyAttempts": 3,
+        "studyCorrect": 1,
         "studyWrong": 2,
         "examAttempts": 0,
         "examCorrect": 0,
         "examWrong": 0,
         "examUnanswered": 0,
         "everWrong": true,
-        "lastSelected": "B",
-        "lastCorrect": false,
+        "lastSelected": "D",
+        "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788288070206
+        "lastTs": 1788288533452
       },
       "form3:525": {
         "attempts": 1,
@@ -10435,7 +10434,7 @@
         "set1": "form1:1",
         "set3": "form1:202",
         "set2": "form4:50",
-        "set5": "form3:520",
+        "set5": "form2:414",
         "set4": "form1:331"
       }
     }
