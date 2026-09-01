@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788289528923,
+  "updatedAt": 1788289543749,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -1576,6 +1576,24 @@
         "correct": true,
         "elapsed": 7,
         "ts": 1788289521762
+      },
+      "form3:495": {
+        "selected": "B",
+        "correct": true,
+        "elapsed": 10,
+        "ts": 1788289532809
+      },
+      "form3:505": {
+        "selected": "B",
+        "correct": true,
+        "elapsed": 3,
+        "ts": 1788289536601
+      },
+      "form3:515": {
+        "selected": "B",
+        "correct": true,
+        "elapsed": 6,
+        "ts": 1788289543701
       }
     },
     "stars": {
@@ -7098,6 +7116,57 @@
         "lastCorrect": true,
         "lastContext": "study",
         "lastTs": 1788289521762
+      },
+      "form3:495": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "B",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1788289532809
+      },
+      "form3:505": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "B",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1788289536601
+      },
+      "form3:515": {
+        "attempts": 1,
+        "correct": 1,
+        "wrong": 0,
+        "studyAttempts": 1,
+        "studyCorrect": 1,
+        "studyWrong": 0,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": false,
+        "lastSelected": "B",
+        "lastCorrect": true,
+        "lastContext": "study",
+        "lastTs": 1788289543701
       }
     },
     "examSessions": {
@@ -8590,7 +8659,7 @@
         "set3": "form1:221",
         "set2": "form4:50",
         "set4": "form1:331",
-        "set5": "form3:495"
+        "set5": "form3:515"
       }
     }
   }
