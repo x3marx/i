@@ -5,7 +5,7 @@
   "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788288993443,
+  "updatedAt": 1788289014112,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
     "version": 4,
@@ -1414,6 +1414,18 @@
         "correct": true,
         "elapsed": 8,
         "ts": 1788288986278
+      },
+      "form1:473": {
+        "selected": "B",
+        "correct": true,
+        "elapsed": 10,
+        "ts": 1788288996643
+      },
+      "form1:483": {
+        "selected": "B",
+        "correct": true,
+        "elapsed": 5,
+        "ts": 1788289012691
       }
     },
     "stars": {
@@ -6579,11 +6591,11 @@
         "lastTs": 1788288226543
       },
       "form1:473": {
-        "attempts": 1,
-        "correct": 1,
+        "attempts": 2,
+        "correct": 2,
         "wrong": 0,
-        "studyAttempts": 1,
-        "studyCorrect": 1,
+        "studyAttempts": 2,
+        "studyCorrect": 2,
         "studyWrong": 0,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -6593,7 +6605,7 @@
         "lastSelected": "B",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788279580823
+        "lastTs": 1788288996643
       },
       "form1:478": {
         "attempts": 2,
@@ -6613,11 +6625,11 @@
         "lastTs": 1788287314285
       },
       "form1:483": {
-        "attempts": 1,
-        "correct": 1,
+        "attempts": 2,
+        "correct": 2,
         "wrong": 0,
-        "studyAttempts": 1,
-        "studyCorrect": 1,
+        "studyAttempts": 2,
+        "studyCorrect": 2,
         "studyWrong": 0,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -6627,7 +6639,7 @@
         "lastSelected": "B",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788279626244
+        "lastTs": 1788289012691
       },
       "form1:488": {
         "attempts": 1,
@@ -9786,7 +9798,7 @@
         "set3": "form1:221",
         "set2": "form4:50",
         "set4": "form1:331",
-        "set5": "form1:473"
+        "set5": "form1:493"
       }
     }
   }
