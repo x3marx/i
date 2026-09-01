@@ -3,7 +3,21 @@
 <!--
 APP CHANGELOG / MAINTENANCE NOTES
 ================================
-Version: 2026-08-31-subgroups-v1
+Current Version: 2026-09-01-reset-sync-guard-v1
+Timezone Policy: All user-visible dates/times use Asia/Riyadh (Saudi Arabia, UTC+3). Internal timestamps remain epoch/ISO for safe sync and comparisons.
+
+CHANGE HISTORY
+--------------
+2026-09-01
+- Added per-lesson Reset + GitHub Sync protection so stale cloud data cannot resurrect intentionally cleared lesson progress.
+- Added reset validation and protected restudy behavior.
+- Fixed automatic GitHub sync to a true 5-minute interval while keeping manual Sync immediate.
+- Standardized all user-visible dates/times to Asia/Riyadh.
+
+2026-08-31
+- Added stable study subgroups (م1، م2...) while keeping final lesson exams on the complete lesson.
+- Improved active-mistake practice and deferred removal until NEXT after a correct retry.
+- Balanced question action button sizing.
 
 Additional UI update:
 - Lesson cards in "رحلة المذاكرة والاختبار" show compact direct subgroup buttons (م1، م2...) only; subgroup progress remains available in the button tooltip and study progress logic.
@@ -49,6 +63,22 @@ Deferred mistake removal update (2026-08-31):
 Question action button sizing update (2026-08-31):
 - Previous / Next / Show-Hide Answer / Review Later buttons now use consistent medium sizing.
 - The goal is visual balance with the question card without returning to oversized controls.
+
+
+RESET + SYNC SAFETY UPDATE (2026-09-01)
+- Added per-lesson reset metadata: studyAt and fullAt.
+- A stale GitHub copy can no longer resurrect lesson data that was intentionally reset on this device.
+- Full reset now validates that answers/history/stars/active mistakes/exam data for the selected lesson are truly empty before reporting success.
+- Restudy reset protects cleared study answers from stale cloud copies while preserving history/stars/exam results.
+- Automatic GitHub sync is now truly fixed at 5 minutes. Older short delays passed by answer/navigation code are ignored; manual Sync remains immediate.
+- Cloud apply uses reset guards per lesson instead of blindly replacing a newer local reset with older cloud state.
+- Reset operations clear transient practice/reveal/timer state for the selected lesson.
+
+TIMEZONE DISPLAY UPDATE (2026-09-01)
+- All user-visible dates and times are explicitly formatted with Asia/Riyadh.
+- Internal epoch/ISO timestamps remain unchanged for reliable comparisons and synchronization.
+- Backup JSON now also includes exportedAtRiyadh and timeZone while retaining exportedAt ISO UTC.
+- Backup filenames use the Riyadh calendar date.
 
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
@@ -971,7 +1001,7 @@ const BANK_ID = "qs668-lesson-groups-v1";
 const PREVIOUS_GROUP_BANK_ID = "qs668-sixgroups-d94ef933408bc203";
 const COMPATIBLE_BANK_IDS = new Set([BANK_ID,PREVIOUS_GROUP_BANK_ID]);
 const BASE_STORE_KEY = "arabic_test_bank_six_groups_v1";
-const STATE_VERSION = 4;
+const STATE_VERSION = 5;
 const PROFILES = {
   omar:{id:"omar",label:"Omar"},
   other:{id:"other",label:"Other"}
@@ -1029,10 +1059,11 @@ function ghSyncMeta(profileId=activeProfile){
   try{return Object.assign(blank,JSON.parse(localStorage.getItem(GH_SYNC_META_PREFIX+profileId)||"{}"));}catch(e){return blank;}
 }
 function setGhSyncMeta(profileId,meta){try{localStorage.setItem(GH_SYNC_META_PREFIX+profileId,JSON.stringify(meta));}catch(e){}}
-function markGhDirty(autoDelay=3500){
-  const m=ghSyncMeta(activeProfile);m.dirty=true;m.localUpdatedAt=Date.now();setGhSyncMeta(activeProfile,m);updateGhStatus();queueGhSync(autoDelay);
+const GH_AUTO_SYNC_DELAY=300000;
+function markGhDirty(_legacyDelayIgnored=GH_AUTO_SYNC_DELAY){
+  const m=ghSyncMeta(activeProfile);m.dirty=true;m.localUpdatedAt=Date.now();setGhSyncMeta(activeProfile,m);updateGhStatus();queueGhSync(GH_AUTO_SYNC_DELAY);
 }
-function queueGhSync(delay=300000){
+function queueGhSync(delay=GH_AUTO_SYNC_DELAY){
   const s=loadGhSettings();
   if(!s.auto||!s.owner||!s.repo||!s.token)return;
   clearTimeout(ghSyncTimer);
@@ -1046,6 +1077,30 @@ function cloudHasProgress(payload){
 }
 function currentGhFile(){return `progress-six-groups/${activeProfile}.json`;}
 function encodePath(path){return String(path).split("/").map(encodeURIComponent).join("/");}
+const APP_TIME_ZONE="Asia/Riyadh";
+function formatRiyadhDate(ts,opts={year:"numeric",month:"2-digit",day:"2-digit"}){
+  try{return new Intl.DateTimeFormat("ar-SA",{timeZone:APP_TIME_ZONE,...opts}).format(new Date(Number(ts)));}
+  catch(e){return "—";}
+}
+function formatRiyadhTime(ts=Date.now(),opts={hour:"2-digit",minute:"2-digit"}){
+  try{return new Intl.DateTimeFormat("ar-SA",{timeZone:APP_TIME_ZONE,...opts}).format(new Date(Number(ts)));}
+  catch(e){return "—";}
+}
+function formatRiyadhIsoLike(ts=Date.now()){
+  try{
+    const parts=new Intl.DateTimeFormat("en-CA",{timeZone:APP_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).formatToParts(new Date(Number(ts)));
+    const v=Object.fromEntries(parts.map(p=>[p.type,p.value]));
+    return `${v.year}-${v.month}-${v.day}T${v.hour}:${v.minute}:${v.second}+03:00`;
+  }catch(e){return new Date(Number(ts)).toISOString();}
+}
+function riyadhDateKey(ts=Date.now()){
+  try{
+    const parts=new Intl.DateTimeFormat("en-CA",{timeZone:APP_TIME_ZONE,year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date(Number(ts)));
+    const v=Object.fromEntries(parts.map(p=>[p.type,p.value]));
+    return `${v.year}-${v.month}-${v.day}`;
+  }catch(e){return new Date(Number(ts)).toISOString().slice(0,10);}
+}
+
 function encodeRef(ref){return String(ref).split("/").map(encodeURIComponent).join("/");}
 function utf8ToBase64(str){const bytes=new TextEncoder().encode(str);let bin="";for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));return btoa(bin);}
 function base64ToUtf8(b64){const bin=atob(String(b64||"").replace(/\s/g,""));const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return new TextDecoder().decode(bytes);}
@@ -1086,7 +1141,7 @@ async function uploadGhCloud(s,existingSha=""){
   if(existingSha)body.sha=existingSha;
   await ghRequest(`/repos/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/contents/${encodePath(currentGhFile())}`,{method:"PUT",settings:s,body});
   const m=ghSyncMeta(activeProfile);m.dirty=false;m.localUpdatedAt=updatedAt;m.lastSyncedCloudUpdatedAt=updatedAt;m.lastSyncedAt=Date.now();setGhSyncMeta(activeProfile,m);
-  ghPendingConflict=null;showGhConflict(false);setGhStatus(`☁️ تمت المزامنة — ${new Date().toLocaleTimeString("ar-SA",{hour:"2-digit",minute:"2-digit"})}`,"good");
+  ghPendingConflict=null;showGhConflict(false);setGhStatus(`☁️ تمت المزامنة — ${formatRiyadhTime()}`,"good");
 }
 function validateCloudPayload(payload){
   const compatible=!!payload&&COMPATIBLE_BANK_IDS.has(payload.bankId)&&Number(payload.questionCount)<=QUESTIONS.length;
@@ -1095,7 +1150,8 @@ function validateCloudPayload(payload){
 }
 function applyCloudPayload(payload){
   validateCloudPayload(payload);
-  state=prepareLoadedState(payload.state);storedStateRaw=payload.state;
+  const guarded=mergeCloudWithResetGuards(payload.state,state);
+  state=guarded;storedStateRaw=guarded;
   view.studySet=state.ui.studySet;view.studySubgroup=state.ui.studySubgroup||"all";view.examSet=state.ui.examSet;view.form="all";view.lesson="all";view.mode="all";view.search="";view.index=0;view.forceShow=false;view.retry=false;view.retryKeys=[];view.retryAnswers={};view.examMistakeOrder=[];view.examMistakeOptionOrder={};view.studyOptionOrder={};view.special="";
   clearInterval(exam.timerId);exam={active:false,setId:"",session:null,questions:[],index:0,timerId:null};
   save();buildDynamicControls();restoreIndexForSet(view.studySet);render();
@@ -1253,6 +1309,7 @@ function freshState(){
     version:STATE_VERSION,bankId:BANK_ID,
     answers:{},stars:{},activeMistakes:{},examMistakeKeys:[],
     history:{},examSessions:{},examResults:{},
+    resetMeta:{},
     lastExamSetId:"",
     ui:{studySet:"set1",studySubgroup:"all",examSet:"set1",lastQuestionBySet:{}}
   };
@@ -1263,6 +1320,11 @@ function normalizeState(raw){
   base.answers=raw.answers&&typeof raw.answers==="object"?raw.answers:{};
   base.stars=raw.stars&&typeof raw.stars==="object"?raw.stars:{};
   base.activeMistakes=raw.activeMistakes&&typeof raw.activeMistakes==="object"?raw.activeMistakes:{};
+  base.resetMeta=raw.resetMeta&&typeof raw.resetMeta==="object"?raw.resetMeta:{};
+  SETS.forEach(s=>{
+    const m=base.resetMeta[s.id];
+    base.resetMeta[s.id]={studyAt:Math.max(0,Number(m?.studyAt)||0),fullAt:Math.max(0,Number(m?.fullAt)||0)};
+  });
   if(!raw.activeMistakes){
     Object.entries(base.answers).forEach(([k,a])=>{
       if(a&&a.correct===false)base.activeMistakes[k]=true;
@@ -1382,6 +1444,77 @@ function save(){
 function setText(id,val){const el=$(id);if(el)el.textContent=val;}
 function setDef(setId){return SETS.find(s=>s.id===setId)||SETS[0];}
 function setQuestions(setId){return QUESTIONS.filter(q=>q.setId===setId);}
+function questionSetIdFromKey(k){return QUESTION_BY_KEY.get(k)?.setId||"";}
+function resetInfo(st,setId){
+  const m=st?.resetMeta?.[setId]||{};
+  return {studyAt:Math.max(0,Number(m.studyAt)||0),fullAt:Math.max(0,Number(m.fullAt)||0)};
+}
+function ensureResetInfo(st,setId){
+  if(!st.resetMeta||typeof st.resetMeta!=="object")st.resetMeta={};
+  if(!st.resetMeta[setId]||typeof st.resetMeta[setId]!=="object")st.resetMeta[setId]={studyAt:0,fullAt:0};
+  return st.resetMeta[setId];
+}
+function clearQuestionFieldForSet(obj,setId){
+  if(!obj||typeof obj!=="object")return;
+  Object.keys(obj).forEach(k=>{if(questionSetIdFromKey(k)===setId)delete obj[k];});
+}
+function copyQuestionFieldForSet(target,source,field,setId){
+  if(!target[field]||typeof target[field]!=="object")target[field]={};
+  clearQuestionFieldForSet(target[field],setId);
+  const src=source?.[field]||{};
+  Object.entries(src).forEach(([k,v])=>{if(questionSetIdFromKey(k)===setId)target[field][k]=v;});
+}
+function copyExamMistakesForSet(target,source,setId){
+  const other=(target.examMistakeKeys||[]).filter(k=>questionSetIdFromKey(k)!==setId);
+  const mine=(source?.examMistakeKeys||[]).filter(k=>questionSetIdFromKey(k)===setId);
+  target.examMistakeKeys=[...new Set([...other,...mine])];
+}
+function preserveSetFromLocal(target,local,setId,scope="full"){
+  copyQuestionFieldForSet(target,local,"answers",setId);
+  if(scope==="full"){
+    copyQuestionFieldForSet(target,local,"stars",setId);
+    copyQuestionFieldForSet(target,local,"activeMistakes",setId);
+    copyQuestionFieldForSet(target,local,"history",setId);
+    if(local?.examSessions&&Object.prototype.hasOwnProperty.call(local.examSessions,setId))target.examSessions[setId]=local.examSessions[setId]; else delete target.examSessions[setId];
+    if(local?.examResults&&Object.prototype.hasOwnProperty.call(local.examResults,setId))target.examResults[setId]=local.examResults[setId]; else delete target.examResults[setId];
+    copyExamMistakesForSet(target,local,setId);
+    if(local?.lastExamSetId===setId)target.lastExamSetId=setId; else if(target.lastExamSetId===setId)target.lastExamSetId="";
+  }
+  if(!target.ui.lastQuestionBySet||typeof target.ui.lastQuestionBySet!=="object")target.ui.lastQuestionBySet={};
+  if(local?.ui?.lastQuestionBySet&&Object.prototype.hasOwnProperty.call(local.ui.lastQuestionBySet,setId))target.ui.lastQuestionBySet[setId]=local.ui.lastQuestionBySet[setId]; else delete target.ui.lastQuestionBySet[setId];
+}
+function mergeCloudWithResetGuards(cloudRaw,localState){
+  const cloud=prepareLoadedState(cloudRaw);
+  const local=prepareLoadedState(localState||{});
+  SETS.forEach(s=>{
+    const l=resetInfo(local,s.id),c=resetInfo(cloud,s.id);
+    if(l.fullAt>c.fullAt){
+      preserveSetFromLocal(cloud,local,s.id,"full");
+      cloud.resetMeta[s.id]={studyAt:Math.max(l.studyAt,l.fullAt),fullAt:l.fullAt};
+    }else if(l.studyAt>c.studyAt && l.fullAt===c.fullAt){
+      preserveSetFromLocal(cloud,local,s.id,"study");
+      cloud.resetMeta[s.id].studyAt=l.studyAt;
+    }
+  });
+  return cloud;
+}
+function setDataCounts(st,setId){
+  const countField=f=>Object.keys(st?.[f]||{}).filter(k=>questionSetIdFromKey(k)===setId).length;
+  return {
+    answers:countField("answers"),history:countField("history"),stars:countField("stars"),activeMistakes:countField("activeMistakes"),
+    examSession:st?.examSessions&&st.examSessions[setId]?1:0,
+    examResults:Array.isArray(st?.examResults?.[setId])?st.examResults[setId].length:0,
+    examMistakeKeys:(st?.examMistakeKeys||[]).filter(k=>questionSetIdFromKey(k)===setId).length,
+    lastQuestion:st?.ui?.lastQuestionBySet?.[setId]?1:0
+  };
+}
+function assertFullResetIntegrity(setId){
+  const c=setDataCounts(state,setId);
+  const bad=Object.entries(c).filter(([,v])=>Number(v)!==0);
+  if(bad.length)throw new Error("فشل التحقق بعد الحذف: "+bad.map(([k,v])=>`${k}=${v}`).join(", "));
+  return c;
+}
+
 function answered(q){return !!state.answers[key(q)];}
 function isCorrect(q){return state.answers[key(q)]?.correct===true;}
 function isWrong(q){return state.answers[key(q)]?.correct===false;}
@@ -1452,7 +1585,7 @@ function examTrendData(setId){
 }
 function formatExamDate(ts){
   if(!ts)return "—";
-  try{return new Date(Number(ts)).toLocaleDateString("ar-SA",{year:"numeric",month:"2-digit",day:"2-digit"});}
+  try{return formatRiyadhDate(ts,{year:"numeric",month:"2-digit",day:"2-digit"});}
   catch(e){return "—";}
 }
 function formatDurationShort(sec){
@@ -1500,7 +1633,8 @@ function examStatusForSet(setId){
 function renderJourney(){
   const box=$("journeyProgress");if(!box)return;
   box.innerHTML=SETS.map(s=>{
-    const r=reviewStatsForSet(s.id),e=examStatusForSet(s.id),defs=subgroupDefs(s.id);
+    const r=reviewStatsForSet(s.id),e=examStatusForSet(s.id),defs=subgroupDefs(s.id),rm=resetInfo(state,s.id);
+    const resetHint=rm.fullAt?`<span class="journeyStatus" title="حذف كامل محمي من الاستعادة القديمة">آخر حذف كامل ${formatRiyadhDate(rm.fullAt)}</span>`:"";
     const subgroupButtons=defs.length?`<div class="journeySubgroups">${defs.map(d=>{
       const qs=subgroupQuestions(s.id,d.id),done=qs.filter(answered).length;
       const active=view.studySet===s.id&&view.studySubgroup===d.id;
@@ -1508,6 +1642,7 @@ function renderJourney(){
     }).join("")}</div>`:"";
     return `<div class="journeyItem">
       <div class="journeyHead"><b>${s.label} <span style="color:var(--muted)">(${s.range})</span></b><span class="journeyStatus">مراجعة ${r.done}/${r.total}</span></div>
+      ${resetHint?`<div class="journeyHead">${resetHint}</div>`:""}
       <div class="progressTrack"><i style="width:${pct(r.done,r.total)}%"></i></div>
       ${subgroupButtons}
       <div class="journeyHead"><span class="journeyStatus">الاختبار ${e.text}</span><span class="journeyStatus">${r.accuracy}% دقة المراجعة</span></div>
@@ -1795,26 +1930,32 @@ function startExamMistakePractice(){
 
 /* Restudy intentionally clears the entire selected lesson, not only the current subgroup. */
 function restudyCurrentSet(){
-  const set=setDef(view.studySet);
+  const setId=view.studySet,set=setDef(setId);
   if(!confirm(`إعادة مذاكرة ${set.label} من البداية؟\nسيتم تصفير إجابات المراجعة لهذا الدرس فقط، مع الاحتفاظ بمجموعة الأخطاء والنجوم وسجل المحاولات ونتائج الاختبارات.`))return;
-  setQuestions(view.studySet).forEach(q=>{delete state.answers[key(q)];});
-  delete state.ui.lastQuestionBySet[view.studySet];
-  view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;
-  view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};
-  save();markGhDirty(100);buildDynamicControls();render();
+  const now=Date.now(),meta=ensureResetInfo(state,setId);meta.studyAt=Math.max(now,Number(meta.fullAt)||0);
+  setQuestions(setId).forEach(q=>{delete state.answers[key(q)];});
+  delete state.ui.lastQuestionBySet[setId];
+  view.studySubgroup="all";state.ui.studySubgroup="all";view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;
+  view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};view.pendingMistakeRemovalKey="";view.timerKey="";view.timerLeft=60;
+  save();markGhDirty();buildDynamicControls();render();
 }
 
 function resetProgress(){
-  const set=setDef(view.studySet);
-  if(!confirm(`هل تريد تصفير تقدم ${set.label} فقط؟\nسيتم حذف إجابات المراجعة وسجل الأخطاء والنجوم والاختبار الخاص بهذه المجموعة.`))return;
-  setQuestions(view.studySet).forEach(q=>{
+  const setId=view.studySet,set=setDef(setId);
+  if(!confirm(`هل تريد حذف كامل بيانات ${set.label}؟\nسيتم حذف إجابات المراجعة وسجل الأخطاء والنجوم ونتائج/جلسات الاختبار لهذا الدرس فقط. بقية الدروس لن تتأثر.`))return;
+  const now=Date.now(),meta=ensureResetInfo(state,setId);meta.fullAt=now;meta.studyAt=now;
+  setQuestions(setId).forEach(q=>{
     const k=key(q);delete state.answers[k];delete state.stars[k];delete state.history[k];if(state.activeMistakes)delete state.activeMistakes[k];
   });
-  delete state.examSessions[view.studySet];delete state.examResults[view.studySet];
-  if(state.lastExamSetId===view.studySet){state.lastExamSetId="";state.examMistakeKeys=[];}
-  delete state.ui.lastQuestionBySet[view.studySet];
-  view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};
-  save();markGhDirty(100);buildDynamicControls();render();
+  delete state.examSessions[setId];delete state.examResults[setId];
+  state.examMistakeKeys=(state.examMistakeKeys||[]).filter(k=>questionSetIdFromKey(k)!==setId);
+  if(state.lastExamSetId===setId)state.lastExamSetId="";
+  delete state.ui.lastQuestionBySet[setId];
+  view.studySubgroup="all";state.ui.studySubgroup="all";view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;
+  view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};view.pendingMistakeRemovalKey="";view.timerKey="";view.timerLeft=60;
+  try{assertFullResetIntegrity(setId);}catch(err){alert(err.message);return;}
+  save();markGhDirty();buildDynamicControls();render();
+  setGhStatus(`تم حذف كامل بيانات ${set.label} محلياً والتحقق منها. الحذف بانتظار المزامنة مع GitHub؛ يمكنك الضغط على Sync لرفعه فوراً.`,"warn");
 }
 
 function ensureTimer(){
@@ -2080,8 +2221,9 @@ function downloadBlob(blob,name){
 }
 function backupProgress(){
   save();
-  const payload={app:"نظام تدريب بنك الأسئلة-الجزء الثالث",profile:activeProfile,profileLabel:PROFILES[activeProfile]?.label||activeProfile,version:STATE_VERSION,bankId:BANK_ID,questionCount:QUESTIONS.length,exportedAt:new Date().toISOString(),state};
-  downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`question-bank-progress-${activeProfile}-${new Date().toISOString().slice(0,10)}.json`);
+  const exportedTs=Date.now();
+  const payload={app:"نظام تدريب بنك الأسئلة-الجزء الثالث",profile:activeProfile,profileLabel:PROFILES[activeProfile]?.label||activeProfile,version:STATE_VERSION,bankId:BANK_ID,questionCount:QUESTIONS.length,exportedAt:new Date(exportedTs).toISOString(),exportedAtRiyadh:formatRiyadhIsoLike(exportedTs),timeZone:APP_TIME_ZONE,state};
+  downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`question-bank-progress-${activeProfile}-${riyadhDateKey(exportedTs)}.json`);
 }
 async function restoreProgressFile(file){
   if(!file)return;
@@ -2091,8 +2233,8 @@ async function restoreProgressFile(file){
     if(!data.state||typeof data.state!=="object")throw new Error("ملف النسخة الاحتياطية غير صالح.");
     state=prepareLoadedState(data.state);
     Object.entries(state.answers).forEach(([k,r])=>{if(QUESTION_BY_KEY.has(k)&&r&&!state.history[k])state.history[k]={attempts:1,correct:r.correct===true?1:0,wrong:r.correct===false?1:0,studyAttempts:1,studyCorrect:r.correct===true?1:0,studyWrong:r.correct===false?1:0,examAttempts:0,examCorrect:0,examWrong:0,examUnanswered:0,everWrong:r.correct===false,lastSelected:r.selected||"",lastCorrect:r.correct===true,lastContext:"study",lastTs:Number(r.ts)||0};});
-    view.studySet=state.ui.studySet;view.examSet=state.ui.examSet;view.form="all";view.lesson="all";view.mode="all";view.search="";view.special="";view.forceShow=false;view.studyOptionOrder={};
-    save();markGhDirty(100);buildDynamicControls();restoreIndexForSet(view.studySet);render();alert("تمت استعادة التقدم بنجاح.");
+    view.studySet=state.ui.studySet;view.studySubgroup=state.ui.studySubgroup||"all";view.examSet=state.ui.examSet;view.form="all";view.lesson="all";view.mode="all";view.search="";view.special="";view.forceShow=false;view.studyOptionOrder={};view.pendingMistakeRemovalKey="";
+    save();markGhDirty();buildDynamicControls();restoreIndexForSet(view.studySet);render();alert("تمت استعادة التقدم بنجاح.");
   }catch(err){alert("تعذر استعادة التقدم: "+(err?.message||err));}
 }
 
@@ -2292,7 +2434,7 @@ render();
 updateGhStatus();
 const initialGhSettings=loadGhSettings();
 if(initialGhSettings.token)setTimeout(()=>syncGithubProgress("auto"),700);
-const yearEl=$("copyrightYear");if(yearEl)yearEl.textContent=String(new Date().getFullYear());
+const yearEl=$("copyrightYear");if(yearEl)yearEl.textContent=new Intl.DateTimeFormat("en-US",{timeZone:APP_TIME_ZONE,year:"numeric"}).format(new Date());
 
 
 /* Phone-only panel defaults. Desktop remains visually unchanged. */
