@@ -2,13 +2,13 @@
   "app": "نظام تدريب بنك الأسئلة-الجزء الثالث",
   "profile": "omar",
   "profileLabel": "Omar",
-  "version": 5,
+  "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788299064729,
-  "deviceId": "device-r50tuzqf-mt4v48vz",
+  "updatedAt": 1788370295224,
+  "deviceId": "device-66n9vr8z-mt4v5053",
   "state": {
-    "version": 5,
+    "version": 4,
     "bankId": "qs668-lesson-groups-v1",
     "answers": {
       "form1:202": {
@@ -10620,41 +10620,15 @@
         }
       ]
     },
-    "resetMeta": {
-      "set1": {
-        "studyAt": 0,
-        "fullAt": 0
-      },
-      "set2": {
-        "studyAt": 0,
-        "fullAt": 0
-      },
-      "set3": {
-        "studyAt": 0,
-        "fullAt": 0
-      },
-      "set4": {
-        "studyAt": 0,
-        "fullAt": 0
-      },
-      "set5": {
-        "studyAt": 1788293264557,
-        "fullAt": 1788293264557
-      },
-      "set6": {
-        "studyAt": 0,
-        "fullAt": 0
-      }
-    },
     "lastExamSetId": "set3",
     "ui": {
-      "studySet": "set5",
-      "studySubgroup": "all",
+      "studySet": "set2",
+      "studySubgroup": "m3",
       "examSet": "set5",
       "lastQuestionBySet": {
         "set1": "form1:1",
         "set3": "form1:221",
-        "set2": "form4:50",
+        "set2": "form3:49",
         "set4": "form1:331",
         "set5": "form1:443"
       }
