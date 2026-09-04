@@ -3,7 +3,7 @@
 <!--
 APP CHANGELOG / MAINTENANCE NOTES
 ================================
-Current Version: 2026-09-04-exam-groups-focus-v1
+Current Version: 2026-09-04-general-review-m1-m6-v1
 Timezone Policy: All user-visible dates/times use Asia/Riyadh (Saudi Arabia, UTC+3). Internal timestamps remain epoch/ISO for safe sync and comparisons.
 
 CHANGE HISTORY
@@ -109,6 +109,16 @@ Focused final-review update (2026-09-04, Asia/Riyadh):
 - The currently reviewed lesson is moved to the top of the control section.
 - Added quick "إعادة المراجعة" and "حذف بيانات الدرس" controls directly under the timer; both call the original existing functions.
 - Added E and ش shortcuts to open/hide the existing answer explanation.
+
+General Review rebuild (2026-09-04, Asia/Riyadh):
+- Replaced the incorrect standalone خ1..خ6 concept with a true "مراجعة عامة" section.
+- مراجعة عامة contains م1..م6; each review group has its matching exam خ1..خ6 using exactly the same questions.
+- All 668 source questions are included exactly once across م1..م6: 112 / 112 / 111 / 111 / 111 / 111.
+- No question is duplicated between general-review groups and no source question is omitted.
+- General-review progress is stored independently from original lesson progress so old lesson answers do not pre-fill fresh final review.
+- Reset/restudy for م1..م6 affects only general-review progress and its matching خ exam; original lesson answers/history stay intact.
+- GitHub reset protection now covers general-review groups as well.
+- E and ش explanation shortcuts, Enter/Backspace navigation, unified mistake handling, Riyadh time, and 5-minute sync remain unchanged.
 
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
@@ -929,6 +939,14 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
           <option value="set4">الهياكل والتحفيز — 80 سؤال</option>
           <option value="set5">المشاريع والتخطيط — 122 سؤال</option>
           <option value="set6">الاختبار التجريبي — 136 سؤال</option>
+          <optgroup label="مراجعة عامة">
+            <option value="m1">م1 — 112 سؤال</option>
+            <option value="m2">م2 — 112 سؤال</option>
+            <option value="m3">م3 — 111 سؤال</option>
+            <option value="m4">م4 — 111 سؤال</option>
+            <option value="m5">م5 — 111 سؤال</option>
+            <option value="m6">م6 — 111 سؤال</option>
+          </optgroup>
         </select>
       </div>
       <div class="field" id="subgroupField">
@@ -948,12 +966,12 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
           <option value="set5">اختبار المشاريع والتخطيط — 122 سؤال</option>
           <option value="set6">الاختبار التجريبي — 136 سؤال</option>
           <optgroup label="مجموعة الاختبارات">
-            <option value="x1">خ1 — 110 سؤال</option>
-            <option value="x2">خ2 — 110 سؤال</option>
-            <option value="x3">خ3 — 110 سؤال</option>
-            <option value="x4">خ4 — 110 سؤال</option>
-            <option value="x5">خ5 — 110 سؤال</option>
-            <option value="x6">خ6 — 110 سؤال</option>
+            <option value="x1">خ1 — 112 سؤال</option>
+            <option value="x2">خ2 — 112 سؤال</option>
+            <option value="x3">خ3 — 111 سؤال</option>
+            <option value="x4">خ4 — 111 سؤال</option>
+            <option value="x5">خ5 — 111 سؤال</option>
+            <option value="x6">خ6 — 111 سؤال</option>
           </optgroup>
         </select>
       </div>
@@ -1050,7 +1068,7 @@ const BANK_ID = "qs668-lesson-groups-v1";
 const PREVIOUS_GROUP_BANK_ID = "qs668-sixgroups-d94ef933408bc203";
 const COMPATIBLE_BANK_IDS = new Set([BANK_ID,PREVIOUS_GROUP_BANK_ID]);
 const BASE_STORE_KEY = "arabic_test_bank_six_groups_v1";
-const STATE_VERSION = 5;
+const STATE_VERSION = 6;
 const PROFILES = {
   omar:{id:"omar",label:"Omar"},
   other:{id:"other",label:"Other"}
@@ -1308,40 +1326,30 @@ const SETS=[
   {id:"set5",number:5,label:"المشاريع والتخطيط",range:"122 سؤال",total:122},
   {id:"set6",number:6,label:"الاختبار التجريبي",range:"136 سؤال",total:136}
 ];
-const CUSTOM_EXAM_SETS=[
-  {id:"x1",number:"خ1",label:"خ1",range:"110 سؤال",total:110},
-  {id:"x2",number:"خ2",label:"خ2",range:"110 سؤال",total:110},
-  {id:"x3",number:"خ3",label:"خ3",range:"110 سؤال",total:110},
-  {id:"x4",number:"خ4",label:"خ4",range:"110 سؤال",total:110},
-  {id:"x5",number:"خ5",label:"خ5",range:"110 سؤال",total:110},
-  {id:"x6",number:"خ6",label:"خ6",range:"110 سؤال",total:110}
+const GENERAL_REVIEW_SETS=[
+  {id:"m1",number:"م1",label:"م1",range:"112 سؤال",total:112,examId:"x1"},
+  {id:"m2",number:"م2",label:"م2",range:"112 سؤال",total:112,examId:"x2"},
+  {id:"m3",number:"م3",label:"م3",range:"111 سؤال",total:111,examId:"x3"},
+  {id:"m4",number:"م4",label:"م4",range:"111 سؤال",total:111,examId:"x4"},
+  {id:"m5",number:"م5",label:"م5",range:"111 سؤال",total:111,examId:"x5"},
+  {id:"m6",number:"م6",label:"م6",range:"111 سؤال",total:111,examId:"x6"}
 ];
-const CUSTOM_EXAM_COUNTS={set3:33,set2:33,set5:22,set1:11,set4:11};
+const GENERAL_REVIEW_KEYS={"m1":["form1:202","form1:40","form1:413","form1:1","form1:331","form1:206","form1:42","form1:418","form1:5","form1:336","form1:211","form1:47","form1:423","form1:10","form1:341","form1:216","form1:52","form1:428","form1:15","form1:346","form1:221","form1:57","form1:433","form1:20","form1:351","form1:226","form1:62","form1:438","form1:25","form1:356","form1:231","form1:67","form1:443","form1:30","form1:361","form1:236","form1:72","form1:448","form1:35","form1:366","form1:241","form1:77","form1:453","form2:2","form1:371","form1:246","form1:82","form1:458","form2:6","form1:376","form1:251","form1:87","form1:463","form1:381","form1:256","form1:92","form1:468","form1:386","form1:261","form1:97","form1:473","form1:391","form1:266","form1:102","form1:478","form1:396","form1:271","form1:107","form1:483","form1:401","form1:276","form1:112","form1:488","form1:406","form1:281","form1:117","form1:493","form1:286","form1:122","form1:498","form1:291","form1:127","form1:503","form1:296","form1:132","form1:508","form1:301","form1:137","form1:513","form1:306","form1:142","form1:518","form1:311","form1:147","form1:523","form1:316","form1:152","form1:528","form1:321","form1:157","form2:411","form1:326","form1:162","form2:414","form1:167","form1:172","form1:177","form1:182","form1:187","form1:192","form1:197","form2:43"],"m2":["form2:203","form2:48","form2:419","form2:11","form2:332","form2:207","form2:53","form2:424","form2:16","form2:337","form2:212","form2:58","form2:429","form2:21","form2:342","form2:217","form2:63","form2:434","form2:26","form2:347","form2:222","form2:68","form2:439","form2:31","form2:352","form2:227","form2:73","form2:444","form2:36","form2:357","form2:232","form2:78","form2:449","form3:3","form2:362","form2:237","form2:83","form2:454","form3:7","form2:367","form2:242","form2:88","form2:459","form3:12","form2:372","form2:247","form2:93","form2:464","form3:17","form2:377","form2:252","form2:98","form2:469","form2:382","form2:257","form2:103","form2:474","form2:387","form2:262","form2:108","form2:479","form2:392","form2:267","form2:113","form2:484","form2:397","form2:272","form2:118","form2:489","form2:402","form2:277","form2:123","form2:494","form2:407","form2:282","form2:128","form2:499","form2:287","form2:133","form2:504","form2:292","form2:138","form2:509","form2:297","form2:143","form2:514","form2:302","form2:148","form2:519","form2:307","form2:153","form2:524","form2:312","form2:158","form2:529","form2:317","form2:163","form3:412","form2:322","form2:168","form3:415","form2:327","form2:173","form3:420","form2:178","form2:183","form2:188","form2:193","form2:198","form3:44","form3:49","form3:54"],"m3":["form3:208","form3:59","form3:425","form3:22","form3:333","form3:213","form3:64","form3:430","form3:27","form3:338","form3:218","form3:69","form3:435","form3:32","form3:343","form3:223","form3:74","form3:440","form3:37","form3:348","form3:228","form3:79","form3:445","form4:4","form3:353","form3:233","form3:84","form3:450","form4:8","form3:358","form3:238","form3:89","form3:455","form4:13","form3:363","form3:243","form3:94","form3:460","form4:18","form3:368","form3:248","form3:99","form3:465","form4:23","form3:373","form3:253","form3:104","form3:470","form4:28","form3:378","form3:258","form3:109","form3:475","form3:383","form3:263","form3:114","form3:480","form3:388","form3:268","form3:119","form3:485","form3:393","form3:273","form3:124","form3:490","form3:398","form3:278","form3:129","form3:495","form3:403","form3:283","form3:134","form3:500","form3:288","form3:139","form3:505","form3:293","form3:144","form3:510","form3:298","form3:149","form3:515","form3:303","form3:154","form3:520","form3:308","form3:159","form3:525","form3:313","form3:164","form3:530","form3:318","form3:169","form4:416","form3:323","form3:174","form4:421","form3:328","form3:179","form4:426","form4:204","form3:184","form4:431","form3:189","form3:194","form3:199","form4:45","form4:50","form4:55","form4:60","form4:65"],"m4":["form4:209","form4:70","form4:436","form4:33","form3:408","form4:214","form4:75","form4:441","form4:38","form4:334","form4:219","form4:80","form4:446","form5:9","form4:339","form4:224","form4:85","form4:451","form5:14","form4:344","form4:229","form4:90","form4:456","form5:19","form4:349","form4:234","form4:95","form4:461","form5:24","form4:354","form4:239","form4:100","form4:466","form5:29","form4:359","form4:244","form4:105","form4:471","form5:34","form4:364","form4:249","form4:110","form4:476","form5:39","form4:369","form4:254","form4:115","form4:481","form6:538","form4:374","form4:259","form4:120","form4:486","form4:379","form4:264","form4:125","form4:491","form4:384","form4:269","form4:130","form4:496","form4:389","form4:274","form4:135","form4:501","form4:394","form4:279","form4:140","form4:506","form4:399","form4:284","form4:145","form4:511","form4:404","form4:289","form4:150","form4:516","form4:294","form4:155","form4:521","form4:299","form4:160","form4:526","form4:304","form4:165","form4:531","form4:309","form4:170","form5:417","form4:314","form4:175","form5:422","form4:319","form4:180","form5:427","form4:324","form4:185","form5:432","form4:329","form4:190","form5:437","form5:205","form4:195","form5:442","form4:200","form5:41","form5:46","form5:51","form5:56","form5:61","form5:66"],"m5":["form5:210","form5:71","form5:447","form6:541","form4:409","form5:215","form5:76","form5:452","form6:543","form5:335","form5:220","form5:81","form5:457","form6:547","form5:340","form5:225","form5:86","form5:462","form6:562","form5:345","form5:230","form5:91","form5:467","form6:578","form5:350","form5:235","form5:96","form5:472","form6:595","form5:355","form5:240","form5:101","form5:477","form6:603","form5:360","form5:245","form5:106","form5:482","form6:605","form5:365","form5:250","form5:111","form5:487","form6:606","form5:370","form5:255","form5:116","form5:492","form5:375","form5:260","form5:121","form5:497","form5:380","form5:265","form5:126","form5:502","form5:385","form5:270","form5:131","form5:507","form5:390","form5:275","form5:136","form5:512","form5:395","form5:280","form5:141","form5:517","form5:400","form5:285","form5:146","form5:522","form5:405","form5:290","form5:151","form5:527","form5:295","form5:156","form5:532","form5:300","form5:161","form6:534","form5:305","form5:166","form6:535","form5:310","form5:171","form6:545","form5:315","form5:176","form6:556","form5:320","form5:181","form6:557","form5:325","form5:186","form6:559","form5:330","form5:191","form6:564","form6:533","form5:196","form6:566","form5:201","form6:536","form6:537","form6:539","form6:542","form6:549","form6:552","form6:554"],"m6":["form6:540","form6:555","form6:567","form6:616","form5:410","form6:544","form6:565","form6:569","form6:619","form6:550","form6:546","form6:571","form6:570","form6:625","form6:560","form6:548","form6:572","form6:573","form6:626","form6:563","form6:551","form6:574","form6:582","form6:628","form6:577","form6:553","form6:575","form6:587","form6:632","form6:583","form6:558","form6:576","form6:588","form6:656","form6:586","form6:561","form6:581","form6:591","form6:663","form6:589","form6:568","form6:584","form6:593","form6:666","form6:592","form6:579","form6:590","form6:596","form6:611","form6:580","form6:594","form6:599","form6:622","form6:585","form6:604","form6:600","form6:637","form6:597","form6:612","form6:607","form6:639","form6:598","form6:617","form6:608","form6:641","form6:601","form6:618","form6:609","form6:644","form6:602","form6:620","form6:610","form6:650","form6:613","form6:621","form6:615","form6:614","form6:624","form6:629","form6:623","form6:634","form6:630","form6:627","form6:635","form6:646","form6:631","form6:642","form6:647","form6:633","form6:643","form6:649","form6:636","form6:645","form6:651","form6:638","form6:653","form6:652","form6:640","form6:654","form6:658","form6:648","form6:655","form6:662","form6:657","form6:659","form6:660","form6:661","form6:664","form6:665","form6:667","form6:668"]};
+const CUSTOM_EXAM_SETS=GENERAL_REVIEW_SETS.map((s,i)=>({
+  id:`x${i+1}`,number:`خ${i+1}`,label:`خ${i+1}`,range:s.range,total:s.total,reviewId:s.id
+}));
+const GENERAL_REVIEW_LAYOUT_VERSION=1;
+function isGeneralReviewSet(setId){return GENERAL_REVIEW_SETS.some(s=>s.id===setId);}
 function isCustomExamSet(setId){return CUSTOM_EXAM_SETS.some(s=>s.id===setId);}
 function lessonQuestions(setId){return QUESTIONS.filter(q=>q.setId===setId);}
-function customExamQuestions(setId){
-  const idx=CUSTOM_EXAM_SETS.findIndex(s=>s.id===setId);
-  if(idx<0)return [];
-  const order=["set3","set2","set5","set1","set4"];
-  const pools={};
-  for(const sourceId of order){
-    const pool=lessonQuestions(sourceId);
-    const count=CUSTOM_EXAM_COUNTS[sourceId];
-    const start=(idx*count)%pool.length;
-    pools[sourceId]=Array.from({length:count},(_,i)=>pool[(start+i)%pool.length]);
-  }
-  /* Interleave subjects while preserving fixed membership. */
-  const result=[];
-  let added=true;
-  while(added){
-    added=false;
-    for(const sourceId of order){
-      if(pools[sourceId].length){result.push(pools[sourceId].shift());added=true;}
-    }
-  }
-  return result;
+function generalReviewQuestions(setId){
+  const keys=GENERAL_REVIEW_KEYS[setId]||[];
+  return keys.map(k=>QUESTION_BY_KEY.get(k)).filter(Boolean);
 }
-
+function customExamQuestions(setId){
+  const def=CUSTOM_EXAM_SETS.find(s=>s.id===setId);
+  return def?generalReviewQuestions(def.reviewId):[];
+}
 
 const STUDY_SUBGROUPS={
   set1:[39],
@@ -1390,9 +1398,9 @@ const norm=s=>(s||"").toString().replace(/[إأآا]/g,"ا").replace(/[ىي]/g,"
 function freshState(){
   return {
     version:STATE_VERSION,bankId:BANK_ID,
-    answers:{},stars:{},activeMistakes:{},examMistakeKeys:[],
+    answers:{},generalReviewAnswers:{},stars:{},activeMistakes:{},examMistakeKeys:[],
     history:{},examSessions:{},examResults:{},
-    resetMeta:{},
+    resetMeta:{},generalReviewLayoutVersion:GENERAL_REVIEW_LAYOUT_VERSION,
     lastExamSetId:"",
     ui:{studySet:"set1",studySubgroup:"all",examSet:"set1",lastQuestionBySet:{}}
   };
@@ -1401,10 +1409,12 @@ function normalizeState(raw){
   const base=freshState();
   if(!raw||typeof raw!=="object")return base;
   base.answers=raw.answers&&typeof raw.answers==="object"?raw.answers:{};
+  base.generalReviewAnswers=raw.generalReviewAnswers&&typeof raw.generalReviewAnswers==="object"?raw.generalReviewAnswers:{};
+  GENERAL_REVIEW_SETS.forEach(s=>{if(!base.generalReviewAnswers[s.id]||typeof base.generalReviewAnswers[s.id]!=="object")base.generalReviewAnswers[s.id]={};});
   base.stars=raw.stars&&typeof raw.stars==="object"?raw.stars:{};
   base.activeMistakes=raw.activeMistakes&&typeof raw.activeMistakes==="object"?raw.activeMistakes:{};
   base.resetMeta=raw.resetMeta&&typeof raw.resetMeta==="object"?raw.resetMeta:{};
-  SETS.forEach(s=>{
+  [...SETS,...GENERAL_REVIEW_SETS].forEach(s=>{
     const m=base.resetMeta[s.id];
     base.resetMeta[s.id]={studyAt:Math.max(0,Number(m?.studyAt)||0),fullAt:Math.max(0,Number(m?.fullAt)||0)};
   });
@@ -1422,9 +1432,14 @@ function normalizeState(raw){
     else base.examResults[setId]=[];
   });
   base.lastExamSetId=typeof raw.lastExamSetId==="string"?raw.lastExamSetId:"";
+  if(Number(raw.generalReviewLayoutVersion)!==GENERAL_REVIEW_LAYOUT_VERSION){
+    CUSTOM_EXAM_SETS.forEach(s=>{delete base.examSessions[s.id];delete base.examResults[s.id];});
+    if(isCustomExamSet(base.lastExamSetId)){base.lastExamSetId="";base.examMistakeKeys=[];}
+  }
+  base.generalReviewLayoutVersion=GENERAL_REVIEW_LAYOUT_VERSION;
   base.ui=Object.assign(base.ui,raw.ui&&typeof raw.ui==="object"?raw.ui:{});
-  if(!SETS.some(s=>s.id===base.ui.studySet))base.ui.studySet="set1";
-  if(!SETS.some(s=>s.id===base.ui.examSet))base.ui.examSet=base.ui.studySet;
+  if(!SETS.some(s=>s.id===base.ui.studySet)&&!isGeneralReviewSet(base.ui.studySet))base.ui.studySet="set1";
+  if(!SETS.some(s=>s.id===base.ui.examSet)&&!isCustomExamSet(base.ui.examSet))base.ui.examSet="set1";
   if(typeof base.ui.studySubgroup!=="string")base.ui.studySubgroup="all";
   if(!base.ui.lastQuestionBySet||typeof base.ui.lastQuestionBySet!=="object")base.ui.lastQuestionBySet={};
   base.version=STATE_VERSION;base.bankId=BANK_ID;
@@ -1525,8 +1540,23 @@ function save(){
   try{localStorage.setItem(profileStoreKey(activeProfile),JSON.stringify(state));}catch(e){console.error("Save failed",e);}
 }
 function setText(id,val){const el=$(id);if(el)el.textContent=val;}
-function setDef(setId){return SETS.find(s=>s.id===setId)||CUSTOM_EXAM_SETS.find(s=>s.id===setId)||SETS[0];}
-function setQuestions(setId){return isCustomExamSet(setId)?customExamQuestions(setId):lessonQuestions(setId);}
+function setDef(setId){return SETS.find(s=>s.id===setId)||GENERAL_REVIEW_SETS.find(s=>s.id===setId)||CUSTOM_EXAM_SETS.find(s=>s.id===setId)||SETS[0];}
+function setQuestions(setId){
+  if(isGeneralReviewSet(setId))return generalReviewQuestions(setId);
+  if(isCustomExamSet(setId))return customExamQuestions(setId);
+  return lessonQuestions(setId);
+}
+function reviewAnswerStore(setId){
+  if(isGeneralReviewSet(setId)){
+    if(!state.generalReviewAnswers[setId])state.generalReviewAnswers[setId]={};
+    return state.generalReviewAnswers[setId];
+  }
+  return state.answers;
+}
+function answerForSet(setId,q){return reviewAnswerStore(setId)[key(q)]||null;}
+function answeredForSet(setId,q){return !!answerForSet(setId,q);}
+function correctForSet(setId,q){return answerForSet(setId,q)?.correct===true;}
+function wrongForSet(setId,q){return answerForSet(setId,q)?.correct===false;}
 function questionSetIdFromKey(k){return QUESTION_BY_KEY.get(k)?.setId||"";}
 function resetInfo(st,setId){
   const m=st?.resetMeta?.[setId]||{};
@@ -1566,6 +1596,21 @@ function preserveSetFromLocal(target,local,setId,scope="full"){
   if(!target.ui.lastQuestionBySet||typeof target.ui.lastQuestionBySet!=="object")target.ui.lastQuestionBySet={};
   if(local?.ui?.lastQuestionBySet&&Object.prototype.hasOwnProperty.call(local.ui.lastQuestionBySet,setId))target.ui.lastQuestionBySet[setId]=local.ui.lastQuestionBySet[setId]; else delete target.ui.lastQuestionBySet[setId];
 }
+function preserveGeneralReviewFromLocal(target,local,setId,scope="full"){
+  if(!target.generalReviewAnswers)target.generalReviewAnswers={};
+  target.generalReviewAnswers[setId]=JSON.parse(JSON.stringify(local?.generalReviewAnswers?.[setId]||{}));
+  if(!target.ui.lastQuestionBySet)target.ui.lastQuestionBySet={};
+  if(local?.ui?.lastQuestionBySet?.[setId])target.ui.lastQuestionBySet[setId]=local.ui.lastQuestionBySet[setId]; else delete target.ui.lastQuestionBySet[setId];
+  if(scope==="full"){
+    const examId=GENERAL_REVIEW_SETS.find(s=>s.id===setId)?.examId||"";
+    if(examId){
+      if(local?.examSessions?.[examId])target.examSessions[examId]=local.examSessions[examId]; else delete target.examSessions[examId];
+      if(local?.examResults?.[examId])target.examResults[examId]=local.examResults[examId]; else delete target.examResults[examId];
+      if(local?.lastExamSetId===examId){target.lastExamSetId=examId;target.examMistakeKeys=[...(local.examMistakeKeys||[])];}
+      else if(target.lastExamSetId===examId){target.lastExamSetId="";target.examMistakeKeys=[];}
+    }
+  }
+}
 function mergeCloudWithResetGuards(cloudRaw,localState){
   const cloud=prepareLoadedState(cloudRaw);
   const local=prepareLoadedState(localState||{});
@@ -1576,6 +1621,16 @@ function mergeCloudWithResetGuards(cloudRaw,localState){
       cloud.resetMeta[s.id]={studyAt:Math.max(l.studyAt,l.fullAt),fullAt:l.fullAt};
     }else if(l.studyAt>c.studyAt && l.fullAt===c.fullAt){
       preserveSetFromLocal(cloud,local,s.id,"study");
+      cloud.resetMeta[s.id].studyAt=l.studyAt;
+    }
+  });
+  GENERAL_REVIEW_SETS.forEach(s=>{
+    const l=resetInfo(local,s.id),c=resetInfo(cloud,s.id);
+    if(l.fullAt>c.fullAt){
+      preserveGeneralReviewFromLocal(cloud,local,s.id,"full");
+      cloud.resetMeta[s.id]={studyAt:Math.max(l.studyAt,l.fullAt),fullAt:l.fullAt};
+    }else if(l.studyAt>c.studyAt && l.fullAt===c.fullAt){
+      preserveGeneralReviewFromLocal(cloud,local,s.id,"study");
       cloud.resetMeta[s.id].studyAt=l.studyAt;
     }
   });
@@ -1598,9 +1653,9 @@ function assertFullResetIntegrity(setId){
   return c;
 }
 
-function answered(q){return !!state.answers[key(q)];}
-function isCorrect(q){return state.answers[key(q)]?.correct===true;}
-function isWrong(q){return state.answers[key(q)]?.correct===false;}
+function answered(q){return answeredForSet(view.studySet,q);}
+function isCorrect(q){return correctForSet(view.studySet,q);}
+function isWrong(q){return wrongForSet(view.studySet,q);}
 function isStarred(q){return !!state.stars[key(q)];}
 function everWrong(q){return Number(state.history[key(q)]?.wrong||0)>0;}
 function isActiveMistake(q){return !!(state.activeMistakes&&state.activeMistakes[key(q)]);}
@@ -1619,10 +1674,15 @@ function removeFromCurrentMistakePool(q){
 }
 function currentQuestionStatusClass(q){
   if(isActiveMistake(q))return " no";
+  const a=answerForSet(view.studySet,q);
+  if(isGeneralReviewSet(view.studySet)){
+    if(a?.correct===true)return " ok";
+    if(a)return " done";
+    return "";
+  }
   const h=state.history&&state.history[key(q)];
-  const a=state.answers&&state.answers[key(q)];
   if((a&&a.correct===true)||(h&&h.lastCorrect===true))return " ok";
-  if(answered(q))return " done";
+  if(a)return " done";
   return "";
 }
 function pct(n,d){return d?Math.round(n/d*100):0;}
@@ -1660,8 +1720,8 @@ function current(){return currentList()[view.index];}
 function clampIndex(){const list=currentList();if(view.index<0)view.index=0;if(view.index>=list.length)view.index=Math.max(0,list.length-1);}
 
 function reviewStatsForSet(setId){
-  const qs=setQuestions(setId),done=qs.filter(answered).length,ok=qs.filter(isCorrect).length;
-  return {total:qs.length,done,ok,wrong:qs.filter(isWrong).length,mistakes:qs.filter(isActiveMistake).length,starred:qs.filter(isStarred).length,accuracy:pct(ok,done)};
+  const qs=setQuestions(setId),done=qs.filter(q=>answeredForSet(setId,q)).length,ok=qs.filter(q=>correctForSet(setId,q)).length;
+  return {total:qs.length,done,ok,wrong:qs.filter(q=>wrongForSet(setId,q)).length,mistakes:qs.filter(isActiveMistake).length,starred:qs.filter(isStarred).length,accuracy:pct(ok,done)};
 }
 function latestExamResult(setId){
   const arr=Array.isArray(state.examResults[setId])?state.examResults[setId]:[];
@@ -1770,21 +1830,29 @@ function renderJourney(){
     save();render();
   });
   box.querySelectorAll("[data-exam-set]").forEach(b=>b.onclick=()=>{view.examSet=b.dataset.examSet;state.ui.examSet=view.examSet;const sel=$("examSetFilter");if(sel)sel.value=view.examSet;save();startExam(view.examSet);});
-  const customHtml=`<div class="customExamSection">
-    <div class="sectionTitle">مجموعة الاختبارات</div>
-    <div class="customExamGrid">${CUSTOM_EXAM_SETS.map(s=>{
-      const e=examStatusForSet(s.id);
-      const active=(exam.active&&exam.setId===s.id)||view.examSet===s.id;
+  const orderedGeneral=view.studySet&&isGeneralReviewSet(view.studySet)
+    ?[GENERAL_REVIEW_SETS.find(s=>s.id===view.studySet),...GENERAL_REVIEW_SETS.filter(s=>s.id!==view.studySet)]
+    :GENERAL_REVIEW_SETS;
+  const generalHtml=`<div class="customExamSection generalReviewSection">
+    <div class="sectionTitle">مراجعة عامة</div>
+    <div class="customExamGrid">${orderedGeneral.map(s=>{
+      const r=reviewStatsForSet(s.id),e=examStatusForSet(s.examId),active=view.studySet===s.id;
       return `<div class="customExamItem ${active?"activeCustomExam":""}">
-        <b>${s.label}</b><span class="journeyStatus">${e.text}</span>
-        ${renderExamTrendInline(s.id)}
-        <button class="btn ${active?"primary":""}" data-custom-exam="${s.id}">${e.kind==="progress"?"استئناف":"فتح الاختبار"}</button>
+        <div class="journeyHead"><b>${s.label} <span style="color:var(--muted)">(${s.range})</span></b><span class="journeyStatus">مراجعة ${r.done}/${r.total}</span></div>
+        <div class="progressTrack"><i style="width:${pct(r.done,r.total)}%"></i></div>
+        <div class="journeyHead"><span class="journeyStatus">${r.accuracy}% دقة</span><span class="journeyStatus">${setDef(s.examId).label}: ${e.text}</span></div>
+        ${renderExamTrendInline(s.examId)}
+        <div class="journeyActions">
+          <button class="btn ${active?"primary":""}" data-general-review="${s.id}">فتح المراجعة</button>
+          <button class="btn ${e.kind==="progress"?"warn":""}" data-general-exam="${s.examId}">${e.kind==="progress"?"استئناف "+setDef(s.examId).label:"فتح "+setDef(s.examId).label}</button>
+        </div>
       </div>`;
     }).join("")}</div>
   </div>`;
-  box.insertAdjacentHTML("beforeend",customHtml);
-  box.querySelectorAll("[data-custom-exam]").forEach(b=>b.onclick=()=>{
-    view.examSet=b.dataset.customExam;state.ui.examSet=view.examSet;
+  box.insertAdjacentHTML("beforeend",generalHtml);
+  box.querySelectorAll("[data-general-review]").forEach(b=>b.onclick=()=>switchStudySet(b.dataset.generalReview));
+  box.querySelectorAll("[data-general-exam]").forEach(b=>b.onclick=()=>{
+    view.examSet=b.dataset.generalExam;state.ui.examSet=view.examSet;
     const sel=$("examSetFilter");if(sel)sel.value=view.examSet;
     save();startExam(view.examSet);
   });
@@ -1798,8 +1866,8 @@ function stats(){
 }
 function cardMetrics(){
   const scope=setQuestions(view.studySet).filter(q=>(view.form==="all"||q.form===view.form)&&(view.lesson==="all"||(q.lesson||"")===view.lesson));
-  const done=scope.filter(answered).length,ok=scope.filter(isCorrect).length;
-  const latest=scope.map(q=>state.answers[key(q)]).filter(Boolean).sort((a,b)=>(Number(b.ts)||0)-(Number(a.ts)||0))[0];
+  const done=scope.filter(q=>answeredForSet(view.studySet,q)).length,ok=scope.filter(q=>correctForSet(view.studySet,q)).length;
+  const latest=scope.map(q=>answerForSet(view.studySet,q)).filter(Boolean).sort((a,b)=>(Number(b.ts)||0)-(Number(a.ts)||0))[0];
   const lastElapsed=latest&&Number.isFinite(Number(latest.elapsed))?Math.round(Number(latest.elapsed)):0;
   return {correctPct:pct(ok,done),lastElapsed,hasLast:!!latest};
 }
@@ -1816,7 +1884,7 @@ function restoreIndexForSet(setId){
   view.index=found>=0?found:0;
 }
 function switchStudySet(setId){
-  if(!SETS.some(s=>s.id===setId))return;
+  if(!SETS.some(s=>s.id===setId)&&!isGeneralReviewSet(setId))return;
   view.studySet=setId;state.ui.studySet=setId;
   view.studySubgroup="all";state.ui.studySubgroup="all";
   view.form="all";view.lesson="all";view.mode="all";view.search="";view.forceShow=false;view.special="";
@@ -1891,10 +1959,11 @@ function currentReviewLabel(){
 }
 function renderQuickReviewControls(){
   if(view.mistakePractice||view.mode==="examMistakes"||view.mode==="historyMistakes")return "";
+  const deleteLabel=isGeneralReviewSet(view.studySet)?"حذف بيانات المجموعة":"حذف بيانات الدرس";
   return `<div class="quickReviewBar">
     <span class="quickReviewName">المراجعة الحالية: ${escapeHtml(currentReviewLabel())}</span>
     <button class="btn" id="quickRestudyBtn" type="button">إعادة المراجعة</button>
-    <button class="btn bad" id="quickResetBtn" type="button">حذف بيانات الدرس</button>
+    <button class="btn bad" id="quickResetBtn" type="button">${deleteLabel}</button>
   </div>`;
 }
 function wireQuickReviewControls(){
@@ -1909,7 +1978,7 @@ function renderCard(){
   if(!q){card.innerHTML='<div class="empty"><h2>لا توجد أسئلة</h2><p>غيّر طريقة العرض أو الفلاتر داخل المجموعة الحالية.</p></div>';return;}
   rememberCurrent(q);
   const k=key(q),inMistakePractice=view.mistakePractice&&(view.mode==="historyMistakes"||view.mode==="examMistakes");
-  const ans=inMistakePractice?(view.practiceAnswers[k]||null):state.answers[k];
+  const ans=inMistakePractice?(view.practiceAnswers[k]||null):answerForSet(view.studySet,q);
   const show=!!view.forceShow,metrics=cardMetrics(),set=setDef(view.mode==="examMistakes"?q.setId:view.studySet);
   const parts=[];
   const lessonProgress=reviewStatsForSet(view.studySet);
@@ -2005,7 +2074,7 @@ function pick(selected){
     return;
   }
 
-  state.answers[key(q)]=record;
+  reviewAnswerStore(view.studySet)[key(q)]=record;
   if(correct)removeActiveMistake(q);else addActiveMistake(q);
   updateHistoryStudy(q,selected,correct,ts);
   view.forceShow=true;rememberCurrent(q);save();markGhDirty();render();
@@ -2086,10 +2155,20 @@ function startExamMistakePractice(){
 /* Restudy intentionally clears the entire selected lesson, not only the current subgroup. */
 function restudyCurrentSet(){
   const setId=view.studySet,set=setDef(setId);
-  if(!confirm(`إعادة مذاكرة ${set.label} من البداية؟\nسيتم تصفير إجابات المراجعة لهذا الدرس فقط، مع الاحتفاظ بمجموعة الأخطاء والنجوم وسجل المحاولات ونتائج الاختبارات.`))return;
-  const now=Date.now(),meta=ensureResetInfo(state,setId);meta.studyAt=Math.max(now,Number(meta.fullAt)||0);
-  setQuestions(setId).forEach(q=>{delete state.answers[key(q)];});
-  delete state.ui.lastQuestionBySet[setId];
+  if(isGeneralReviewSet(setId)){
+    if(!confirm(`إعادة مراجعة ${set.label} من البداية؟\nسيتم تصفير إجابات هذه المراجعة فقط، ولن تتأثر إجابات الدروس الأصلية أو سجلها.`))return;
+    const now=Date.now(),meta=ensureResetInfo(state,setId);meta.studyAt=Math.max(now,Number(meta.fullAt)||0);
+    state.generalReviewAnswers[setId]={};
+    delete state.ui.lastQuestionBySet[setId];
+    view.studySubgroup="all";state.ui.studySubgroup="all";view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;
+    view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};view.pendingMistakeRemovalKey="";view.timerKey="";view.timerLeft=60;
+    save();markGhDirty();buildDynamicControls();render();return;
+  }
+  const setId2=view.studySet,set2=setDef(setId2);
+  if(!confirm(`إعادة مذاكرة ${set2.label} من البداية؟\nسيتم تصفير إجابات المراجعة لهذا الدرس فقط، مع الاحتفاظ بمجموعة الأخطاء والنجوم وسجل المحاولات ونتائج الاختبارات.`))return;
+  const now=Date.now(),meta=ensureResetInfo(state,setId2);meta.studyAt=Math.max(now,Number(meta.fullAt)||0);
+  setQuestions(setId2).forEach(q=>{delete state.answers[key(q)];});
+  delete state.ui.lastQuestionBySet[setId2];
   view.studySubgroup="all";state.ui.studySubgroup="all";view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;
   view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};view.pendingMistakeRemovalKey="";view.timerKey="";view.timerLeft=60;
   save();markGhDirty();buildDynamicControls();render();
@@ -2097,20 +2176,34 @@ function restudyCurrentSet(){
 
 function resetProgress(){
   const setId=view.studySet,set=setDef(setId);
-  if(!confirm(`هل تريد حذف كامل بيانات ${set.label}؟\nسيتم حذف إجابات المراجعة وسجل الأخطاء والنجوم ونتائج/جلسات الاختبار لهذا الدرس فقط. بقية الدروس لن تتأثر.`))return;
-  const now=Date.now(),meta=ensureResetInfo(state,setId);meta.fullAt=now;meta.studyAt=now;
-  setQuestions(setId).forEach(q=>{
+  if(isGeneralReviewSet(setId)){
+    const examId=GENERAL_REVIEW_SETS.find(s=>s.id===setId)?.examId||"";
+    if(!confirm(`هل تريد حذف بيانات ${set.label}؟\nسيتم حذف تقدم هذه المراجعة ونتائج ${setDef(examId).label} فقط. لن تتأثر بيانات الدروس الأصلية.`))return;
+    const now=Date.now(),meta=ensureResetInfo(state,setId);meta.fullAt=now;meta.studyAt=now;
+    state.generalReviewAnswers[setId]={};
+    if(examId){delete state.examSessions[examId];delete state.examResults[examId];if(state.lastExamSetId===examId){state.lastExamSetId="";state.examMistakeKeys=[];}}
+    delete state.ui.lastQuestionBySet[setId];
+    view.studySubgroup="all";state.ui.studySubgroup="all";view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;
+    view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};view.pendingMistakeRemovalKey="";view.timerKey="";view.timerLeft=60;
+    save();markGhDirty();buildDynamicControls();render();
+    setGhStatus(`تم حذف بيانات ${set.label} و${setDef(examId).label} محلياً. يمكنك الضغط على Sync لرفع الحذف فوراً.`,"warn");
+    return;
+  }
+  const setId2=view.studySet,set2=setDef(setId2);
+  if(!confirm(`هل تريد حذف كامل بيانات ${set2.label}؟\nسيتم حذف إجابات المراجعة وسجل الأخطاء والنجوم ونتائج/جلسات الاختبار لهذا الدرس فقط. بقية الدروس لن تتأثر.`))return;
+  const now=Date.now(),meta=ensureResetInfo(state,setId2);meta.fullAt=now;meta.studyAt=now;
+  setQuestions(setId2).forEach(q=>{
     const k=key(q);delete state.answers[k];delete state.stars[k];delete state.history[k];if(state.activeMistakes)delete state.activeMistakes[k];
   });
-  delete state.examSessions[setId];delete state.examResults[setId];
-  state.examMistakeKeys=(state.examMistakeKeys||[]).filter(k=>questionSetIdFromKey(k)!==setId);
-  if(state.lastExamSetId===setId)state.lastExamSetId="";
-  delete state.ui.lastQuestionBySet[setId];
+  delete state.examSessions[setId2];delete state.examResults[setId2];
+  state.examMistakeKeys=(state.examMistakeKeys||[]).filter(k=>questionSetIdFromKey(k)!==setId2);
+  if(state.lastExamSetId===setId2)state.lastExamSetId="";
+  delete state.ui.lastQuestionBySet[setId2];
   view.studySubgroup="all";state.ui.studySubgroup="all";view.index=0;view.mode="all";view.search="";view.form="all";view.lesson="all";view.forceShow=false;
   view.studyOptionOrder={};view.mistakePractice=false;view.practiceAnswers={};view.pendingMistakeRemovalKey="";view.timerKey="";view.timerLeft=60;
-  try{assertFullResetIntegrity(setId);}catch(err){alert(err.message);return;}
+  try{assertFullResetIntegrity(setId2);}catch(err){alert(err.message);return;}
   save();markGhDirty();buildDynamicControls();render();
-  setGhStatus(`تم حذف كامل بيانات ${set.label} محلياً والتحقق منها. الحذف بانتظار المزامنة مع GitHub؛ يمكنك الضغط على Sync لرفعه فوراً.`,"warn");
+  setGhStatus(`تم حذف كامل بيانات ${set2.label} محلياً والتحقق منها. الحذف بانتظار المزامنة مع GitHub؛ يمكنك الضغط على Sync لرفعه فوراً.`,"warn");
 }
 
 function ensureTimer(){
