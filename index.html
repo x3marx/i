@@ -3,7 +3,7 @@
 <!--
 APP CHANGELOG / MAINTENANCE NOTES
 ================================
-Current Version: 2026-09-04-general-review-m1-m6-v1
+Current Version: 2026-09-04-general-review-lesson-layout-v1
 Timezone Policy: All user-visible dates/times use Asia/Riyadh (Saudi Arabia, UTC+3). Internal timestamps remain epoch/ISO for safe sync and comparisons.
 
 CHANGE HISTORY
@@ -119,6 +119,12 @@ General Review rebuild (2026-09-04, Asia/Riyadh):
 - Reset/restudy for م1..م6 affects only general-review progress and its matching خ exam; original lesson answers/history stay intact.
 - GitHub reset protection now covers general-review groups as well.
 - E and ش explanation shortcuts, Enter/Backspace navigation, unified mistake handling, Riyadh time, and 5-minute sync remain unchanged.
+
+General Review visual alignment (2026-09-04, Asia/Riyadh):
+- م1..م6 now use the exact same journeyItem card renderer as the original lessons.
+- Same progress bar, status row, reset hint, review button, exam button, active-state styling, and ordering logic.
+- خ1..خ6 remain linked to their matching م1..م6 question sets.
+- No question distribution, progress-store, reset logic, or exam logic changed in this update.
 
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
@@ -1796,30 +1802,43 @@ function examStatusForSet(setId){
 }
 function renderJourney(){
   const box=$("journeyProgress");if(!box)return;
-  const orderedSets=view.studySet&&SETS.some(s=>s.id===view.studySet)
-    ?[SETS.find(s=>s.id===view.studySet),...SETS.filter(s=>s.id!==view.studySet)]
-    :SETS;
-  box.innerHTML=orderedSets.map(s=>{
-    const r=reviewStatsForSet(s.id),e=examStatusForSet(s.id),defs=subgroupDefs(s.id),rm=resetInfo(state,s.id);
+
+  function renderJourneyItem(s,examId=s.id){
+    const r=reviewStatsForSet(s.id),e=examStatusForSet(examId),defs=subgroupDefs(s.id),rm=resetInfo(state,s.id);
     const resetHint=rm.fullAt?`<span class="journeyStatus" title="حذف كامل محمي من الاستعادة القديمة">آخر حذف كامل ${formatRiyadhDate(rm.fullAt)}</span>`:"";
     const subgroupButtons=defs.length?`<div class="journeySubgroups">${defs.map(d=>{
-      const qs=subgroupQuestions(s.id,d.id),done=qs.filter(answered).length;
+      const qs=subgroupQuestions(s.id,d.id),done=qs.filter(q=>answeredForSet(s.id,q)).length;
       const active=view.studySet===s.id&&view.studySubgroup===d.id;
       return `<button class="btn subgroupChip ${active?"primary":""}" data-review-set="${s.id}" data-review-subgroup="${d.id}" title="${s.label} — ${d.label} · ${done}/${d.size}">${d.label}</button>`;
     }).join("")}</div>`:"";
+    const examLabel=isGeneralReviewSet(s.id)?setDef(examId).label:"الاختبار";
     return `<div class="journeyItem">
       <div class="journeyHead"><b>${s.label} <span style="color:var(--muted)">(${s.range})</span></b><span class="journeyStatus">مراجعة ${r.done}/${r.total}</span></div>
       ${resetHint?`<div class="journeyHead">${resetHint}</div>`:""}
       <div class="progressTrack"><i style="width:${pct(r.done,r.total)}%"></i></div>
       ${subgroupButtons}
-      <div class="journeyHead"><span class="journeyStatus">الاختبار ${e.text}</span><span class="journeyStatus">${r.accuracy}% دقة المراجعة</span></div>
-      ${renderExamTrendInline(s.id)}
+      <div class="journeyHead"><span class="journeyStatus">${examLabel} ${e.text}</span><span class="journeyStatus">${r.accuracy}% دقة المراجعة</span></div>
+      ${renderExamTrendInline(examId)}
       <div class="journeyActions">
         <button class="btn ${view.studySet===s.id&&view.studySubgroup==="all"?"primary":""}" data-review-set="${s.id}" data-review-subgroup="all">فتح المراجعة</button>
-        <button class="btn ${e.kind==="progress"?"warn":""}" data-exam-set="${s.id}">${e.kind==="progress"?"استئناف الاختبار":"فتح الاختبار"}</button>
+        <button class="btn ${e.kind==="progress"?"warn":""}" data-exam-set="${examId}">${e.kind==="progress"?"استئناف "+examLabel:"فتح "+examLabel}</button>
       </div>
     </div>`;
-  }).join("");
+  }
+
+  const orderedSets=view.studySet&&SETS.some(s=>s.id===view.studySet)
+    ?[SETS.find(s=>s.id===view.studySet),...SETS.filter(s=>s.id!==view.studySet)]
+    :SETS;
+
+  const orderedGeneral=view.studySet&&isGeneralReviewSet(view.studySet)
+    ?[GENERAL_REVIEW_SETS.find(s=>s.id===view.studySet),...GENERAL_REVIEW_SETS.filter(s=>s.id!==view.studySet)]
+    :GENERAL_REVIEW_SETS;
+
+  box.innerHTML=
+    orderedSets.map(s=>renderJourneyItem(s,s.id)).join("")+
+    `<div class="sectionTitle" style="margin-top:14px">مراجعة عامة</div>`+
+    orderedGeneral.map(s=>renderJourneyItem(s,s.examId)).join("");
+
   box.querySelectorAll("[data-review-set]").forEach(b=>b.onclick=()=>{
     const setId=b.dataset.reviewSet,subgroupId=b.dataset.reviewSubgroup||"all";
     switchStudySet(setId);
@@ -1829,30 +1848,10 @@ function renderJourney(){
     const subgroupSel=$("subgroupFilter");if(subgroupSel)subgroupSel.value=subgroupId;
     save();render();
   });
-  box.querySelectorAll("[data-exam-set]").forEach(b=>b.onclick=()=>{view.examSet=b.dataset.examSet;state.ui.examSet=view.examSet;const sel=$("examSetFilter");if(sel)sel.value=view.examSet;save();startExam(view.examSet);});
-  const orderedGeneral=view.studySet&&isGeneralReviewSet(view.studySet)
-    ?[GENERAL_REVIEW_SETS.find(s=>s.id===view.studySet),...GENERAL_REVIEW_SETS.filter(s=>s.id!==view.studySet)]
-    :GENERAL_REVIEW_SETS;
-  const generalHtml=`<div class="customExamSection generalReviewSection">
-    <div class="sectionTitle">مراجعة عامة</div>
-    <div class="customExamGrid">${orderedGeneral.map(s=>{
-      const r=reviewStatsForSet(s.id),e=examStatusForSet(s.examId),active=view.studySet===s.id;
-      return `<div class="customExamItem ${active?"activeCustomExam":""}">
-        <div class="journeyHead"><b>${s.label} <span style="color:var(--muted)">(${s.range})</span></b><span class="journeyStatus">مراجعة ${r.done}/${r.total}</span></div>
-        <div class="progressTrack"><i style="width:${pct(r.done,r.total)}%"></i></div>
-        <div class="journeyHead"><span class="journeyStatus">${r.accuracy}% دقة</span><span class="journeyStatus">${setDef(s.examId).label}: ${e.text}</span></div>
-        ${renderExamTrendInline(s.examId)}
-        <div class="journeyActions">
-          <button class="btn ${active?"primary":""}" data-general-review="${s.id}">فتح المراجعة</button>
-          <button class="btn ${e.kind==="progress"?"warn":""}" data-general-exam="${s.examId}">${e.kind==="progress"?"استئناف "+setDef(s.examId).label:"فتح "+setDef(s.examId).label}</button>
-        </div>
-      </div>`;
-    }).join("")}</div>
-  </div>`;
-  box.insertAdjacentHTML("beforeend",generalHtml);
-  box.querySelectorAll("[data-general-review]").forEach(b=>b.onclick=()=>switchStudySet(b.dataset.generalReview));
-  box.querySelectorAll("[data-general-exam]").forEach(b=>b.onclick=()=>{
-    view.examSet=b.dataset.generalExam;state.ui.examSet=view.examSet;
+
+  box.querySelectorAll("[data-exam-set]").forEach(b=>b.onclick=()=>{
+    view.examSet=b.dataset.examSet;
+    state.ui.examSet=view.examSet;
     const sel=$("examSetFilter");if(sel)sel.value=view.examSet;
     save();startExam(view.examSet);
   });
