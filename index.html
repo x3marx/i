@@ -3,7 +3,7 @@
 <!--
 APP CHANGELOG / MAINTENANCE NOTES
 ================================
-Current Version: 2026-09-02-mock-subgroups-v1
+Current Version: 2026-09-04-exam-groups-focus-v1
 Timezone Policy: All user-visible dates/times use Asia/Riyadh (Saudi Arabia, UTC+3). Internal timestamps remain epoch/ISO for safe sync and comparisons.
 
 CHANGE HISTORY
@@ -99,6 +99,16 @@ Mock-exam study subgroup update (2026-09-02, Asia/Riyadh):
 - The 136-question mock-exam lesson is now split into four equal study subgroups: 34 / 34 / 34 / 34.
 - This changes study/review navigation only.
 - The final mock exam still uses the full lesson question set and remains 136 questions.
+
+Focused final-review update (2026-09-04, Asia/Riyadh):
+- Added "مجموعة الاختبارات": خ1..خ6, each exactly 110 questions.
+- Every custom exam contains 33 finance, 33 IT, 22 projects, 11 data analysis, and 11 structures questions.
+- Custom exam membership is deterministic and has no duplicate question within the same exam.
+- Custom exams use the same existing exam engine, result history, mistake review, and mistake-training logic.
+- Exam mistakes are kept separate from active study mistakes.
+- The currently reviewed lesson is moved to the top of the control section.
+- Added quick "إعادة المراجعة" and "حذف بيانات الدرس" controls directly under the timer; both call the original existing functions.
+- Added E and ش shortcuts to open/hide the existing answer explanation.
 
 Maintenance warning:
 - If subgroup sizes are changed later, do not alter question keys.
@@ -866,6 +876,17 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style id="examGroupsFocusStyles">
+.customExamSection{margin-top:16px;padding-top:12px;border-top:1px solid var(--line)}
+.customExamGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.customExamItem{display:flex;flex-direction:column;gap:6px;padding:9px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.customExamItem.activeCustomExam{outline:2px solid var(--accent)}
+.quickReviewBar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.quickReviewName{font-weight:900;margin-inline-end:auto}
+@media(max-width:760px){.customExamGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.quickReviewBar .btn{min-height:40px;padding:7px 10px}}
+</style>
+
 </head>
 <body>
 <div class="profileSwitcher" id="profileSwitcher" aria-label="اختيار ملف التقدم">
@@ -926,6 +947,14 @@ html[data-theme="light"] .mobileSection>summary{color:#1e3a5f}
           <option value="set4">اختبار الهياكل والتحفيز — 80 سؤال</option>
           <option value="set5">اختبار المشاريع والتخطيط — 122 سؤال</option>
           <option value="set6">الاختبار التجريبي — 136 سؤال</option>
+          <optgroup label="مجموعة الاختبارات">
+            <option value="x1">خ1 — 110 سؤال</option>
+            <option value="x2">خ2 — 110 سؤال</option>
+            <option value="x3">خ3 — 110 سؤال</option>
+            <option value="x4">خ4 — 110 سؤال</option>
+            <option value="x5">خ5 — 110 سؤال</option>
+            <option value="x6">خ6 — 110 سؤال</option>
+          </optgroup>
         </select>
       </div>
 
@@ -1279,6 +1308,40 @@ const SETS=[
   {id:"set5",number:5,label:"المشاريع والتخطيط",range:"122 سؤال",total:122},
   {id:"set6",number:6,label:"الاختبار التجريبي",range:"136 سؤال",total:136}
 ];
+const CUSTOM_EXAM_SETS=[
+  {id:"x1",number:"خ1",label:"خ1",range:"110 سؤال",total:110},
+  {id:"x2",number:"خ2",label:"خ2",range:"110 سؤال",total:110},
+  {id:"x3",number:"خ3",label:"خ3",range:"110 سؤال",total:110},
+  {id:"x4",number:"خ4",label:"خ4",range:"110 سؤال",total:110},
+  {id:"x5",number:"خ5",label:"خ5",range:"110 سؤال",total:110},
+  {id:"x6",number:"خ6",label:"خ6",range:"110 سؤال",total:110}
+];
+const CUSTOM_EXAM_COUNTS={set3:33,set2:33,set5:22,set1:11,set4:11};
+function isCustomExamSet(setId){return CUSTOM_EXAM_SETS.some(s=>s.id===setId);}
+function lessonQuestions(setId){return QUESTIONS.filter(q=>q.setId===setId);}
+function customExamQuestions(setId){
+  const idx=CUSTOM_EXAM_SETS.findIndex(s=>s.id===setId);
+  if(idx<0)return [];
+  const order=["set3","set2","set5","set1","set4"];
+  const pools={};
+  for(const sourceId of order){
+    const pool=lessonQuestions(sourceId);
+    const count=CUSTOM_EXAM_COUNTS[sourceId];
+    const start=(idx*count)%pool.length;
+    pools[sourceId]=Array.from({length:count},(_,i)=>pool[(start+i)%pool.length]);
+  }
+  /* Interleave subjects while preserving fixed membership. */
+  const result=[];
+  let added=true;
+  while(added){
+    added=false;
+    for(const sourceId of order){
+      if(pools[sourceId].length){result.push(pools[sourceId].shift());added=true;}
+    }
+  }
+  return result;
+}
+
 
 const STUDY_SUBGROUPS={
   set1:[39],
@@ -1462,8 +1525,8 @@ function save(){
   try{localStorage.setItem(profileStoreKey(activeProfile),JSON.stringify(state));}catch(e){console.error("Save failed",e);}
 }
 function setText(id,val){const el=$(id);if(el)el.textContent=val;}
-function setDef(setId){return SETS.find(s=>s.id===setId)||SETS[0];}
-function setQuestions(setId){return QUESTIONS.filter(q=>q.setId===setId);}
+function setDef(setId){return SETS.find(s=>s.id===setId)||CUSTOM_EXAM_SETS.find(s=>s.id===setId)||SETS[0];}
+function setQuestions(setId){return isCustomExamSet(setId)?customExamQuestions(setId):lessonQuestions(setId);}
 function questionSetIdFromKey(k){return QUESTION_BY_KEY.get(k)?.setId||"";}
 function resetInfo(st,setId){
   const m=st?.resetMeta?.[setId]||{};
@@ -1571,20 +1634,22 @@ function getStudyOptions(q){const k=key(q);if(!view.studyOptionOrder[k])view.stu
 function reshuffleStudyQuestion(q){if(q&&view.studyOptionOrder)delete view.studyOptionOrder[key(q)];}
 
 function baseList(){
-  let list=subgroupQuestions(view.studySet,view.studySubgroup);
-  if(view.form!=="all")list=list.filter(q=>q.form===view.form);
-  if(view.lesson!=="all")list=list.filter(q=>(q.lesson||"")===view.lesson);
-  if(view.mode==="unanswered")list=list.filter(q=>!answered(q));
-  if(view.mode==="wrong")list=list.filter(q=>isWrong(q));
-  if(view.mode==="historyMistakes")list=list.filter(q=>isActiveMistake(q));
-  if(view.mode==="starred")list=list.filter(q=>isStarred(q));
+  let list;
   if(view.mode==="examMistakes"){
     const mistakeSet=new Set(state.examMistakeKeys||[]);
-    list=list.filter(q=>mistakeSet.has(key(q)));
+    list=[...mistakeSet].map(k=>QUESTION_BY_KEY.get(k)).filter(Boolean);
     if(view.examMistakeOrder.length){
       const order=new Map(view.examMistakeOrder.map((k,i)=>[k,i]));
       list.sort((a,b)=>(order.get(key(a))??999999)-(order.get(key(b))??999999));
     }
+  }else{
+    list=subgroupQuestions(view.studySet,view.studySubgroup);
+    if(view.form!=="all")list=list.filter(q=>q.form===view.form);
+    if(view.lesson!=="all")list=list.filter(q=>(q.lesson||"")===view.lesson);
+    if(view.mode==="unanswered")list=list.filter(q=>!answered(q));
+    if(view.mode==="wrong")list=list.filter(q=>isWrong(q));
+    if(view.mode==="historyMistakes")list=list.filter(q=>isActiveMistake(q));
+    if(view.mode==="starred")list=list.filter(q=>isStarred(q));
   }
   const t=norm(view.search);
   if(t)list=list.filter(q=>norm(q.question+" "+q.options.map(o=>o.text).join(" ")).includes(t));
@@ -1671,7 +1736,10 @@ function examStatusForSet(setId){
 }
 function renderJourney(){
   const box=$("journeyProgress");if(!box)return;
-  box.innerHTML=SETS.map(s=>{
+  const orderedSets=view.studySet&&SETS.some(s=>s.id===view.studySet)
+    ?[SETS.find(s=>s.id===view.studySet),...SETS.filter(s=>s.id!==view.studySet)]
+    :SETS;
+  box.innerHTML=orderedSets.map(s=>{
     const r=reviewStatsForSet(s.id),e=examStatusForSet(s.id),defs=subgroupDefs(s.id),rm=resetInfo(state,s.id);
     const resetHint=rm.fullAt?`<span class="journeyStatus" title="حذف كامل محمي من الاستعادة القديمة">آخر حذف كامل ${formatRiyadhDate(rm.fullAt)}</span>`:"";
     const subgroupButtons=defs.length?`<div class="journeySubgroups">${defs.map(d=>{
@@ -1702,6 +1770,24 @@ function renderJourney(){
     save();render();
   });
   box.querySelectorAll("[data-exam-set]").forEach(b=>b.onclick=()=>{view.examSet=b.dataset.examSet;state.ui.examSet=view.examSet;const sel=$("examSetFilter");if(sel)sel.value=view.examSet;save();startExam(view.examSet);});
+  const customHtml=`<div class="customExamSection">
+    <div class="sectionTitle">مجموعة الاختبارات</div>
+    <div class="customExamGrid">${CUSTOM_EXAM_SETS.map(s=>{
+      const e=examStatusForSet(s.id);
+      const active=(exam.active&&exam.setId===s.id)||view.examSet===s.id;
+      return `<div class="customExamItem ${active?"activeCustomExam":""}">
+        <b>${s.label}</b><span class="journeyStatus">${e.text}</span>
+        ${renderExamTrendInline(s.id)}
+        <button class="btn ${active?"primary":""}" data-custom-exam="${s.id}">${e.kind==="progress"?"استئناف":"فتح الاختبار"}</button>
+      </div>`;
+    }).join("")}</div>
+  </div>`;
+  box.insertAdjacentHTML("beforeend",customHtml);
+  box.querySelectorAll("[data-custom-exam]").forEach(b=>b.onclick=()=>{
+    view.examSet=b.dataset.customExam;state.ui.examSet=view.examSet;
+    const sel=$("examSetFilter");if(sel)sel.value=view.examSet;
+    save();startExam(view.examSet);
+  });
 }
 
 function stats(){
@@ -1797,6 +1883,26 @@ function renderNav(){
   nav.appendChild(frag);
 }
 
+
+function currentReviewLabel(){
+  const set=setDef(view.studySet);
+  const sg=subgroupDefs(view.studySet).find(d=>d.id===view.studySubgroup);
+  return sg?`${set.label} — ${sg.label}`:set.label;
+}
+function renderQuickReviewControls(){
+  if(view.mistakePractice||view.mode==="examMistakes"||view.mode==="historyMistakes")return "";
+  return `<div class="quickReviewBar">
+    <span class="quickReviewName">المراجعة الحالية: ${escapeHtml(currentReviewLabel())}</span>
+    <button class="btn" id="quickRestudyBtn" type="button">إعادة المراجعة</button>
+    <button class="btn bad" id="quickResetBtn" type="button">حذف بيانات الدرس</button>
+  </div>`;
+}
+function wireQuickReviewControls(){
+  const restudy=$("quickRestudyBtn"),reset=$("quickResetBtn");
+  if(restudy)restudy.onclick=restudyCurrentSet;
+  if(reset)reset.onclick=resetProgress;
+}
+
 function renderCard(){
   if(view.special==="progress"){renderProgressDashboard();return;}
   const card=$("quizCard"),q=current();
@@ -1804,7 +1910,7 @@ function renderCard(){
   rememberCurrent(q);
   const k=key(q),inMistakePractice=view.mistakePractice&&(view.mode==="historyMistakes"||view.mode==="examMistakes");
   const ans=inMistakePractice?(view.practiceAnswers[k]||null):state.answers[k];
-  const show=!!view.forceShow,metrics=cardMetrics(),set=setDef(view.studySet);
+  const show=!!view.forceShow,metrics=cardMetrics(),set=setDef(view.mode==="examMistakes"?q.setId:view.studySet);
   const parts=[];
   const lessonProgress=reviewStatsForSet(view.studySet);
   const sgDefs=subgroupDefs(view.studySet),sg=sgDefs.find(d=>d.id===view.studySubgroup);
@@ -1812,6 +1918,7 @@ function renderCard(){
   const sgDone=sg?sgList.filter(answered).length:0;
   parts.push(`<div class="meta"><div class="metaInfo"><span class="badge">سؤال ${escapeHtml(q.id)}</span><span class="badge lessonProgressBadge">${escapeHtml(set.label)} <span class="progressNums">${lessonProgress.done}/${lessonProgress.total}</span></span>${sg?`<span class="badge lessonProgressBadge">${sg.label} <span class="progressNums">${sgDone}/${sg.size}</span></span>`:""}${isStarred(q)?'<span class="badge good">للمراجعة لاحقاً</span>':""}${isActiveMistake(q)?'<span class="badge resumeBadge">ضمن مجموعة الأخطاء</span>':""}${isExamMistake(q)?'<span class="badge resumeBadge">ضمن أخطاء الاختبار</span>':""}${inMistakePractice?'<span class="badge good">تدريب جديد — الإجابة مخفية</span>':""}${view.pendingMistakeRemovalKey===k?`<span class="badge good">إجابة صحيحة — اضغط التالي لاعتمادها وإزالتها من ${view.mode==="examMistakes"?"أخطاء الاختبار":"مجموعة الأخطاء"}</span>`:""}</div><div class="metaRates"><span class="metricBadge">✅ ${metrics.correctPct}%</span><span class="metricBadge">⏱ ${metrics.hasLast?metrics.lastElapsed+"ث":"—"}</span></div></div>`);
   parts.push(`<div class="timerBox" id="timerBox"><div class="timerHead"><span>مؤقت السؤال</span><span class="timerText" id="timerText">60 ثانية</span></div><div class="timerBar"><i class="timerFill" id="timerFill"></i></div></div>`);
+  parts.push(renderQuickReviewControls());
   parts.push(`<div class="question">${escapeHtml(q.question)}</div><div class="options">`);
   const displayOptions=(view.mode==="examMistakes"&&view.examMistakeOptionOrder[k])?view.examMistakeOptionOrder[k]:getStudyOptions(q);
   displayOptions.forEach((o,optionIndex)=>{
@@ -1827,6 +1934,7 @@ function renderCard(){
   }
   parts.push(`<div class="cardActions"><button class="btn" id="prevInCard">السابق</button><button class="btn primary" id="nextInCard">التالي</button><button class="btn" id="showInCard">${show?"إخفاء الإجابة":"إظهار الإجابة"}</button><button class="btn warn" id="starInCard">${isStarred(q)?'إزالة من المراجعة':'مراجعة لاحقاً'}</button>${view.mode==="historyMistakes"?'<button class="btn bad" id="removeMistakeInCard">حذف من مجموعة الأخطاء</button>':view.mode==="examMistakes"?'<button class="btn bad" id="removeMistakeInCard">إزالة من أخطاء الاختبار</button>':""}</div>`);
   card.innerHTML=parts.join("");
+  wireQuickReviewControls();
 
   card.querySelectorAll("[data-pick]").forEach(btn=>{
     btn.addEventListener("click",()=>{if(!btn.classList.contains("eliminated"))pick(btn.dataset.pick);});
@@ -1963,8 +2071,11 @@ function showAll(){setMode("all");}
 function startExamMistakePractice(){
   const keys=[...new Set(state.examMistakeKeys||[])].filter(k=>QUESTION_BY_KEY.has(k));
   if(!keys.length){alert("لا توجد أخطاء محفوظة من آخر اختبار.");return;}
-  const setId=state.lastExamSetId&&SETS.some(s=>s.id===state.lastExamSetId)?state.lastExamSetId:QUESTION_BY_KEY.get(keys[0])?.setId;
-  if(setId)switchStudySet(setId);
+  const sourceExamSet=state.lastExamSetId||"";
+  if(!isCustomExamSet(sourceExamSet)){
+    const setId=SETS.some(s=>s.id===sourceExamSet)?sourceExamSet:QUESTION_BY_KEY.get(keys[0])?.setId;
+    if(setId)switchStudySet(setId);
+  }
   view.mode="examMistakes";view.index=0;view.forceShow=false;view.special="";view.studyOptionOrder={};
   view.mistakePractice=true;view.practiceAnswers={};view.pendingMistakeRemovalKey="";
   view.examMistakeOrder=shuffleArray(keys);view.examMistakeOptionOrder={};
@@ -2028,7 +2139,7 @@ function createExamSession(setId){
 }
 function sessionQuestions(session){return (session.order||[]).map(k=>QUESTION_BY_KEY.get(k)).filter(Boolean);}
 function startExam(setId=view.examSet,forceNew=false){
-  if(!SETS.some(s=>s.id===setId))setId="set1";
+  if(!SETS.some(s=>s.id===setId)&&!isCustomExamSet(setId))setId="set1";
   view.examSet=setId;state.ui.examSet=setId;
   let session=state.examSessions[setId];
   if(forceNew||!session||session.status!=="in_progress"){
@@ -2133,9 +2244,9 @@ function applyExamHistory(session){
     };
     if(ans){
       h.attempts++;h.examAttempts++;
-      if(correct){h.correct++;h.examCorrect++;removeActiveMistake(q);}else{h.wrong++;h.examWrong++;h.everWrong=true;addActiveMistake(q);}
+      if(correct){h.correct++;h.examCorrect++;}else{h.wrong++;h.examWrong++;h.everWrong=true;}
       h.lastSelected=ans.selected;h.lastCorrect=correct;h.lastTs=Number(ans.ts)||Date.now();
-    }else{h.examUnanswered++;h.lastSelected="";h.lastCorrect=false;h.lastTs=Date.now();addActiveMistake(q);}
+    }else{h.examUnanswered++;h.lastSelected="";h.lastCorrect=false;h.lastTs=Date.now();}
     h.lastContext="exam";state.history[k]=h;
   });
 }
@@ -2422,6 +2533,14 @@ document.addEventListener("keydown",e=>{
   if(e.key===" "){
     e.preventDefault();
     showAnswer();
+    return;
+  }
+  if(String(e.key||"").toLowerCase()==="e"||e.key==="ش"){
+    const btn=document.getElementById("explainInCard");
+    if(btn&&!btn.hidden&&!btn.disabled){
+      e.preventDefault();
+      btn.click();
+    }
     return;
   }
 
