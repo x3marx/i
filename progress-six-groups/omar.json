@@ -2,13 +2,13 @@
   "app": "نظام تدريب بنك الأسئلة-الجزء الثالث",
   "profile": "omar",
   "profileLabel": "Omar",
-  "version": 5,
+  "version": 6,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788547233074,
+  "updatedAt": 1788549437364,
   "deviceId": "device-r50tuzqf-mt4v48vz",
   "state": {
-    "version": 5,
+    "version": 6,
     "bankId": "qs668-lesson-groups-v1",
     "answers": {
       "form1:202": {
@@ -4020,16 +4020,37 @@
         "ts": 1788299040383
       }
     },
+    "generalReviewAnswers": {
+      "m1": {
+        "form1:202": {
+          "selected": "A",
+          "correct": true,
+          "elapsed": 60,
+          "ts": 1788548987162
+        },
+        "form1:40": {
+          "selected": "D",
+          "correct": true,
+          "elapsed": 60,
+          "ts": 1788549133769
+        }
+      },
+      "m2": {},
+      "m3": {},
+      "m4": {},
+      "m5": {},
+      "m6": {}
+    },
     "stars": {},
     "activeMistakes": {},
     "examMistakeKeys": [],
     "history": {
       "form1:202": {
-        "attempts": 2,
-        "correct": 2,
+        "attempts": 3,
+        "correct": 3,
         "wrong": 0,
-        "studyAttempts": 1,
-        "studyCorrect": 1,
+        "studyAttempts": 2,
+        "studyCorrect": 2,
         "studyWrong": 0,
         "examAttempts": 1,
         "examCorrect": 1,
@@ -4038,8 +4059,8 @@
         "everWrong": false,
         "lastSelected": "A",
         "lastCorrect": true,
-        "lastContext": "exam",
-        "lastTs": 1788064456899
+        "lastContext": "study",
+        "lastTs": 1788548987162
       },
       "form1:206": {
         "attempts": 2,
@@ -6218,11 +6239,11 @@
         "lastTs": 1788066765292
       },
       "form1:40": {
-        "attempts": 5,
-        "correct": 5,
+        "attempts": 6,
+        "correct": 6,
         "wrong": 0,
-        "studyAttempts": 5,
-        "studyCorrect": 5,
+        "studyAttempts": 6,
+        "studyCorrect": 6,
         "studyWrong": 0,
         "examAttempts": 0,
         "examCorrect": 0,
@@ -6232,7 +6253,7 @@
         "lastSelected": "D",
         "lastCorrect": true,
         "lastContext": "study",
-        "lastTs": 1788190955096
+        "lastTs": 1788549133769
       },
       "form1:42": {
         "attempts": 5,
@@ -16826,846 +16847,6 @@
         "remaining": 4942,
         "startedAt": 1788064324537,
         "finishedAt": 1788067124048
-      },
-      "x1": {
-        "setId": "x1",
-        "status": "in_progress",
-        "attempt": 1,
-        "order": [
-          "form1:381",
-          "form1:92",
-          "form1:488",
-          "form2:11",
-          "form1:202",
-          "form1:301",
-          "form1:256",
-          "form1:177",
-          "form1:281",
-          "form1:82",
-          "form1:341",
-          "form1:147",
-          "form1:503",
-          "form1:187",
-          "form1:10",
-          "form1:513",
-          "form1:40",
-          "form1:336",
-          "form1:331",
-          "form1:206",
-          "form1:67",
-          "form1:296",
-          "form1:286",
-          "form1:52",
-          "form1:376",
-          "form2:222",
-          "form1:458",
-          "form1:15",
-          "form1:1",
-          "form1:346",
-          "form1:366",
-          "form2:2",
-          "form1:137",
-          "form1:453",
-          "form1:498",
-          "form1:241",
-          "form1:356",
-          "form1:361",
-          "form1:371",
-          "form1:197",
-          "form1:167",
-          "form1:291",
-          "form1:438",
-          "form1:236",
-          "form1:47",
-          "form1:463",
-          "form1:77",
-          "form1:316",
-          "form1:246",
-          "form1:157",
-          "form1:152",
-          "form1:443",
-          "form1:182",
-          "form1:326",
-          "form1:122",
-          "form1:261",
-          "form1:211",
-          "form1:271",
-          "form1:266",
-          "form2:207",
-          "form1:276",
-          "form1:493",
-          "form1:20",
-          "form1:483",
-          "form1:132",
-          "form2:203",
-          "form1:72",
-          "form1:321",
-          "form1:25",
-          "form1:62",
-          "form1:162",
-          "form1:433",
-          "form1:468",
-          "form1:127",
-          "form1:107",
-          "form1:221",
-          "form1:473",
-          "form2:6",
-          "form1:508",
-          "form2:217",
-          "form1:306",
-          "form1:172",
-          "form1:478",
-          "form1:226",
-          "form1:42",
-          "form1:231",
-          "form1:216",
-          "form2:227",
-          "form1:112",
-          "form1:428",
-          "form2:232",
-          "form1:251",
-          "form1:117",
-          "form1:311",
-          "form1:423",
-          "form1:97",
-          "form1:30",
-          "form1:192",
-          "form1:5",
-          "form1:418",
-          "form1:518",
-          "form1:351",
-          "form1:35",
-          "form1:413",
-          "form1:57",
-          "form1:87",
-          "form2:212",
-          "form1:142",
-          "form1:102",
-          "form1:448"
-        ],
-        "optionOrder": {
-          "form1:381": [
-            "D",
-            "C",
-            "B",
-            "A"
-          ],
-          "form1:92": [
-            "C",
-            "A",
-            "D",
-            "B"
-          ],
-          "form1:488": [
-            "D",
-            "C",
-            "B",
-            "A"
-          ],
-          "form2:11": [
-            "B",
-            "D",
-            "A",
-            "C"
-          ],
-          "form1:202": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ],
-          "form1:301": [
-            "D",
-            "A",
-            "C",
-            "B"
-          ],
-          "form1:256": [
-            "C",
-            "A",
-            "B",
-            "D"
-          ],
-          "form1:177": [
-            "D",
-            "B",
-            "C",
-            "A"
-          ],
-          "form1:281": [
-            "B",
-            "C",
-            "D",
-            "A"
-          ],
-          "form1:82": [
-            "B",
-            "D",
-            "A",
-            "C"
-          ],
-          "form1:341": [
-            "B",
-            "D",
-            "C",
-            "A"
-          ],
-          "form1:147": [
-            "A",
-            "D",
-            "B",
-            "C"
-          ],
-          "form1:503": [
-            "A",
-            "C",
-            "B",
-            "D"
-          ],
-          "form1:187": [
-            "C",
-            "A",
-            "B",
-            "D"
-          ],
-          "form1:10": [
-            "A",
-            "D",
-            "C",
-            "B"
-          ],
-          "form1:513": [
-            "A",
-            "C",
-            "B",
-            "D"
-          ],
-          "form1:40": [
-            "C",
-            "A",
-            "D",
-            "B"
-          ],
-          "form1:336": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ],
-          "form1:331": [
-            "D",
-            "A",
-            "C",
-            "B"
-          ],
-          "form1:206": [
-            "C",
-            "A",
-            "D",
-            "B"
-          ],
-          "form1:67": [
-            "B",
-            "D",
-            "C",
-            "A"
-          ],
-          "form1:296": [
-            "B",
-            "C",
-            "A",
-            "D"
-          ],
-          "form1:286": [
-            "B",
-            "D",
-            "C",
-            "A"
-          ],
-          "form1:52": [
-            "A",
-            "D",
-            "C",
-            "B"
-          ],
-          "form1:376": [
-            "B",
-            "A",
-            "C",
-            "D"
-          ],
-          "form2:222": [
-            "C",
-            "B",
-            "A",
-            "D"
-          ],
-          "form1:458": [
-            "B",
-            "D",
-            "C",
-            "A"
-          ],
-          "form1:15": [
-            "C",
-            "B",
-            "A",
-            "D"
-          ],
-          "form1:1": [
-            "A",
-            "C",
-            "B",
-            "D"
-          ],
-          "form1:346": [
-            "A",
-            "B",
-            "D",
-            "C"
-          ],
-          "form1:366": [
-            "B",
-            "C",
-            "D",
-            "A"
-          ],
-          "form2:2": [
-            "B",
-            "A",
-            "C",
-            "D"
-          ],
-          "form1:137": [
-            "A",
-            "C",
-            "D",
-            "B"
-          ],
-          "form1:453": [
-            "D",
-            "A",
-            "B",
-            "C"
-          ],
-          "form1:498": [
-            "B",
-            "D",
-            "A",
-            "C"
-          ],
-          "form1:241": [
-            "A",
-            "D",
-            "C",
-            "B"
-          ],
-          "form1:356": [
-            "C",
-            "B",
-            "D",
-            "A"
-          ],
-          "form1:361": [
-            "C",
-            "D",
-            "B",
-            "A"
-          ],
-          "form1:371": [
-            "C",
-            "B",
-            "A",
-            "D"
-          ],
-          "form1:197": [
-            "D",
-            "B",
-            "A",
-            "C"
-          ],
-          "form1:167": [
-            "C",
-            "A",
-            "D",
-            "B"
-          ],
-          "form1:291": [
-            "B",
-            "A",
-            "D",
-            "C"
-          ],
-          "form1:438": [
-            "D",
-            "A",
-            "B",
-            "C"
-          ],
-          "form1:236": [
-            "C",
-            "D",
-            "A",
-            "B"
-          ],
-          "form1:47": [
-            "C",
-            "B",
-            "A",
-            "D"
-          ],
-          "form1:463": [
-            "A",
-            "C",
-            "D",
-            "B"
-          ],
-          "form1:77": [
-            "D",
-            "C",
-            "A",
-            "B"
-          ],
-          "form1:316": [
-            "B",
-            "A",
-            "C",
-            "D"
-          ],
-          "form1:246": [
-            "B",
-            "A",
-            "C",
-            "D"
-          ],
-          "form1:157": [
-            "D",
-            "B",
-            "A",
-            "C"
-          ],
-          "form1:152": [
-            "C",
-            "D",
-            "A",
-            "B"
-          ],
-          "form1:443": [
-            "B",
-            "C",
-            "D",
-            "A"
-          ],
-          "form1:182": [
-            "D",
-            "A",
-            "C",
-            "B"
-          ],
-          "form1:326": [
-            "A",
-            "C",
-            "B",
-            "D"
-          ],
-          "form1:122": [
-            "B",
-            "C",
-            "A",
-            "D"
-          ],
-          "form1:261": [
-            "C",
-            "A",
-            "D",
-            "B"
-          ],
-          "form1:211": [
-            "D",
-            "B",
-            "A",
-            "C"
-          ],
-          "form1:271": [
-            "D",
-            "B",
-            "C",
-            "A"
-          ],
-          "form1:266": [
-            "C",
-            "A",
-            "B",
-            "D"
-          ],
-          "form2:207": [
-            "B",
-            "A",
-            "C",
-            "D"
-          ],
-          "form1:276": [
-            "D",
-            "C",
-            "B",
-            "A"
-          ],
-          "form1:493": [
-            "A",
-            "B",
-            "D",
-            "C"
-          ],
-          "form1:20": [
-            "C",
-            "D",
-            "B",
-            "A"
-          ],
-          "form1:483": [
-            "A",
-            "C",
-            "B",
-            "D"
-          ],
-          "form1:132": [
-            "B",
-            "C",
-            "A",
-            "D"
-          ],
-          "form2:203": [
-            "B",
-            "C",
-            "D",
-            "A"
-          ],
-          "form1:72": [
-            "B",
-            "D",
-            "A",
-            "C"
-          ],
-          "form1:321": [
-            "A",
-            "B",
-            "D",
-            "C"
-          ],
-          "form1:25": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ],
-          "form1:62": [
-            "D",
-            "C",
-            "A",
-            "B"
-          ],
-          "form1:162": [
-            "C",
-            "B",
-            "D",
-            "A"
-          ],
-          "form1:433": [
-            "C",
-            "D",
-            "A",
-            "B"
-          ],
-          "form1:468": [
-            "C",
-            "A",
-            "B",
-            "D"
-          ],
-          "form1:127": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ],
-          "form1:107": [
-            "A",
-            "D",
-            "C",
-            "B"
-          ],
-          "form1:221": [
-            "A",
-            "B",
-            "D",
-            "C"
-          ],
-          "form1:473": [
-            "C",
-            "D",
-            "B",
-            "A"
-          ],
-          "form2:6": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ],
-          "form1:508": [
-            "B",
-            "C",
-            "A",
-            "D"
-          ],
-          "form2:217": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ],
-          "form1:306": [
-            "A",
-            "C",
-            "D",
-            "B"
-          ],
-          "form1:172": [
-            "A",
-            "C",
-            "D",
-            "B"
-          ],
-          "form1:478": [
-            "D",
-            "B",
-            "A",
-            "C"
-          ],
-          "form1:226": [
-            "D",
-            "B",
-            "C",
-            "A"
-          ],
-          "form1:42": [
-            "A",
-            "B",
-            "D",
-            "C"
-          ],
-          "form1:231": [
-            "C",
-            "D",
-            "A",
-            "B"
-          ],
-          "form1:216": [
-            "C",
-            "A",
-            "B",
-            "D"
-          ],
-          "form2:227": [
-            "A",
-            "C",
-            "D",
-            "B"
-          ],
-          "form1:112": [
-            "C",
-            "D",
-            "B",
-            "A"
-          ],
-          "form1:428": [
-            "B",
-            "D",
-            "C",
-            "A"
-          ],
-          "form2:232": [
-            "B",
-            "A",
-            "C",
-            "D"
-          ],
-          "form1:251": [
-            "C",
-            "A",
-            "D",
-            "B"
-          ],
-          "form1:117": [
-            "D",
-            "B",
-            "C",
-            "A"
-          ],
-          "form1:311": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ],
-          "form1:423": [
-            "B",
-            "D",
-            "C",
-            "A"
-          ],
-          "form1:97": [
-            "B",
-            "C",
-            "D",
-            "A"
-          ],
-          "form1:30": [
-            "C",
-            "D",
-            "A",
-            "B"
-          ],
-          "form1:192": [
-            "B",
-            "D",
-            "C",
-            "A"
-          ],
-          "form1:5": [
-            "D",
-            "A",
-            "C",
-            "B"
-          ],
-          "form1:418": [
-            "A",
-            "B",
-            "D",
-            "C"
-          ],
-          "form1:518": [
-            "C",
-            "A",
-            "B",
-            "D"
-          ],
-          "form1:351": [
-            "B",
-            "D",
-            "C",
-            "A"
-          ],
-          "form1:35": [
-            "D",
-            "A",
-            "B",
-            "C"
-          ],
-          "form1:413": [
-            "A",
-            "D",
-            "B",
-            "C"
-          ],
-          "form1:57": [
-            "C",
-            "D",
-            "A",
-            "B"
-          ],
-          "form1:87": [
-            "D",
-            "A",
-            "C",
-            "B"
-          ],
-          "form2:212": [
-            "A",
-            "C",
-            "B",
-            "D"
-          ],
-          "form1:142": [
-            "C",
-            "D",
-            "A",
-            "B"
-          ],
-          "form1:102": [
-            "B",
-            "D",
-            "A",
-            "C"
-          ],
-          "form1:448": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ]
-        },
-        "index": 13,
-        "answers": {
-          "form1:381": {
-            "selected": "D",
-            "ts": 1788543028093
-          },
-          "form1:92": {
-            "selected": "D",
-            "ts": 1788543041961
-          },
-          "form1:488": {
-            "selected": "A",
-            "ts": 1788543056279
-          },
-          "form2:11": {
-            "selected": "C",
-            "ts": 1788543088983
-          },
-          "form1:202": {
-            "selected": "A",
-            "ts": 1788543100137
-          },
-          "form1:301": {
-            "selected": "A",
-            "ts": 1788543138057
-          },
-          "form1:256": {
-            "selected": "B",
-            "ts": 1788545317404
-          },
-          "form1:177": {
-            "selected": "B",
-            "ts": 1788545421072
-          },
-          "form1:281": {
-            "selected": "A",
-            "ts": 1788545427123
-          },
-          "form1:82": {
-            "selected": "B",
-            "ts": 1788545437514
-          },
-          "form1:341": {
-            "selected": "B",
-            "ts": 1788545443421
-          },
-          "form1:147": {
-            "selected": "A",
-            "ts": 1788546921031
-          },
-          "form1:503": {
-            "selected": "B",
-            "ts": 1788546928243
-          }
-        },
-        "review": {
-          "form1:301": true
-        },
-        "remaining": 4771,
-        "startedAt": 1788543006269,
-        "finishedAt": 0
       }
     },
     "examResults": {
@@ -17725,11 +16906,36 @@
       "set6": {
         "studyAt": 0,
         "fullAt": 0
+      },
+      "m1": {
+        "studyAt": 0,
+        "fullAt": 0
+      },
+      "m2": {
+        "studyAt": 0,
+        "fullAt": 0
+      },
+      "m3": {
+        "studyAt": 0,
+        "fullAt": 0
+      },
+      "m4": {
+        "studyAt": 0,
+        "fullAt": 0
+      },
+      "m5": {
+        "studyAt": 0,
+        "fullAt": 0
+      },
+      "m6": {
+        "studyAt": 0,
+        "fullAt": 0
       }
     },
+    "generalReviewLayoutVersion": 1,
     "lastExamSetId": "set3",
     "ui": {
-      "studySet": "set6",
+      "studySet": "m1",
       "studySubgroup": "all",
       "examSet": "x1",
       "lastQuestionBySet": {
@@ -17738,7 +16944,8 @@
         "set5": "form1:443",
         "set1": "form1:1",
         "set4": "form5:385",
-        "set6": "form6:574"
+        "set6": "form6:574",
+        "m1": "form1:413"
       }
     }
   }
