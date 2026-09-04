@@ -2,13 +2,13 @@
   "app": "نظام تدريب بنك الأسئلة-الجزء الثالث",
   "profile": "omar",
   "profileLabel": "Omar",
-  "version": 5,
+  "version": 4,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788533663175,
-  "deviceId": "device-r50tuzqf-mt4v48vz",
+  "updatedAt": 1788537182155,
+  "deviceId": "device-66n9vr8z-mt4v5053",
   "state": {
-    "version": 5,
+    "version": 4,
     "bankId": "qs668-lesson-groups-v1",
     "answers": {
       "form1:202": {
@@ -4000,6 +4000,12 @@
         "correct": true,
         "elapsed": 14,
         "ts": 1788533359379
+      },
+      "form6:666": {
+        "selected": "C",
+        "correct": false,
+        "elapsed": 22,
+        "ts": 1788537176969
       }
     },
     "stars": {},
@@ -4016,7 +4022,8 @@
       "form6:626": true,
       "form6:634": true,
       "form6:653": true,
-      "form6:655": true
+      "form6:655": true,
+      "form6:666": true
     },
     "examMistakeKeys": [],
     "history": {
@@ -15324,6 +15331,23 @@
         "lastCorrect": true,
         "lastContext": "study",
         "lastTs": 1788533359379
+      },
+      "form6:666": {
+        "attempts": 1,
+        "correct": 0,
+        "wrong": 1,
+        "studyAttempts": 1,
+        "studyCorrect": 0,
+        "studyWrong": 1,
+        "examAttempts": 0,
+        "examCorrect": 0,
+        "examWrong": 0,
+        "examUnanswered": 0,
+        "everWrong": true,
+        "lastSelected": "C",
+        "lastCorrect": false,
+        "lastContext": "study",
+        "lastTs": 1788537176969
       }
     },
     "examSessions": {
@@ -16806,32 +16830,6 @@
         }
       ]
     },
-    "resetMeta": {
-      "set1": {
-        "studyAt": 1788386146812,
-        "fullAt": 1788386146812
-      },
-      "set2": {
-        "studyAt": 0,
-        "fullAt": 0
-      },
-      "set3": {
-        "studyAt": 0,
-        "fullAt": 0
-      },
-      "set4": {
-        "studyAt": 1788394261646,
-        "fullAt": 1788394261646
-      },
-      "set5": {
-        "studyAt": 1788293264557,
-        "fullAt": 1788293264557
-      },
-      "set6": {
-        "studyAt": 0,
-        "fullAt": 0
-      }
-    },
     "lastExamSetId": "set3",
     "ui": {
       "studySet": "set6",
@@ -16843,7 +16841,7 @@
         "set5": "form1:443",
         "set1": "form1:1",
         "set4": "form5:385",
-        "set6": "form6:666"
+        "set6": "form6:667"
       }
     }
   }
