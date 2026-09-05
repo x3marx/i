@@ -5,7 +5,7 @@
   "version": 6,
   "bankId": "qs668-lesson-groups-v1",
   "questionCount": 668,
-  "updatedAt": 1788631630017,
+  "updatedAt": 1788635158807,
   "deviceId": "device-66n9vr8z-mt4v5053",
   "state": {
     "version": 6,
@@ -22173,7 +22173,7 @@
           }
         },
         "review": {},
-        "remaining": 6501,
+        "remaining": 6498,
         "startedAt": 1788630460227,
         "finishedAt": 0
       }
